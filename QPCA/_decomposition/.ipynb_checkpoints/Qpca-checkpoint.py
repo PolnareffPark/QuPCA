@@ -12,6 +12,7 @@ from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 import math
 from .._quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,wrapper_state_vector_tomography
 from .._postprocessingUtilities.postprocessing_eig_reconstruction import postprocessing
+from .._benchmark.benchmark import _eigenvectors_benchmarking,_eigenvalues_benchmarking,_error_benchmark,_error_benchmark_from_scratch
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
 
@@ -39,6 +40,12 @@ class QPCA():
     
     reconstructed_eigenvectors : array-like.
                 Array of tuples of the form [(e_1,v_1),(e_2,v_2),..] where e_s are the eigenvalues and v_s are the reconstructed eigenvectors.
+    
+    original_eigenValues: array-like,.
+                Original eigenvalues of the input matrix.
+                
+    original_eigenVectors: array-like.
+                Orignal eigenvectors of the input matrix.
     
     """
     
@@ -153,16 +160,89 @@ class QPCA():
                     statevector_dictionary=new_tomo_dict
 
             return statevector_dictionary
-
         
         statevector_dictionary=state_vector_tomography()
         #print(statevector_dictionary)
-        eigenvectors=postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,resolution=self.resolution)
-        self.reconstructed_eigenvectors=eigenvectors
-        return eigenvectors
+        eigenvalue_eigenvector_tuple=postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,resolution=self.resolution)
+        self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
+
+        return eigenvalue_eigenvector_tuple
+    
+    def quantum_input_matrix_reconstruction(self):
         
-    #### BENCHMARKING    
-    def eigenvectors_benchmarking(self,print_distances=True,only_first_eigenvectors=True,plot_delta=False,distance_type='l2'):
+        """ Method to reconstruct the input matrix.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        reconstructed_input_matrix: array-like. 
+                Reconstructed input matrix.
+                    
+        Notes
+        -----
+        Using the reconstructed eigenvectors and eigenvalues from QPCA, we can reconstruct the original input matrix using the reverse procedure of SVD.
+        """
+        
+        reconstructed_eigenvalues=np.array([])
+        reconstructed_eigenvectors=np.array([])
+        for t in self.reconstructed_eigenvalue_eigenvector_tuple:
+            reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])
+            reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1])
+        try:
+            reconstructed_eigenvectors=reconstructed_eigenvectors.reshape(len(reconstructed_eigenvalues),len(reconstructed_eigenvalues),order='F')
+        except:
+            raise Exception('Ops! QPCA was not able to reconstruct all the eigenvectors! Please check that you are not considering eigenvalues equal to zero.')
+        k = reconstructed_eigenvalues.argsort()[::-1]   
+        reconstructed_eigenvalues = reconstructed_eigenvalues[k]
+        reconstructed_eigenvectors = reconstructed_eigenvectors[:,k]
+        
+        reconstructed_input_matrix = reconstructed_eigenvectors @ np.diag(reconstructed_eigenvalues) @ reconstructed_eigenvectors.T
+        return reconstructed_input_matrix
+    
+        
+    # BENCHMARKING    
+    
+    def spectral_benchmarking(self, eigenvector_benchmarking=True, eigenvalues_benchmarching=False,print_distances=True,only_first_eigenvectors=True,plot_delta=False,distance_type='l2'):
+        if eigenvector_benchmarking:
+            error_list, delta=_eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple=self.reconstructed_eigenvalue_eigenvector_tuple,
+                                                         original_eigenVectors=self.original_eigenVectors,input_matrix=self.input_matrix,n_shots=self.n_shots,
+                                                         print_distances=print_distances,only_first_eigenvectors=only_first_eigenvectors,plot_delta=plot_delta,distance_type=distance_type)
+        if eigenvalues_benchmarching:
+            _eigenvalues_benchmarking(reconstructed_eigenvalue_eigenvector_tuple=self.reconstructed_eigenvalue_eigenvector_tuple,original_eigenValues=self.original_eigenValues)
+        
+        if eigenvector_benchmarking:
+            return error_list, delta
+            
+    def error_benchmarking(self,shots_list,errors_list=None,delta_list=None,n_tomography_repetitions=1,plot_delta=False,distance_type='l2'):
+        
+        if errors_list==None:
+            
+            delta_list=[]
+            ll=[]
+            for s in shots_list:
+                if plot_delta:
+                    delta_error = (np.sqrt((36*len(self.original_eigenVectors[:,0])*np.log(len(self.original_eigenVectors[:,0])))/(s)))
+                    delta_list.append(delta_error)
+
+                reconstructed_eigenvectors=self.eigenvectors_reconstruction(n_shots=s,n_repetitions=n_tomography_repetitions)
+                eig_count=0  
+                for eigenvalue, eigenvector in reconstructed_eigenvectors:
+                    distance=distance_function_wrapper(distance_type,abs(eigenvector),abs(self.original_eigenVectors[:,eig_count]))
+                    ll.append((eigenvalue,np.round(distance,4)))
+                    eig_count+=1
+    
+            dict__ = {k: [v for k1, v in ll if k1 == k] for k, v in ll}
+            
+            _error_benchmark_from_scratch(original_eigenVectors=self.original_eigenVectors,shots_list=shots_list,error_dict=dict__,plot_delta=plot_delta,label_error=distance_type,delta_list=delta_list)
+        else:
+            
+            _error_benchmark(original_eigenVectors=self.original_eigenVectors,shots_list=shots_list,errors_list=errors_list,delta_list=delta_list,plot_delta=plot_delta,
+                         label_error=distance_type,n_tomography_repetitions=n_tomography_repetitions)
+    
+    
+    '''def eigenvectors_benchmarking(self,print_distances=True,only_first_eigenvectors=True,plot_delta=False,distance_type='l2'):
         
         """ Method to benchmark the quality of the reconstructed eigenvectors.
 
@@ -199,35 +279,35 @@ class QPCA():
         #global eigenvalues_reconstructed
         
         save_list=[]
-        fig, ax = plt.subplots(1,len(self.reconstructed_eigenvectors),figsize=(20, 15))
+        fig, ax = plt.subplots(1,len(self.reconstructed_eigenvalue_eigenvector_tuple),figsize=(20, 15))
         for e,chart in enumerate(ax.reshape(-1,order='F')):
-            delta=np.sqrt((36*len(np.linalg.eig(self.input_matrix)[1][:,e%len(self.input_matrix)])*np.log(len(np.linalg.eig(self.input_matrix)[1][:,e%len(self.input_matrix)])))/(self.n_shots))
+            delta=np.sqrt((36*len(self.original_eigenVectors[:,e%len(self.input_matrix)])*np.log(len(self.original_eigenVectors[:,e%len(self.input_matrix)])))/(self.n_shots))
             
             if plot_delta:
                 
-                for i in range(len(np.linalg.eig(self.input_matrix)[1][:,(e%len(self.input_matrix))])):
+                for i in range(len(self.original_eigenVectors[:,(e%len(self.input_matrix))])):
                     circle=plt.Circle((i+1,abs(self.original_eigenVectors[:,e%len(self.input_matrix)])[i]),np.sqrt(7)*delta,color='g',alpha=0.1)
                     chart.add_patch(circle)
                     chart.axis("equal")
                     chart.hlines(abs(self.original_eigenVectors[:,e%len(self.input_matrix)])[i],xmin=i+1,xmax=i+1+(np.sqrt(7)*delta))
                     chart.text(i+1+((i+1+(np.sqrt(7)*delta))-(i+1))/2,abs(self.original_eigenVectors[:,e%len(self.input_matrix)])[i]+0.01,r'$\sqrt{7}\delta$')
                 chart.plot([], [], ' ', label=r'$\delta$='+str(round(delta,4)))
-                chart.plot(list(range(1,len(self.input_matrix)+1)),abs(self.reconstructed_eigenvectors[e%len(self.input_matrix)][1]),marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
+                chart.plot(list(range(1,len(self.input_matrix)+1)),abs(self.reconstructed_eigenvalue_eigenvector_tuple[e%len(self.input_matrix)][1]),marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
                 chart.plot(list(range(1,len(self.input_matrix)+1)),abs(self.original_eigenVectors[:,e%len(self.input_matrix)]),marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
 
             else:
-                chart.plot(list(range(1,len(self.input_matrix)+1)),abs(self.reconstructed_eigenvectors[e%len(self.input_matrix)][1]),marker='o',label='reconstructed')
+                chart.plot(list(range(1,len(self.input_matrix)+1)),abs(self.reconstructed_eigenvalue_eigenvector_tuple[e%len(self.input_matrix)][1]),marker='o',label='reconstructed')
                 chart.plot(list(range(1,len(self.input_matrix)+1)),abs(self.original_eigenVectors[:,e%len(self.input_matrix)]),marker='o',label='original')
             
             if print_distances:
-                distance=distance_function_wrapper(distance_type,abs(self.reconstructed_eigenvectors[e%len(self.input_matrix)][1]),abs(self.original_eigenVectors[:,e%len(self.input_matrix)]))
+                distance=distance_function_wrapper(distance_type,abs(self.reconstructed_eigenvalue_eigenvector_tuple[e%len(self.input_matrix)][1]),abs(self.original_eigenVectors[:,e%len(self.input_matrix)]))
                 chart.plot([], [], ' ', label=distance_type+"_error "+str(np.round(distance,4)))
                 
-            save_list.append((self.reconstructed_eigenvectors[e%len(self.input_matrix)][0],np.round(distance,4)))
+            save_list.append((self.reconstructed_eigenvalue_eigenvector_tuple[e%len(self.input_matrix)][0],np.round(distance,4)))
             chart.plot([], [], ' ', label="n_shots "+str(self.n_shots))
             chart.legend()
             chart.set_ylabel("eigenvector's values")
-            chart.set_title('Eigenvectors corresponding to eigenvalues '+str(self.reconstructed_eigenvectors[e%len(self.input_matrix)][0]))
+            chart.set_title('Eigenvectors corresponding to eigenvalues '+str(self.reconstructed_eigenvalue_eigenvector_tuple[e%len(self.input_matrix)][0]))
             if only_first_eigenvectors:
                 break
            
@@ -251,7 +331,7 @@ class QPCA():
     
         fig, ax = plt.subplots(figsize=(20, 15))
 
-        eigenvalues=[i[0] for i in self.reconstructed_eigenvectors]
+        eigenvalues=[i[0] for i in self.reconstructed_eigenvalue_eigenvector_tuple]
         ax.plot(list(range(1,len(eigenvalues)+1)),eigenvalues,marker='o',label='reconstructed',linestyle='None',markersize=25,alpha=0.3,color='r')
         ax.plot(list(range(1,len(self.original_eigenValues)+1)),self.original_eigenValues,marker='x',label='original',linestyle='None',markersize=20,color='black')
         ax.legend(labelspacing = 3)
@@ -306,26 +386,27 @@ class QPCA():
             
             for s in shots_list:
                 if plot_delta:
-                    delta_error = (np.sqrt((36*len(np.linalg.eig(self.input_matrix)[1][:,0])*np.log(len(np.linalg.eig(self.input_matrix)[1][:,0])))/(s)))
+                    delta_error = (np.sqrt((36*len(self.original_eigenVectors[:,0])*np.log(len(self.original_eigenVectors[:,0])))/(s)))
                     delta_list.append(delta_error)
 
                 
                 reconstructed_eigenvectors=self.eigenvectors_reconstruction(n_shots=s,n_repetitions=n_tomography_repetitions)
                 eig_count=0  
-                for eigenvalue, eigenvector in sorted(reconstructed_eigenvectors,reverse=True):
+                for eigenvalue, eigenvector in reconstructed_eigenvectors:
                     distance=distance_function_wrapper(label_error,abs(eigenvector),abs(self.original_eigenVectors[:,eig_count]))
                     ll.append((eigenvalue,np.round(distance,4)))
-                    dict_ = {k: [v for k1, v in ll if k1 == k] for k, v in ll}
                     eig_count+=1
 
-            fig, ax = plt.subplots(1,len(dict_),figsize=(25, 10))
+            dict__ = {k: [v for k1, v in ll if k1 == k] for k, v in ll}
+
+            fig, ax = plt.subplots(1,len(dict__),figsize=(25, 10))
             for e,chart in enumerate(ax.reshape(-1)):
-                chart.plot(shots_list,dict_[list(dict_.keys())[e]],'-o')
+                chart.plot(shots_list,dict__[list(dict__.keys())[e]],'-o')
                 chart.set_xticks(shots_list)
                 chart.set_xscale('log')
                 chart.set_xlabel('n_shots')
                 chart.set_ylabel(label_error+'_error')
-                chart.set_title(label_error+'_error for eigenvector wrt the eigenvalues {}'.format(list(dict_.keys())[e]))
+                chart.set_title(label_error+'_error for eigenvector wrt the eigenvalues {}'.format(list(dict__.keys())[e]))
 
             fig.tight_layout()
             fig, ax = plt.subplots(figsize=(25, 10))
@@ -347,13 +428,10 @@ class QPCA():
         else:
             if plot_delta==False and delta_list:
                 warnings.warn("Attention! delta_list that you passed has actually no effect since the flag plot_delta is set to False. Please set it to True if you want to get the delta decreasing plot.")
-            dict_={}
-            for j in range(len(self.reconstructed_eigenvectors)):
-                values=[]
-                for i in range(len(errors_list)):
-                    values.append(errors_list[i][j][1])
-                    dict_.update({errors_list[i][j][0]:values})
-
+     
+            e_list=[sub for e in errors_list for sub in e]
+            dict_ = {k: [v for k1, v in e_list if k1 == k] for k, v in e_list}
+            
             fig, ax = plt.subplots(1,len(dict_),figsize=(25, 10))
             fig.tight_layout()
             for e,chart in enumerate(ax.reshape(-1)):
@@ -377,7 +455,7 @@ class QPCA():
                     plt.title(r'Tomography error')
             
             plt.show()
-
+'''
     
     
         
@@ -386,7 +464,7 @@ class QPCA():
         
         #TODO: aggiustare il condition number creando una matrice random per ogni dimensionalità diversa e calcolando il condition number di conseguenza.
         
-        n=np.linspace(1, max_n_samples, dtype=np.int64, num=10)
+        n=np.linspace(1, max_n_samples, dtype=np.int64, num=100)
         zoomed=False
         if rand_PCA:
             classical_complexity=n*n_features*np.log(classical_principal_components)
@@ -398,13 +476,18 @@ class QPCA():
 
         delta=np.sqrt((36*n_features*np.log(n_features))/self.n_shots)
         martrix_encoding_complexity=np.log(n*n_features)
-        pe_complexity=(((np.linalg.cond(self.input_matrix)/eps))**2)*(1/eps)*np.log(n*n_features)
-        '''A=[np.random.rand(i,1000) for i in n]
-        pe_complexity=[]
-        for i in range(100):
-            pe_complexity.append((((np.linalg.cond(A[i])/eps))**2)*(1/eps)*np.log(n[i]*n_features))
+        #pe_complexity=(((np.linalg.cond(self.input_matrix)/eps))**2)*(1/eps)*np.log(n*n_features)
         
-        pe_complexity=np.array(pe_complexity)'''
+        A=[np.random.rand(i,n_features) for i in n]
+        pe_complexity=[]
+        cond_number_list=[]
+        for i in range(100):
+            cond_number_list.append(np.linalg.cond(A[i]))
+        cond_number=np.mean(cond_number_list)
+            
+        #pe_complexity.append((((np.linalg.cond(A[i])/eps))**2)*(1/eps)*np.log(n[i]*n_features))
+        pe_complexity=(((cond_number/eps))**2)*(1/eps)*np.log(n*n_features)
+        #pe_complexity=np.array(pe_complexity)
         tomography_complexity=n_features/(delta**2)
         
         #print('delta',delta)
@@ -429,7 +512,7 @@ class QPCA():
         plt.title('Runtime comparison between quantum and '+label_PCA)
         idx_ = np.argwhere(np.diff(np.sign(classical_complexity-total_complexity))).flatten()
         #print(n[idx_])
-        if len(n[idx_])>0:
+        '''if len(n[idx_])>0:
             
             order_of_magnitude_diff=math.floor(math.log(n[-1], 10))- math.floor(math.log(n[idx_], 10))
             print(order_of_magnitude_diff)
@@ -465,11 +548,11 @@ class QPCA():
                 #plt.xticks(visible=True)
                 #plt.yticks(visible=True)
 
-                mark_inset(ax, ax2, loc1=2, loc2=4, fc="none", ec="0.7",linestyle='--')
+                mark_inset(ax, ax2, loc1=2, loc2=4, fc="none", ec="0.7",linestyle='--')'''
         #print(np.array(xticks)[1:-1],np.array(xticks)[1:-1]+n[idx_],)
-        if zoomed==False:
-            ax.vlines(n[idx_],ymin=0,ymax=total_complexity[idx_],linestyle='--',color='black',alpha=0.3)
-            ax.set_xticks(np.append(np.array(xticks)[1:-1],n[idx_]))
+        #if zoomed==False:
+        ax.vlines(n[idx_],ymin=0,ymax=total_complexity[idx_],linestyle='--',color='black',alpha=0.3)
+        ax.set_xticks(np.append(np.array(xticks)[1:-1],n[idx_]))
             #ax.set_yticks(classical_complexity[idx_])
             
         ax.legend()

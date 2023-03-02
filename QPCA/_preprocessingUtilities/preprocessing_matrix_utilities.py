@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import warnings
 
 
 def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,seed=None):
@@ -33,6 +34,8 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
         """
         
         assert (matrix_dimension & (matrix_dimension-1) == 0) and matrix_dimension != 0, 'Attention! The matrix you choose is not a 2^n Hermitian matrix'
+        
+        
         if replicate_paper == False:
             # Set dimension for the matrix
             if seed!=None:
@@ -45,7 +48,6 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
                 eig, e_v = np.linalg.eig(hermitian_matrix)
                 eigenvalues_list=sorted(eigenvalues_list,reverse=True)
                 b = np.array(eigenvalues_list)
-
                 input_matrix = e_v @ np.diag(b) @ e_v.T
             else:
                 input_matrix=hermitian_matrix

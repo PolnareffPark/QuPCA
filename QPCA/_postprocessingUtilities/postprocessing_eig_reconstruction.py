@@ -29,7 +29,6 @@ def postprocessing(input_matrix,statevector_dictionary,resolution):
         """
         
         binary_lambda=[]
-            
         for d in statevector_dictionary:
             if statevector_dictionary[d]!=0:
                 
@@ -45,12 +44,11 @@ def postprocessing(input_matrix,statevector_dictionary,resolution):
                     
             l_list.append(np.asarray(tmp_list))
             
-            
         for l in l_list:
             normalization_factor=np.sqrt((1/(sum(l**2))))
             l*=normalization_factor
  
-        eigenvectors=[]
+        eigenvalue_eigenvector_tuples=[]
         for ll, eig in zip(l_list,eigenvalues):
             eigenvector=np.zeros(len(input_matrix))
             save_sign=np.sign(ll)
@@ -69,8 +67,8 @@ def postprocessing(input_matrix,statevector_dictionary,resolution):
 
             eigenvector=scaled_statevectors[idx_max]*value*save_sign[len(input_matrix)*idx_max:len(input_matrix)*idx_max+len(input_matrix)]
             #eigenvector=scaled_statevectors[idx_max]*value*save_sign[:len(input_matrix)]
-            eigenvectors.append((eig,eigenvector))
+            eigenvalue_eigenvector_tuples.append((eig,eigenvector))
             
-        eigenvectors=sorted(eigenvectors,reverse=True)
+        eigenvalue_eigenvector_tuples=sorted(eigenvalue_eigenvector_tuples,reverse=True)
         #self.reconstructed_eigenvectors=sorted(eigenvectors,reverse=True)
-        return eigenvectors
+        return eigenvalue_eigenvector_tuples

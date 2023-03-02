@@ -185,7 +185,7 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
         backend_total = Aer.get_backend("qasm_simulator")
         job = backend_total.run(transpile(total_circuit_1, backend=backend_total), shots=n_shots)
         counts = job.result().get_counts()
-
+    
         for i in counts:
             counts[i]/=n_shots
 
