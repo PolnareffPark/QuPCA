@@ -10,7 +10,7 @@ from qiskit import Aer, transpile, execute
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 import math
-from .._quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,wrapper_state_vector_tomography
+from .._quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,state_vector_tomography
 from .._postprocessingUtilities.postprocessing_eig_reconstruction import postprocessing
 #from .._decomposition.Qpca import 
 from scipy.spatial import distance
@@ -25,9 +25,12 @@ def _eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple,origin
 
     Parameters
     ----------
-    reconstructed_eigenvalue_eigenvector_tuple:
+    reconstructed_eigenvalue_eigenvector_tuple: array-like.
+                Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.
     
-    original_eigenVectors:
+    original_eigenVectors: array-like.
+                Array representing the original eigenvectors of the input matrix.
+                
     
     input_matrix:
     

@@ -10,7 +10,7 @@ from qiskit import Aer, transpile, execute
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 import math
-from .._quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,wrapper_state_vector_tomography
+from .._quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,state_vector_tomography,q_ram_pHe_quantum_circuit_generation
 from .._postprocessingUtilities.postprocessing_eig_reconstruction import postprocessing
 from .._benchmark.benchmark import _eigenvectors_benchmarking,_eigenvalues_benchmarking,_error_benchmark,_error_benchmark_from_scratch
 from scipy.spatial import distance
@@ -137,17 +137,17 @@ class QPCA():
         way, the statevector of the quantum state is reconstructed and a postprocessing method is executed to get the eigenvectors from the reconstructed statevector.
         """
         
-        def state_vector_tomography():
+        def wrapper_state_vector_tomography(quantum_circuit,n_shots):
             
             assert n_repetitions>0, "n_repetitions must be greater than 0."
             self.n_shots=n_shots
 
             if n_repetitions==1:
-                tomo_dict=wrapper_state_vector_tomography(self.pe_circuit,self.qram_circuit,n_shots)
+                tomo_dict=state_vector_tomography(quantum_circuit,n_shots)
                 #self.statevector_dictionary=tomo_dict
                 statevector_dictionary=tomo_dict
             else:
-                tomo_dict=[wrapper_state_vector_tomography(self.pe_circuit,self.qram_circuit,n_shots) for j in range(n_repetitions)]
+                tomo_dict=[state_vector_tomography(quantum_circuit,n_shots) for j in range(n_repetitions)]
                 keys=list(tomo_dict[0].keys())
                 new_tomo_dict={}
                 for k in keys:
@@ -161,8 +161,10 @@ class QPCA():
 
             return statevector_dictionary
         
-        statevector_dictionary=state_vector_tomography()
-        #print(statevector_dictionary)
+        qc=q_ram_pHe_quantum_circuit_generation(self.pe_circuit,self.qram_circuit)
+        
+        statevector_dictionary=wrapper_state_vector_tomography(quantum_circuit=qc,n_shots=n_shots)
+
         eigenvalue_eigenvector_tuple=postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,resolution=self.resolution)
         self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
 
@@ -205,6 +207,48 @@ class QPCA():
     # BENCHMARKING    
     
     def spectral_benchmarking(self, eigenvector_benchmarking=True, eigenvalues_benchmarching=False,print_distances=True,only_first_eigenvectors=True,plot_delta=False,distance_type='l2'):
+        
+        """ Method to benchmark the reconstructed eigenvectors/eigenvalues.
+
+        Parameters
+        ----------
+        eigenvector_benchmarking: bool value, default=True.
+                If True, an eigenvectors benchmarking is performed to show how the quantum algorithm approximate the eigenvectors.
+        
+        eigenvalues_benchmarching: bool value, default=False.
+                If True, an eigenvalues benchmarking is performed to show how the quantum algorithm approximate the eigenvalues.
+                
+        print_distances: bool value, default=True.
+                If True, the distance (defined by the parameter distance_type) between the reconstructed and original eigenvectors is printed in the legend.
+                
+        only_first_eigenvectors: bool value, default=True.
+                If True, the benchmarking is performed only for the first eigenvector. Otherwise, all the eigenvectors are considered.
+                
+        plot_delta: bool value, default=False.
+                If True, a plot showing the trend of the tomography error is showed.
+                
+        distance_type: string value, default='l2'
+            It defines the distance measure used to benchmark the eigenvectors:
+
+                    -'l2': the l2 distance between original and reconstructed eigenvectors is computed.
+
+                    -'cosine': the cosine distance between original and reconstructed eigenvectors is computed.
+
+        Returns
+        -------
+        If eigenvector_benchmarking is True:
+        
+            - save_list: array-like. 
+                List of distances between all the original and reconsructed eigenvectors.
+            - delta: float value.
+                The tomography error value.
+                    
+        Notes
+        -----
+        The execution of this method shows the distance between original and reconstructed eigenvector's values and allows to visualize the tomography error. In this way, you can check that the reconstruction of the eigenvectors always takes place with an error conforming to the one expressed in the tomography algorithm in the "A Quantum Interior Point Method for LPs and SDPs" paper.
+        """
+        
+        
         if eigenvector_benchmarking:
             error_list, delta=_eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple=self.reconstructed_eigenvalue_eigenvector_tuple,
                                                          original_eigenVectors=self.original_eigenVectors,input_matrix=self.input_matrix,n_shots=self.n_shots,
@@ -214,6 +258,7 @@ class QPCA():
         
         if eigenvector_benchmarking:
             return error_list, delta
+            
             
     def error_benchmarking(self,shots_list,errors_list=None,delta_list=None,n_tomography_repetitions=1,plot_delta=False,distance_type='l2'):
         

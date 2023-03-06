@@ -138,9 +138,66 @@ def from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations):
     return qc
 
 
-def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
+def q_ram_pHe_quantum_circuit_generation(pe_circuit,qram_circuit):
+    """
+        Parameters
+        ----------
+
+        pe_circuit: QuantumCircuit. 
+                    The quantum circuit that performs Phase Estimation.
+
+        qram_circuit: QuantumCircuit. 
+                    The quantum circuit that encodes the input matrix.
+
+
+        Returns
+        -------
+        total_circuit_1: QuantumCircuit. 
+                    The quantum circuit composed of the qram plus the phase estimation circuit.
+
+        Notes
+        -----
+    """
     
-    def computing_amplitudes():
+    tot_qubit = pe_circuit.qregs[0].size+qram_circuit.qregs[0].size
+    qr_total = QuantumRegister(tot_qubit, 'total')
+
+    total_circuit_1 = QuantumCircuit(qr_total , name='matrix')
+
+    total_circuit_1.append(qram_circuit.to_gate(), qr_total[pe_circuit.qregs[0].size:])
+    total_circuit_1.append(pe_circuit.to_gate(), qr_total[0:pe_circuit.num_qubits])
+
+    return total_circuit_1
+
+
+def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None):
+    """ 
+        State vector tomography to estimate real vectors.
+
+            Parameters
+            ----------
+
+            quantum_circuit: QuantumCircuit. 
+                        The quantum circuit to be reconstructed. 
+
+            n_shots: int value.
+                        Number of shots to execute the quantum circuit.
+                        
+            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
+                        Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
+
+            Returns
+            -------
+            statevector_dictionary: dict-like. 
+                        The reconstructed statevector of the input quantum circuit.
+
+            Notes
+            -----
+            This method reconstruct the real statevector of the input quantum circuit. It is an implementation of the Algorithm 4.1 in "A Quantum Interior Point Method for LPs and SDPs" paper, and it is composed of 
+            two parts: amplitudes estimation and sign estimation.
+    """
+    
+    def computing_amplitudes(q_size,c_size,qubits_to_be_measured):
         
         """ This is the first step of the state vector tomography algorithm described in Algorithm 4.1 in "A Quantum Interior Point Method for LPs and SDPs" paper. It is
             useful to reconstruct each statevector components.
@@ -148,14 +205,14 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
             Parameters
             ----------
 
-            pe_circuit: QuantumCircuit. 
-                        The quantum circuit that performs Phase Estimation.
+            q_size: int value. 
+                        The size of the quantum register under consideration.
 
-            qram_circuit: QuantumCircuit. 
-                        The quantum circuit that encodes the input matrix.
+            c_size: int value. 
+                        The size of the classical register under consideration.
 
-            n_shots: int value.
-                        Number of shots to execute the quantum circuit.
+            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
+                        Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
 
             Returns
             -------
@@ -167,29 +224,23 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
             This method is used to reconstruct the amplitudes of the values of the statevector that is under consideration. In addition to this function, state vector tomography also includes a sign estimation function.
             """
     
-        tot_qubit = pe_circuit.qregs[0].size+qram_circuit.qregs[0].size
+        quantum_regs_1=QuantumRegister(q_size)
+            
+        classical_regs_1 = ClassicalRegister(c_size, 'classical')
 
-        qr_total = QuantumRegister(tot_qubit, 'total')
-        # classical = ClassicalRegister(4, 'measure')
-
-        total_circuit_1 = QuantumCircuit(qr_total , name='matrix')
-
-        total_circuit_1.append(qram_circuit.to_gate(), qr_total[pe_circuit.qregs[0].size:])
-        total_circuit_1.append(pe_circuit.to_gate(), qr_total[0:pe_circuit.num_qubits])
-        # total_circuit.measure(qr_total[:2], classical[:])
-        #total_circuit_1.swap(qr_total[0],qr_total[1])
-        total_circuit_1.measure_all()
-
-        total_circuit_1.decompose(reps=1).draw("mpl")
+        new_total_circuit_1 = QuantumCircuit(quantum_regs_1,classical_regs_1)
+        new_total_circuit_1.append(quantum_circuit,quantum_regs_1)
+        new_total_circuit_1.measure(quantum_regs_1[qubits_to_be_measured],classical_regs_1)
 
         backend_total = Aer.get_backend("qasm_simulator")
-        job = backend_total.run(transpile(total_circuit_1, backend=backend_total), shots=n_shots)
+        job = backend_total.run(transpile(new_total_circuit_1, backend=backend_total), shots=n_shots)
         counts = job.result().get_counts()
     
         for i in counts:
             counts[i]/=n_shots
-
-        statevector=np.zeros(2**tot_qubit)
+        
+        #TODO: check if put q_size or c_size
+        statevector=np.zeros(2**c_size)
         for i in counts:
             statevector[int(i,2)]=counts[i]
 
@@ -197,25 +248,25 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
 
         return statevector
     
-    def sign_estimation(statevector):
+    def sign_estimation(statevector,q_size,c_size,qubits_to_be_measured):
         
         """ This is the second and last step of the state vector tomography algorithm described in Algorithm 4.1 in "A Quantum Interior Point Method for LPs and SDPs" paper. It is
             useful to reconstruct the sign of each statevector's components.
 
             Parameters
             ----------
-
-            pe_circuit: QuantumCircuit. 
-                        The quantum circuit that performs Phase Estimation.
-
-            qram_circuit: QuantumCircuit. 
-                        The quantum circuit that encodes the input matrix.
-
+            
             statevector: array-like. 
                         The reconstructed statevector (without sign reconstruction) obtained from computing_amplitudes function.
+            
+            q_size: int value. 
+                        The size of the quantum register under consideration.
 
-            n_shots: int value.
-                        Number of shots to execute the quantum circuit.
+            c_size: int value. 
+                        The size of the classical register under consideration.
+
+            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
+                        Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
 
             Returns
             -------
@@ -228,37 +279,36 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
             This method is used to reconstruct the correct sign of the statevector's values under consideration.
             """
         
-        tot_qubit = pe_circuit.qregs[0].size+qram_circuit.qregs[0].size
-
-        qr_total_xi = QuantumRegister(tot_qubit, 'xi')
-        qr_total_pi = QuantumRegister(tot_qubit, 'pi')
+        qr_total_xi = QuantumRegister(q_size, 'xi')
+        qr_total_pi = QuantumRegister(q_size, 'pi')
+        
         qr_control = QuantumRegister(1, 'control_qubit')
-        n_classical_register=tot_qubit+1
+        
+        n_classical_register=c_size+1
+        
         classical = ClassicalRegister(n_classical_register, 'measure')
 
         total_circuit_2 = QuantumCircuit(qr_total_xi,qr_total_pi,qr_control ,classical, name='matrix')
-
-        total_circuit_2.append(qram_circuit.to_gate(), qr_total_xi[pe_circuit.qregs[0].size:])
-        total_circuit_2.append(pe_circuit.to_gate(), qr_total_xi[0:pe_circuit.num_qubits])
-
-        #total_circuit_2.swap(qr_total_xi[0],qr_total_xi[1])
-        total_circuit_2.initialize(np.sqrt(statevector),qr_total_pi)
+        
+        total_circuit_2.append(quantum_circuit,qr_total_xi)
+        #index qr_total_pi[qubits_to_be_measured]
+        total_circuit_2.initialize(np.sqrt(statevector),qr_total_pi[qubits_to_be_measured])
         total_circuit_2.h(qr_control)
-        for i in range(tot_qubit):
+        # qubits_to_be_measured-> range(q_size)
+        for i in qubits_to_be_measured:
+    
             total_circuit_2.cswap(control_qubit=qr_control, target_qubit1=qr_total_xi[i],target_qubit2=qr_total_pi[i])
 
         total_circuit_2.h(qr_control)
-        total_circuit_2.measure(qr_total_xi,classical[0:n_classical_register-1])
+        total_circuit_2.measure(qr_total_xi[qubits_to_be_measured],classical[0:n_classical_register-1])
         total_circuit_2.measure(qr_control,classical[n_classical_register-1])
-
-        total_circuit_2.draw("mpl")
-
+     
         backend_total = Aer.get_backend("qasm_simulator")
         job = backend_total.run(transpile(total_circuit_2, backend=backend_total), shots=n_shots)
         counts_for_sign = job.result().get_counts()
 
         #Take only counts with control qubits equal to 0
-        tmp=np.zeros(2**tot_qubit)
+        tmp=np.zeros(2**c_size)
         for c in counts_for_sign:
             if c[0]=='0':
                 tmp[int(c[1:],2)]=counts_for_sign[c]
@@ -273,7 +323,7 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
                 sign=-1
             if prob==0:
                 sign=0
-            sign_dictionary.update({bin(e)[2:].zfill(tot_qubit):sign})
+            sign_dictionary.update({bin(e)[2:].zfill(c_size):sign})
 
         statevector_dictionary={}
         for e,key in enumerate(sign_dictionary):
@@ -281,8 +331,20 @@ def wrapper_state_vector_tomography(pe_circuit,qram_circuit,n_shots):
         #self.statevector_dictionary=statevector_dictionary
         return statevector_dictionary
     
-    statevector=computing_amplitudes()
+    
+    q_size=quantum_circuit.qregs[0].size
+    if qubits_to_be_measured==None:
+        c_size=q_size
+        qubits_to_be_measured=list(range(q_size))
+    elif isinstance(qubits_to_be_measured,int):
+        c_size=1
+    else:
+        tmp_array=np.array(list(range(q_size)))
+        c_size=len(tmp_array[qubits_to_be_measured])
+    
+    statevector=computing_amplitudes(q_size,c_size,qubits_to_be_measured)
     #print('statevector-wno sign',statevector)
-    statevector_dictionary=sign_estimation(statevector)
+    statevector_dictionary=sign_estimation(statevector,q_size,c_size,qubits_to_be_measured)
+    
     #print('statevector',statevector_dictionary)
     return statevector_dictionary
