@@ -65,7 +65,11 @@ def _eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple,origin
     """
 
     #global eigenvalues_reconstructed
-
+    '''print('reconstructed_eigenvalue_eigenvector_tuple:', reconstructed_eigenvalue_eigenvector_tuple)
+    print('original_eigenVectors:',original_eigenVectors)
+    print('input_matrix:',input_matrix)
+    print('n_shots:',n_shots)'''
+    
     save_list=[]
     fig, ax = plt.subplots(1,len(reconstructed_eigenvalue_eigenvector_tuple),figsize=(20, 15))
     for e,chart in enumerate(ax.reshape(-1,order='F')):
