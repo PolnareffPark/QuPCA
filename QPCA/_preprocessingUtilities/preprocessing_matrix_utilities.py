@@ -51,6 +51,7 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
                 input_matrix = e_v @ np.diag(b) @ e_v.T
             else:
                 input_matrix=hermitian_matrix
+            
 
         else:
             if eigenvalues_list:
@@ -62,9 +63,11 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
             else:
                 raise Exception('Only matrix 2x2 or 4x4 are allowed to replicate the reference paper')
 
+        #input_matrix=input_matrix/np.trace(input_matrix)
+        
 
         print(f'Matrix:\n {input_matrix.round(2)}\n')
         for eigenval, eigenvec in zip(np.linalg.eig(input_matrix)[0][::-1], np.rot90(np.linalg.eig(input_matrix)[1])):
-            print(f'eigenvalue: {eigenval:.0f} - eigenvector: {eigenvec.round(3)}')
+            print(f'eigenvalue: {eigenval} - eigenvector: {eigenvec.round(3)}')
 
         return input_matrix
