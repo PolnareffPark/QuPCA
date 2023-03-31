@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>_quantumUtilities &mdash; Qpca  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="_preprocessingUtilities" href="Q_preprocessing.html" />
+    <link rel="prev" title="_decomposition" href="QPCA.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Qpca
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">QPCA</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="QPCA.html">_decomposition</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">_quantumUtilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-QPCA._quantumUtilities">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.from_binary_tree_to_qcircuit"><code class="docutils literal notranslate"><span class="pre">from_binary_tree_to_qcircuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.q_ram_pHe_quantum_circuit_generation"><code class="docutils literal notranslate"><span class="pre">q_ram_pHe_quantum_circuit_generation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.state_vector_tomography"><code class="docutils literal notranslate"><span class="pre">state_vector_tomography()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.thetas_computation"><code class="docutils literal notranslate"><span class="pre">thetas_computation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">_preprocessingUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">_postprocessingUtilities</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Qpca</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">QPCA</a></li>
+      <li class="breadcrumb-item active">_quantumUtilities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/QUtilities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quantumutilities">
+<h1>_quantumUtilities<a class="headerlink" href="#quantumutilities" title="Permalink to this heading"></a></h1>
+<section id="module-QPCA._quantumUtilities">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-QPCA._quantumUtilities" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA._quantumUtilities.from_binary_tree_to_qcircuit">
+<span class="sig-prename descclassname"><span class="pre">QPCA._quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">from_binary_tree_to_qcircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_combinations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._quantumUtilities.from_binary_tree_to_qcircuit" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocessing quantum circuit generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_matrix</strong> (<em>array-like.</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
+<li><p><strong>thetas</strong> (<em>array-like.</em>) – List of all the computed thetas for the unitary rotations R_y to encode the input matrix.</p></li>
+<li><p><strong>all_combinations</strong> (<em>array-like.</em>) – List of all the possibile combinations of bitstrings up to length log2(p*q), with p number of rows and q number of columns of the input matrix.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>qc</strong> – The quantum circuit that encodes the input matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QuantumCircuit.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method generalize the implementation of a quantum circuit to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
+log2(p*q), with p number of rows and q number of columns of the input matrix.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA._quantumUtilities.q_ram_pHe_quantum_circuit_generation">
+<span class="sig-prename descclassname"><span class="pre">QPCA._quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">q_ram_pHe_quantum_circuit_generation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pe_circuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qram_circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._quantumUtilities.q_ram_pHe_quantum_circuit_generation" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pe_circuit</strong> (<em>QuantumCircuit.</em>) – The quantum circuit that performs Phase Estimation.</p></li>
+<li><p><strong>qram_circuit</strong> (<em>QuantumCircuit.</em>) – The quantum circuit that encodes the input matrix.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>total_circuit_1</strong> – The quantum circuit composed of the qram plus the phase estimation circuit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QuantumCircuit.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA._quantumUtilities.state_vector_tomography">
+<span class="sig-prename descclassname"><span class="pre">QPCA._quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">state_vector_tomography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quantum_circuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubits_to_be_measured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drawing_circuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._quantumUtilities.state_vector_tomography" title="Permalink to this definition"></a></dt>
+<dd><p>State vector tomography to estimate real vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>quantum_circuit</strong> (<em>QuantumCircuit.</em>) – The quantum circuit to be reconstructed.</p></li>
+<li><p><strong>n_shots</strong> (<em>int value.</em>) – Number of shots to execute the quantum circuit.</p></li>
+<li><p><strong>qubits_to_be_measured</strong> (<em>Union</em><em>[</em><em>Qubit</em><em>, </em><em>QuantumRegister</em><em>, </em><em>int</em><em>, </em><em>slice</em><em>, </em><em>Sequence</em><em>[</em><em>Union</em><em>[</em><em>Qubit</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>)</em><em>, </em><em>default=None.</em>) – Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).</p></li>
+<li><p><strong>backend</strong> (<em>Qiskit backend</em><em>, </em><em>default value=None.</em>) – The Qiskit backend used to execute the circuit. If None, the qasm simulator is used by default.</p></li>
+<li><p><strong>drawing_circuit</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, a drawing of the tomography circuit is displayed. Otherwise, only the reconstructed statevector is returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>statevector_dictionary</strong> – The reconstructed statevector of the input quantum circuit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict-like.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method reconstruct the real statevector of the input quantum circuit. It is an implementation of the Algorithm 4.1 in “A Quantum Interior Point Method for LPs and SDPs” paper, and it is composed of
+two parts: amplitudes estimation and sign estimation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA._quantumUtilities.thetas_computation">
+<span class="sig-prename descclassname"><span class="pre">QPCA._quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">thetas_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._quantumUtilities.thetas_computation" title="Permalink to this definition"></a></dt>
+<dd><p>Thetas computation-Preprocessing phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_matrix</strong> (<em>array-like.</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>default=False.</em>) – If True, print the amplitudes for each state. If False, nothing happens.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>thetas</strong> (<em>array-like.</em>) – List of all the computed thetas for the unitary rotations R_y to encode the input matrix.</p></li>
+<li><p><strong>all_combinations</strong> (<em>array-like.</em>) – List of all the possibile combinations of bitstrings up to length log2(p*q), with p number of rows and q number of columns of the input matrix.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method is part of the preprocessing stage to compute all the thetas (angles) necessary to perform the unitary rotations in the circuit to store the input matrix.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="QPCA.html" class="btn btn-neutral float-left" title="_decomposition" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Q_preprocessing.html" class="btn btn-neutral float-right" title="_preprocessingUtilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tommaso.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
