@@ -52,7 +52,6 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
             else:
                 input_matrix=hermitian_matrix
             
-
         else:
             if eigenvalues_list:
                 warnings.warn("Attention! You want to replicate the paper results so the eigenvalues list that you passed will have no effect!")
@@ -64,7 +63,6 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
                 raise Exception('Only matrix 2x2 or 4x4 are allowed to replicate the reference paper')
 
         #input_matrix=input_matrix/np.trace(input_matrix)
-        
 
         print(f'Matrix:\n {input_matrix.round(2)}\n')
         for eigenval, eigenvec in zip(np.linalg.eig(input_matrix)[0][::-1], np.rot90(np.linalg.eig(input_matrix)[1])):
