@@ -1,2 +1,2 @@
-from .Qpca import *
-__all__ = ['Qpca',]
+from .Qpca import QPCA
+__all__ = ['QPCA']
