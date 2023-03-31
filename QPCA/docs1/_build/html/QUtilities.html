@@ -47,7 +47,6 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">_quantumUtilities</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-QPCA._quantumUtilities">Module contents</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.from_binary_tree_to_qcircuit"><code class="docutils literal notranslate"><span class="pre">from_binary_tree_to_qcircuit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.q_ram_pHe_quantum_circuit_generation"><code class="docutils literal notranslate"><span class="pre">q_ram_pHe_quantum_circuit_generation()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.state_vector_tomography"><code class="docutils literal notranslate"><span class="pre">state_vector_tomography()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#QPCA._quantumUtilities.thetas_computation"><code class="docutils literal notranslate"><span class="pre">thetas_computation()</span></code></a></li>
 </ul>
@@ -96,9 +95,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_matrix</strong> (<em>array-like.</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
-<li><p><strong>thetas</strong> (<em>array-like.</em>) – List of all the computed thetas for the unitary rotations R_y to encode the input matrix.</p></li>
-<li><p><strong>all_combinations</strong> (<em>array-like.</em>) – List of all the possibile combinations of bitstrings up to length log2(p*q), with p number of rows and q number of columns of the input matrix.</p></li>
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
+<li><p><strong>thetas</strong> (<em>array-like</em>) – List of all the computed thetas for the unitary rotations R_ys to encode the input matrix.</p></li>
+<li><p><strong>all_combinations</strong> (<em>array-like</em>) – List of all the possibile combinations of bitstrings up to length log2(n_samples*n_features)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -110,27 +109,7 @@
 </dl>
 <p class="rubric">Notes</p>
 <p>This method generalize the implementation of a quantum circuit to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
-log2(p*q), with p number of rows and q number of columns of the input matrix.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="QPCA._quantumUtilities.q_ram_pHe_quantum_circuit_generation">
-<span class="sig-prename descclassname"><span class="pre">QPCA._quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">q_ram_pHe_quantum_circuit_generation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pe_circuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qram_circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._quantumUtilities.q_ram_pHe_quantum_circuit_generation" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pe_circuit</strong> (<em>QuantumCircuit.</em>) – The quantum circuit that performs Phase Estimation.</p></li>
-<li><p><strong>qram_circuit</strong> (<em>QuantumCircuit.</em>) – The quantum circuit that encodes the input matrix.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>total_circuit_1</strong> – The quantum circuit composed of the qram plus the phase estimation circuit.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>QuantumCircuit.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
+log2(n_samples*n_features).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -140,8 +119,8 @@ log2(p*q), with p number of rows and q number of columns of the input matrix.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>quantum_circuit</strong> (<em>QuantumCircuit.</em>) – The quantum circuit to be reconstructed.</p></li>
-<li><p><strong>n_shots</strong> (<em>int value.</em>) – Number of shots to execute the quantum circuit.</p></li>
+<li><p><strong>quantum_circuit</strong> (<em>QuantumCircuit</em>) – The quantum circuit to be reconstructed.</p></li>
+<li><p><strong>n_shots</strong> (<em>int value</em>) – Number of measures performed in the tomography process.</p></li>
 <li><p><strong>qubits_to_be_measured</strong> (<em>Union</em><em>[</em><em>Qubit</em><em>, </em><em>QuantumRegister</em><em>, </em><em>int</em><em>, </em><em>slice</em><em>, </em><em>Sequence</em><em>[</em><em>Union</em><em>[</em><em>Qubit</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>)</em><em>, </em><em>default=None.</em>) – Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).</p></li>
 <li><p><strong>backend</strong> (<em>Qiskit backend</em><em>, </em><em>default value=None.</em>) – The Qiskit backend used to execute the circuit. If None, the qasm simulator is used by default.</p></li>
 <li><p><strong>drawing_circuit</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, a drawing of the tomography circuit is displayed. Otherwise, only the reconstructed statevector is returned.</p></li>
@@ -166,7 +145,7 @@ two parts: amplitudes estimation and sign estimation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_matrix</strong> (<em>array-like.</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
 <li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>default=False.</em>) – If True, print the amplitudes for each state. If False, nothing happens.</p></li>
 </ul>
 </dd>
