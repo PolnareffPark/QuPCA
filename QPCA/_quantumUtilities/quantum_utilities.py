@@ -16,7 +16,7 @@ def thetas_computation(input_matrix,debug=False):
     Parameters
     ----------
 
-    input_matrix: array-like.
+    input_matrix: array-like of shape (n_samples, n_features)
                     Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.
                     
     debug: bool, default=False.
@@ -79,21 +79,21 @@ def thetas_computation(input_matrix,debug=False):
 
     return thetas, all_combinations
     
-def from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations):
+def from_binary_tree_to_qcircuit(input_matrix, thetas, all_combinations):
     
     """ Preprocessing quantum circuit generation.
 
     Parameters
     ----------
 
-    input_matrix: array-like.
+    input_matrix: array-like of shape (n_samples, n_features)
                     Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.
                     
-    thetas: array-like.
-                    List of all the computed thetas for the unitary rotations R_y to encode the input matrix.
+    thetas: array-like
+                    List of all the computed thetas for the unitary rotations R_ys to encode the input matrix.
     
-    all_combinations: array-like.
-                    List of all the possibile combinations of bitstrings up to length log2(p*q), with p number of rows and q number of columns of the input matrix.
+    all_combinations: array-like
+                    List of all the possibile combinations of bitstrings up to length log2(n_samples*n_features)
 
     Returns
     -------
@@ -103,7 +103,7 @@ def from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations):
     Notes
     -----
     This method generalize the implementation of a quantum circuit to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
-    log2(p*q), with p number of rows and q number of columns of the input matrix.
+    log2(n_samples*n_features).
     """
     
     right_nodes_indexes = list(range(0, len(thetas), 2))
@@ -118,15 +118,12 @@ def from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations):
         if target_qubit == 0:
             qc.ry(theta=r_l[1], qubit=target_qubit)
             continue
-
         not_gate = []
         for qb in range(target_qubit):
             if r_l[0][qb] == '0':
                 not_gate.append(qb)
-
         c_t_qubits = list(range(len(r_l[0])))
         n_controls = len(range(target_qubit))
-
         if len(not_gate) > 0:
             qc.x(not_gate)
             c_ry = RYGate(r_l[1]).control(n_controls)
@@ -135,11 +132,10 @@ def from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations):
         else:
             c_ry = RYGate(r_l[1]).control(n_controls)
             qc.append(c_ry, c_t_qubits)
-
     return qc
 
 
-def q_ram_pHe_quantum_circuit_generation(pe_circuit,qram_circuit):
+'''def q_ram_pHe_quantum_circuit_generation(pe_circuit,qram_circuit):
     """
         Parameters
         ----------
@@ -169,7 +165,7 @@ def q_ram_pHe_quantum_circuit_generation(pe_circuit,qram_circuit):
     total_circuit_1.append(pe_circuit.to_gate(), qr_total[0:pe_circuit.num_qubits])
 
     return total_circuit_1
-
+'''
 
 def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,backend=None,drawing_circuit=False):
     """ 
@@ -178,11 +174,11 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
         Parameters
         ----------
 
-        quantum_circuit: QuantumCircuit. 
+        quantum_circuit: QuantumCircuit 
                     The quantum circuit to be reconstructed. 
 
-        n_shots: int value.
-                    Number of shots to execute the quantum circuit.
+        n_shots: int value
+                    Number of measures performed in the tomography process.
                     
         qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
                     Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
@@ -212,45 +208,38 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
             Parameters
             ----------
 
-            q_size: int value. 
+            q_size: int value
                         The size of the quantum register under consideration.
 
-            c_size: int value. 
+            c_size: int value
                         The size of the classical register under consideration.
 
-            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
+            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None
                         Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
 
             Returns
             -------
-            probabilities: array-like. 
+            probabilities: array-like
                         The reconstructed probabilities statevector (without sign reconstruction).
 
             Notes
             -----
             This method is used to reconstruct the amplitudes of the values of the statevector that is under consideration. In addition to this function, state vector tomography also includes a sign estimation function.
             """
-    
-        quantum_regs_1=QuantumRegister(q_size)
-            
-        classical_regs_1 = ClassicalRegister(c_size, 'classical')
-
-        new_total_circuit_1 = QuantumCircuit(quantum_regs_1,classical_regs_1)
-        new_total_circuit_1.append(quantum_circuit,quantum_regs_1)
-        new_total_circuit_1.measure(quantum_regs_1[qubits_to_be_measured],classical_regs_1)
-        
-        job = backend.run(transpile(new_total_circuit_1, backend=backend), shots=n_shots)
-        counts = job.result().get_counts()
-    
-        for i in counts:
-            counts[i]/=n_shots
-        
         #TODO: check if put q_size or c_size
         probabilities=np.zeros(2**c_size)
+        quantum_regs_1=QuantumRegister(q_size)
+        classical_regs_1 = ClassicalRegister(c_size, 'classical')
+        tomography_circuit_1 = QuantumCircuit(quantum_regs_1,classical_regs_1)
+        tomography_circuit_1.append(quantum_circuit,quantum_regs_1)
+        tomography_circuit_1.measure(quantum_regs_1[qubits_to_be_measured],classical_regs_1)        
+        job = backend.run(transpile(tomography_circuit_1, backend=backend), shots=n_shots)
+        counts = job.result().get_counts()
+        
         for i in counts:
+            counts[i]/=n_shots
             probabilities[int(i,2)]=counts[i]
-
-        #self.statevector=statevector
+        
         return probabilities
     
     def sign_estimation(probabilities,q_size,c_size,qubits_to_be_measured):
@@ -261,22 +250,22 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
             Parameters
             ----------
             
-            probabilities: array-like. 
+            probabilities: array-like 
                         The reconstructed probabilities statevector (without sign reconstruction) obtained from computing_amplitudes function.
             
-            q_size: int value. 
+            q_size: int value 
                         The size of the quantum register under consideration.
 
-            c_size: int value. 
+            c_size: int value 
                         The size of the classical register under consideration.
 
-            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
+            qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None
                         Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
 
             Returns
             -------
 
-            statevector_dictionary: dict-like.
+            statevector_dictionary: dict-like
                         Dictionary where the keys represent the eigenvalues/eigenvectors encoded in the qubits and the values represent the reconstructed statevector's values (with sign).
 
             Notes
@@ -289,35 +278,28 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
         n_classical_register=c_size+1
         classical_registers=ClassicalRegister(n_classical_register,'classical')
         qr_control = QuantumRegister(1, 'control_qubit')
-        
         op_U=quantum_circuit.to_gate(label='op_U').control()
         op_V = StatePreparation(np.sqrt(probabilities),label='op_V').control()
-        
-        total_circuit_2 = QuantumCircuit(qr_total_xi,qr_control, classical_registers,name='matrix')
-        total_circuit_2.h(qr_control)
-        total_circuit_2.x(qr_control)
-        total_circuit_2.append(op_U, qr_control[:]+qr_total_xi[:])
-        total_circuit_2.x(qr_control)
-        total_circuit_2.append(op_V, qr_control[:]+qr_total_xi[qubits_to_be_measured])
-        total_circuit_2.h(qr_control)
-        total_circuit_2.measure(qr_total_xi[qubits_to_be_measured],classical_registers[0:n_classical_register-1])
-        total_circuit_2.measure(qr_control,classical_registers[n_classical_register-1])
-        #total_circuit_2.measure_all()
-        
+
+        tomography_circuit_2 = QuantumCircuit(qr_total_xi,qr_control, classical_registers,name='matrix')
+        tomography_circuit_2.h(qr_control)
+        tomography_circuit_2.x(qr_control)
+        tomography_circuit_2.append(op_U, qr_control[:]+qr_total_xi[:])
+        tomography_circuit_2.x(qr_control)
+        tomography_circuit_2.append(op_V, qr_control[:]+qr_total_xi[qubits_to_be_measured])
+        tomography_circuit_2.h(qr_control)
+        tomography_circuit_2.measure(qr_total_xi[qubits_to_be_measured],classical_registers[0:n_classical_register-1])
+        tomography_circuit_2.measure(qr_control,classical_registers[n_classical_register-1])
+    
         if drawing_circuit:
-            display(total_circuit_2.draw('mpl'))
+            display(tomography_circuit_2.draw('mpl'))
 
-        #backend_total = Aer.get_backend("qasm_simulator")
-        job = backend.run(transpile(total_circuit_2, backend=backend), shots=n_shots)
+        job = backend.run(transpile(tomography_circuit_2, backend=backend), shots=n_shots)
         counts_for_sign = job.result().get_counts()
-
-        #Take only counts with control qubits equal to 0
         tmp=np.zeros(2**c_size)
         for c in counts_for_sign:
             if c[0]=='0':
                 tmp[int(c[1:],2)]=counts_for_sign[c]
-
-        #Sign estimation
         sign_dictionary={}
         sign=0
         for e, (count, prob) in enumerate(zip(tmp, probabilities)):
@@ -332,9 +314,6 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
         statevector_dictionary={}
         for e,key in enumerate(sign_dictionary):
             statevector_dictionary[key]=sign_dictionary[key]*np.sqrt(probabilities[e])
-        #self.statevector_dictionary=statevector_dictionary
-
-        
         return statevector_dictionary
     
     if backend==None:
