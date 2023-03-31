@@ -219,11 +219,6 @@ way, the statevector of the quantum state is reconstructed and a postprocessing 
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.error_benchmarking">
-<span class="sig-name descname"><span class="pre">error_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shots_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_tomography_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.error_benchmarking" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="QPCA._decomposition.QPCA.generate_phase_estimation_circuit">
 <span class="sig-name descname"><span class="pre">generate_phase_estimation_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.generate_phase_estimation_circuit" title="Permalink to this definition"></a></dt>
 <dd><p>Generate phase estimation circuit with a number of qubits provided as resolution parameter in the constructor.</p>
@@ -269,54 +264,6 @@ log2(n_samples, n_features).</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>Using the reconstructed eigenvectors and eigenvalues from QPCA, we can reconstruct the original input matrix using the reverse procedure of SVD.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.runtime_comparison">
-<span class="sig-name descname"><span class="pre">runtime_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classical_principal_components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_PCA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.runtime_comparison" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.spectral_benchmarking">
-<span class="sig-name descname"><span class="pre">spectral_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eigenvector_benchmarking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvalues_benchmarching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_first_eigenvectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.spectral_benchmarking" title="Permalink to this definition"></a></dt>
-<dd><p>Method to benchmark the reconstructed eigenvectors/eigenvalues.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>eigenvector_benchmarking</strong> (<em>bool value</em><em>, </em><em>default=True.</em>) – If True, an eigenvectors benchmarking is performed to show how the quantum algorithm approximate the eigenvectors.</p></li>
-<li><p><strong>eigenvalues_benchmarching</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, an eigenvalues benchmarking is performed to show how the quantum algorithm approximate the eigenvalues.</p></li>
-<li><p><strong>print_distances</strong> (<em>bool value</em><em>, </em><em>default=True.</em>) – If True, the distance (defined by the parameter distance_type) between the reconstructed and original eigenvectors is printed in the legend.</p></li>
-<li><p><strong>only_first_eigenvectors</strong> (<em>bool value</em><em>, </em><em>default=True.</em>) – If True, the benchmarking is performed only for the first eigenvector. Otherwise, all the eigenvectors are considered.</p></li>
-<li><p><strong>plot_delta</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, a plot showing the trend of the tomography error is showed.</p></li>
-<li><p><strong>distance_type</strong> (<em>string value</em><em>, </em><em>default='l2'</em>) – <p>It defines the distance measure used to benchmark the eigenvectors:</p>
-<blockquote>
-<div><p>-‘l2’: the l2 distance between original and reconstructed eigenvectors is computed.</p>
-<p>-‘cosine’: the cosine distance between original and reconstructed eigenvectors is computed.</p>
-</div></blockquote>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><dl class="simple">
-<dt>save_list: array-like.</dt><dd><p>List of distances between all the original and reconsructed eigenvectors.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>delta: float value.</dt><dd><p>The tomography error value.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>If eigenvector_benchmarking is True</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The execution of this method shows the distance between original and reconstructed eigenvector’s values and allows to visualize the tomography error. In this way, you can check that the reconstruction of the eigenvectors always takes place with an error conforming to the one expressed in the tomography algorithm in the “A Quantum Interior Point Method for LPs and SDPs” paper.</p>
 </dd></dl>
 
 </dd></dl>
