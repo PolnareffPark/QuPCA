@@ -135,38 +135,6 @@ def from_binary_tree_to_qcircuit(input_matrix, thetas, all_combinations):
     return qc
 
 
-'''def q_ram_pHe_quantum_circuit_generation(pe_circuit,qram_circuit):
-    """
-        Parameters
-        ----------
-
-        pe_circuit: QuantumCircuit. 
-                    The quantum circuit that performs Phase Estimation.
-
-        qram_circuit: QuantumCircuit. 
-                    The quantum circuit that encodes the input matrix.
-
-
-        Returns
-        -------
-        total_circuit_1: QuantumCircuit. 
-                    The quantum circuit composed of the qram plus the phase estimation circuit.
-
-        Notes
-        -----
-    """
-    
-    tot_qubit = pe_circuit.qregs[0].size+qram_circuit.qregs[0].size
-    qr_total = QuantumRegister(tot_qubit, 'total')
-
-    total_circuit_1 = QuantumCircuit(qr_total , name='matrix')
-
-    total_circuit_1.append(qram_circuit.to_gate(), qr_total[pe_circuit.qregs[0].size:])
-    total_circuit_1.append(pe_circuit.to_gate(), qr_total[0:pe_circuit.num_qubits])
-
-    return total_circuit_1
-'''
-
 def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,backend=None,drawing_circuit=False):
     """ 
         State vector tomography to estimate real vectors.
