@@ -1,9 +1,10 @@
 import numpy as np
 import itertools
 import pandas as pd
+from scipy.signal import find_peaks
 
     
-def general_postprocessing(statevector_dictionary,resolution):
+def general_postprocessing(statevector_dictionary,resolution,n_shots, plot_peaks):
         
         """ Eigenvectors reconstruction process from the reconstructed statevector.
         
@@ -19,6 +20,8 @@ def general_postprocessing(statevector_dictionary,resolution):
         resolution: int value.
                         Number of qubits used in the phase estimation process to represent the eigenvalues.
         
+        plot_peaks: bool value
+                        If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.
         
         Returns
         -------
@@ -41,7 +44,9 @@ def general_postprocessing(statevector_dictionary,resolution):
         
         tail=df1.reset_index()
         tail['num']=tail['lambda'].apply(lambda x :int(x[::-1],base=2)/(2**resolution))
-        lambdas=find_peaks(tail,len_input_matrix,resolution)
+        if plot_peaks:
+            tail[['eigenvalue','module']].sort_values('eigenvalue').set_index('eigenvalue').plot(style='-*',figsize=(15,10))
+        lambdas=peaks_extraction(tail,len_input_matrix,n_shots)
         
         df.columns=['state','module','lambda']
         signs=np.sign(np.array(list(statevector_dictionary.values())))
@@ -84,7 +89,7 @@ def general_postprocessing(statevector_dictionary,resolution):
         return eigenvalue_eigenvector_tuples
     
 
-def find_peaks(df,len_input_matrix,resolution):
+def peaks_extraction(df,len_input_matrix,n_shots):
     """ 
     Process to find the correct eigenvalues peaks after the PE procedure.
         
@@ -94,12 +99,8 @@ def find_peaks(df,len_input_matrix,resolution):
         df: DataFrame.
                         It contains the extracted eigenvalues ordered by module squared.
         
-        input_matrix: array-like.
-                        Hermitian input matrix.
-                        
-        resolution: int value.
-                        Number of qubits used in the phase estimation process to represent the eigenvalues.
-        
+        len_input_matrix: int value.
+                        Length of the input matrix.
         
         Returns
         -------
@@ -108,94 +109,24 @@ def find_peaks(df,len_input_matrix,resolution):
         
         Notes
         -----
+        This algorithm uses the find_peaks SciPy function to extract the right peaks (which correspond to the eigenvalues) of the PE outputs. This is an iterative function that search for the right number of peaks. If an extracted peak is not the right one, it means that the PE resolution needs to be increased to correctly identify the right peaks.
     """
     
     peaks=[]
     nums_peaks=[]
-    peaks.append(df.iloc[0]['lambda'])
-    nums_peaks.append(df.iloc[0]['num'])
-    for i in range(1,len(df)):
-
-        if any(abs(df.iloc[i]['num']-n_)<= 4/(2**resolution) for n_ in nums_peaks):
-            pass
+    offset=1/n_shots
+    stop=False
+    while stop==False:
+        p=find_peaks(df.sort_values(['num'])['module'],threshold=offset)[0]
+        if len(p)>len_input_matrix:
+            offset+=1/n_shots
         else:
-
-            nums_peaks.append(df.iloc[i]['num'])
-            peaks.append(df.iloc[i]['lambda'])
-            pass
-        if len(peaks)==len_input_matrix:
-            break
-
+            stop=True
+            for i in p:
+                el = df.sort_values(['num']).iloc[i]
+                nums_peaks.append(el['num'])
+                peaks.append(el['lambda'])
+    
     return peaks
-
-
-'''
-def postprocessing(input_matrix,statevector_dictionary,resolution):
-        
-        """ Eigenvectors reconstruction process from the reconstructed statevector.
-        
-        Parameters
-        ----------
-        
-        input_matrix: array-like.
-                        Hermitian input matrix.
-                        
-        statevector_dictionary: dict-like.
-                        Dictionary where the keys represent the eigenvalues/eigenvectors encoded in the qubits and the values represent the reconstructed statevector's values.
-                        
-        resolution: int value.
-                        Number of qubits used in the phase estimation process to represent the eigenvalues.
-        
-        Returns
-        -------
-        eigenvectors: array-like. 
-                        List of tuples containing as first value the reconstructed eigenvalue and as second value the reconstructed eigenvector.
-        
-        Notes
-        -----
-        """
-        
-        binary_lambda=[]
-        for d in statevector_dictionary:
-            if statevector_dictionary[d]!=0:
-                
-                binary_lambda.append(d[-resolution:])
-        l_list=[]
-        eigenvalues=[]
-        for b_l in np.unique(binary_lambda):
-            eigenvalues.append(int(b_l[::-1],2))
-            tmp_list=[]
-            for key in list(statevector_dictionary.keys()):
-                if key[-resolution:]==b_l:
-                    tmp_list.append(statevector_dictionary[key])
-                  
-            l_list.append(np.asarray(tmp_list))    
-        for l in l_list:
-            normalization_factor=np.sqrt((1/(sum(l**2))))
-            l*=normalization_factor
-
-        eigenvalue_eigenvector_tuples=[]
-        for ll, eig in zip(l_list,eigenvalues):
-            eigenvector=np.zeros(len(input_matrix))
-            save_sign=np.sign(ll)
-            statevector=abs(ll)
-            max_list=[]
-            scaled_statevectors=[]
-            for e,i in enumerate(range(0,len(statevector),len(input_matrix))):
-                max_list.append(max(statevector[i:i+len(input_matrix)]))
-                
-                scaled_statevectors.append(statevector[i:i+len(input_matrix)]/max_list[e])
-            
-            idx_max=np.argmax(max_list)
-            max_max=max_list[idx_max]
-           
-            value=np.sqrt(max_max)
-
-            eigenvector=scaled_statevectors[idx_max]*value*save_sign[len(input_matrix)*idx_max:len(input_matrix)*idx_max+len(input_matrix)]
-            #eigenvector=scaled_statevectors[idx_max]*value*save_sign[:len(input_matrix)]
-            eigenvalue_eigenvector_tuples.append((eig,eigenvector))
-            
-        eigenvalue_eigenvector_tuples=sorted(eigenvalue_eigenvector_tuples,reverse=True)
-        #self.reconstructed_eigenvectors=sorted(eigenvectors,reverse=True)
-        return eigenvalue_eigenvector_tuples
-'''
+    
+    
