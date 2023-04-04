@@ -133,7 +133,7 @@ class QPCA():
         
 
 
-    def eigenvectors_reconstruction(self,n_shots=50000,n_repetitions=1):
+    def eigenvectors_reconstruction(self,n_shots=50000,n_repetitions=1,plot_peaks=False):
         
         """ Method that reconstructs the eigenvalues/eigenvectors once performed Phase Estimation. 
 
@@ -145,7 +145,10 @@ class QPCA():
         n_repetitions: int value, default=1.
                 Number of times that state vector tomography will be executed. If > 1, the final result will be the average result
                 of all the execution of the tomography.
-
+                
+        plot_peaks: bool value, defualt=False
+                        If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.
+        
         Returns
         ----------
         eigenvalue_eigenvector_tuple: array-like. 
@@ -180,7 +183,7 @@ class QPCA():
             return statevector_dictionary
         
         statevector_dictionary=wrapper_state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots)
-        eigenvalue_eigenvector_tuple=general_postprocessing(statevector_dictionary=statevector_dictionary,resolution=self.resolution)
+        eigenvalue_eigenvector_tuple=general_postprocessing(statevector_dictionary=statevector_dictionary,resolution=self.resolution,n_shots=self.n_shots,plot_peaks=plot_peaks)
         self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
         return eigenvalue_eigenvector_tuple
     
@@ -217,5 +220,5 @@ class QPCA():
         reconstructed_input_matrix = reconstructed_eigenvectors @ np.diag(reconstructed_eigenvalues) @ reconstructed_eigenvectors.T
         return reconstructed_input_matrix
     
-        
+    
     
