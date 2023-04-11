@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>_decomposition &mdash; Qpca  documentation</title>
+  <title>decomposition &mdash; Qpca  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,7 +17,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="_quantumUtilities" href="QUtilities.html" />
+    <link rel="next" title="quantumUtilities" href="QUtilities.html" />
     <link rel="prev" title="QPCA" href="modules.html" /> 
 </head>
 
@@ -43,16 +43,16 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">QPCA</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">_decomposition</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-QPCA._decomposition">Module contents</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#QPCA._decomposition.QPCA"><code class="docutils literal notranslate"><span class="pre">QPCA</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">decomposition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-QPCA.decomposition">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA.decomposition.QPCA"><code class="docutils literal notranslate"><span class="pre">QPCA</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="QUtilities.html">_quantumUtilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">_preprocessingUtilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">_postprocessingUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QUtilities.html">quantumUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">preprocessingUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">postprocessingUtilities</a></li>
 </ul>
 </li>
 </ul>
@@ -72,7 +72,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="modules.html">QPCA</a></li>
-      <li class="breadcrumb-item active">_decomposition</li>
+      <li class="breadcrumb-item active">decomposition</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/QPCA.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -83,15 +83,15 @@
            <div itemprop="articleBody">
              
   <section id="decomposition">
-<h1>_decomposition<a class="headerlink" href="#decomposition" title="Permalink to this heading"></a></h1>
+<h1>decomposition<a class="headerlink" href="#decomposition" title="Permalink to this heading"></a></h1>
 <p>This module contains an implementation of quantum PCA algorithm. This class can be used for an end-to-end process,
 starting from the input matrix up to the reconstruction of the same matrix using the computed eigenvectors and eigenvalues
 extracted by quantum routines.</p>
-<section id="module-QPCA._decomposition">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-QPCA._decomposition" title="Permalink to this heading"></a></h2>
+<section id="module-QPCA.decomposition">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-QPCA.decomposition" title="Permalink to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">QPCA._decomposition.</span></span><span class="sig-name descname"><span class="pre">QPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">QPCA.decomposition.</span></span><span class="sig-name descname"><span class="pre">QPCA</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA" title="Permalink to this definition"></a></dt>
 <dd><p>Quantum Principal component analysis (QPCA).
 Implementation of the QPCA algorithm proposed in “A Low Complexity Quantum Principal Component Analysis Algorithm” paper.</p>
 <dl class="field-list simple">
@@ -104,8 +104,8 @@ and <cite>n_features</cite> is the number of features.</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.input_matrix_trace">
-<span class="sig-name descname"><span class="pre">input_matrix_trace</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.input_matrix_trace" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.input_matrix_trace">
+<span class="sig-name descname"><span class="pre">input_matrix_trace</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.input_matrix_trace" title="Permalink to this definition"></a></dt>
 <dd><p>The trace of the input matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -115,8 +115,8 @@ and <cite>n_features</cite> is the number of features.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.input_matrix">
-<span class="sig-name descname"><span class="pre">input_matrix</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.input_matrix" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.input_matrix">
+<span class="sig-name descname"><span class="pre">input_matrix</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.input_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Input hermitian matrix on which you want to apply QPCA divided by its trace, where <cite>n_samples</cite> is the number of samples
 and <cite>n_features</cite> is the number of features.</p>
 <dl class="field-list simple">
@@ -127,8 +127,8 @@ and <cite>n_features</cite> is the number of features.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.qram_circuit">
-<span class="sig-name descname"><span class="pre">qram_circuit</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.qram_circuit" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.qram_circuit">
+<span class="sig-name descname"><span class="pre">qram_circuit</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.qram_circuit" title="Permalink to this definition"></a></dt>
 <dd><p>The quantum circuit that encodes the input matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -138,8 +138,8 @@ and <cite>n_features</cite> is the number of features.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.total_circuit">
-<span class="sig-name descname"><span class="pre">total_circuit</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.total_circuit" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.total_circuit">
+<span class="sig-name descname"><span class="pre">total_circuit</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.total_circuit" title="Permalink to this definition"></a></dt>
 <dd><p>The quantum circuit that performs the encoding of the input matrix and Phase Estimation. The number of qubits will be log(n_samples*n_features)+resolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -149,8 +149,8 @@ and <cite>n_features</cite> is the number of features.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.n_shots">
-<span class="sig-name descname"><span class="pre">n_shots</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.n_shots" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.n_shots">
+<span class="sig-name descname"><span class="pre">n_shots</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.n_shots" title="Permalink to this definition"></a></dt>
 <dd><p>Number of measures performed in the tomography process.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -160,8 +160,8 @@ and <cite>n_features</cite> is the number of features.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.reconstructed_eigenvalue_eigenvector_tuple">
-<span class="sig-name descname"><span class="pre">reconstructed_eigenvalue_eigenvector_tuple</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.reconstructed_eigenvalue_eigenvector_tuple" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.reconstructed_eigenvalue_eigenvector_tuple">
+<span class="sig-name descname"><span class="pre">reconstructed_eigenvalue_eigenvector_tuple</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.reconstructed_eigenvalue_eigenvector_tuple" title="Permalink to this definition"></a></dt>
 <dd><p>Array of tuples of the form [(e_1,v_1),(e_2,v_2),..] where e_s are the eigenvalues and v_s are the reconstructed eigenvectors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -171,8 +171,8 @@ and <cite>n_features</cite> is the number of features.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.original_eigenValues">
-<span class="sig-name descname"><span class="pre">original_eigenValues</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.original_eigenValues" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.original_eigenValues">
+<span class="sig-name descname"><span class="pre">original_eigenValues</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.original_eigenValues" title="Permalink to this definition"></a></dt>
 <dd><p>Original eigenvalues of the input matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -182,8 +182,8 @@ and <cite>n_features</cite> is the number of features.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.original_eigenVectors">
-<span class="sig-name descname"><span class="pre">original_eigenVectors</span></span><a class="headerlink" href="#QPCA._decomposition.QPCA.original_eigenVectors" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.original_eigenVectors">
+<span class="sig-name descname"><span class="pre">original_eigenVectors</span></span><a class="headerlink" href="#QPCA.decomposition.QPCA.original_eigenVectors" title="Permalink to this definition"></a></dt>
 <dd><p>Orignal eigenvectors of the input matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -195,8 +195,8 @@ and <cite>n_features</cite> is the number of features.</p>
 <p class="rubric">Notes</p>
 <p>It is important to consider that the input matrix is divided by its trace so as to have the eigenvalues between 0 and 1.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.eigenvectors_reconstruction">
-<span class="sig-name descname"><span class="pre">eigenvectors_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_shots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.eigenvectors_reconstruction" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.eigenvectors_reconstruction">
+<span class="sig-name descname"><span class="pre">eigenvectors_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_shots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.eigenvectors_reconstruction" title="Permalink to this definition"></a></dt>
 <dd><p>Method that reconstructs the eigenvalues/eigenvectors once performed Phase Estimation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -204,6 +204,7 @@ and <cite>n_features</cite> is the number of features.</p>
 <li><p><strong>n_shots</strong> (<em>int value</em><em>, </em><em>default=50000.</em>) – Number of measures performed in the tomography process.</p></li>
 <li><p><strong>n_repetitions</strong> (<em>int value</em><em>, </em><em>default=1.</em>) – Number of times that state vector tomography will be executed. If &gt; 1, the final result will be the average result
 of all the execution of the tomography.</p></li>
+<li><p><strong>plot_peaks</strong> (<em>bool value</em><em>, </em><em>defualt=False</em>) – If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -219,40 +220,32 @@ way, the statevector of the quantum state is reconstructed and a postprocessing 
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.generate_phase_estimation_circuit">
-<span class="sig-name descname"><span class="pre">generate_phase_estimation_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.generate_phase_estimation_circuit" title="Permalink to this definition"></a></dt>
-<dd><p>Generate phase estimation circuit with a number of qubits provided as resolution parameter in the constructor.</p>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_qram</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_pe_circuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fit Qpca model. This method generates the encoding matrix circuit and apply the phase estimation operator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>q_circuit</strong> – The quantum circuit that performs the encoding of the input matrix and Phase Estimation.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix on which you want to apply QPCA divided by its trace, where <cite>n_samples</cite> is the number of samples
+and <cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>resolution</strong> (<em>int value</em>) – Number of qubits used for the phase estimation process to encode the eigenvalues.</p></li>
+<li><p><strong>plot_qram</strong> (<em>bool value</em><em>, </em><em>default=False</em>) – If True, it returns a plot of the Qram circuit that encodes the input matrix.</p></li>
+<li><p><strong>plot_pe_circuit</strong> (<em>bool value</em><em>, </em><em>default=False</em>) – If True, it returns a plot of the circuit composed of Qram and phase estimation operator.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>QuantumCircuit.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>pe_circuit</strong> – The quantum circuit that encodes the input matrix and performs phase estimation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QuantumCircuit</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.generate_qram_circuit">
-<span class="sig-name descname"><span class="pre">generate_qram_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.generate_qram_circuit" title="Permalink to this definition"></a></dt>
-<dd><p>Generate qram circuit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>qc</strong> – The quantum circuit that encodes the input matrix.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>QuantumCircuit</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method implements the quantum circuit generation to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
-log2(n_samples, n_features).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="QPCA._decomposition.QPCA.quantum_input_matrix_reconstruction">
-<span class="sig-name descname"><span class="pre">quantum_input_matrix_reconstruction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#QPCA._decomposition.QPCA.quantum_input_matrix_reconstruction" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction">
+<span class="sig-name descname"><span class="pre">quantum_input_matrix_reconstruction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction" title="Permalink to this definition"></a></dt>
 <dd><p>Method to reconstruct the input matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -276,7 +269,7 @@ log2(n_samples, n_features).</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="modules.html" class="btn btn-neutral float-left" title="QPCA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="QUtilities.html" class="btn btn-neutral float-right" title="_quantumUtilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="QUtilities.html" class="btn btn-neutral float-right" title="quantumUtilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

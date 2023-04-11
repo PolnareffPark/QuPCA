@@ -1,10 +1,10 @@
-_preprocessingUtilities
+preprocessingUtilities
 ============
 
 Module contents
 ---------------
 
-.. automodule:: QPCA._preprocessingUtilities
+.. automodule:: QPCA.preprocessingUtilities
    :members:
    :undoc-members:
    
