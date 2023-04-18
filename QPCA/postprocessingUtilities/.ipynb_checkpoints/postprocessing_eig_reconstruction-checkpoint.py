@@ -52,7 +52,6 @@ def general_postprocessing(input_matrix,statevector_dictionary,resolution,n_shot
         if plot_peaks:
             tail[['eigenvalue','module']].sort_values('eigenvalue').set_index('eigenvalue').plot(style='-*',figsize=(15,10))
         lambdas,lambdas_num,mean_threshold=__peaks_extraction(tail,len_input_matrix,n_shots)
-        
         df.columns=['state','module','lambda']
         signs=np.sign(np.array(list(statevector_dictionary.values())))
         signs[np.where(signs==0)]=1
@@ -136,7 +135,8 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
         right_thresholds=p_[1]['right_thresholds']
         left_thresholds=p_[1]['left_thresholds']
         
-        if len(p)>len_input_matrix:
+        
+        if len(p)>len_input_matrix or len(p)==0:
             offset+=1/n_shots
         else:
             stop=True
@@ -146,9 +146,9 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
                 peaks.append(el['lambda'])
     
     mean_threshold=(left_thresholds+right_thresholds)/2
-    print(mean_threshold)
-    print(nums_peaks)
-    print('sorted_mean',sorted(mean_threshold,reverse=True))
+    #print(mean_threshold)
+    #print(nums_peaks)
+    #print('sorted_mean',sorted(mean_threshold,reverse=True))
     sorted_peaks=np.array(peaks)[mean_threshold.argsort()[::-1]]
     sorted_num_peaks=np.array(nums_peaks)[mean_threshold.argsort()[::-1]]
     return sorted_peaks,sorted_num_peaks,sorted(mean_threshold,reverse=True)

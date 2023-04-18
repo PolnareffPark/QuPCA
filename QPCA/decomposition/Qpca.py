@@ -9,7 +9,7 @@ from qiskit import Aer, transpile, execute
 import math
 from ..quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,state_vector_tomography#,q_ram_pHe_quantum_circuit_generation
 from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
-#from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,_error_benchmark,_error_benchmark_from_scratch,sign_reconstruction_benchmarking
+#from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking,distance_function_wrapper
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
 
@@ -141,8 +141,8 @@ class QPCA():
 
         Returns
         ----------
-        pe_circuit: QuantumCircuit 
-                    The quantum circuit that encodes the input matrix and performs phase estimation.
+        self: object
+                    Returns the instance itself.
                     
         Notes
         ----------
@@ -245,13 +245,13 @@ class QPCA():
             reconstructed_eigenvectors=reconstructed_eigenvectors.reshape(len(reconstructed_eigenvalues),len(reconstructed_eigenvalues),order='F')
         except:
             raise Exception('Ops! QPCA was not able to reconstruct all the eigenvectors! Please check that you are not considering eigenvalues near to zero. In that case, you can both increase the number of shots or the resolution for the phase estimation.')
-        '''k = reconstructed_eigenvalues.argsort()[::-1]   
+        k = reconstructed_eigenvalues.argsort()[::-1]   
         reconstructed_eigenvalues = reconstructed_eigenvalues[k]
-        reconstructed_eigenvectors = reconstructed_eigenvectors[:,k]'''
+        reconstructed_eigenvectors = reconstructed_eigenvectors[:,k]
         reconstructed_eigenvalues*=self.input_matrix_trace
         reconstructed_input_matrix = reconstructed_eigenvectors @ np.diag(reconstructed_eigenvalues) @ reconstructed_eigenvectors.T
         return reconstructed_input_matrix
     
     
-        
+    
     
