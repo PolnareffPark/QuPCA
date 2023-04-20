@@ -1,6 +1,5 @@
-Example of QPCA usage
+Example
 ============
-**Example of Qpca usage.**
 
 First, you have to import the necessary modules from the package and then you can generate a random Hermitian 
 matrix using :meth:`~QPCA.preprocessingUtilities.generate_matrix` method provided in the package. You can 

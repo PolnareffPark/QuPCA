@@ -1,5 +1,6 @@
 quantumUtilities
 ============
+
 In this module, you will find the implementation of the vector state tomography algorithm described in the paper 
 "A Quantum Interior Point Method for LPs and SDPs". Here below there is an example of a possible general usage
 of this algorithm.
@@ -62,4 +63,3 @@ Module contents
 .. automodule:: QPCA.quantumUtilities
    :members:
    :undoc-members:
-   
