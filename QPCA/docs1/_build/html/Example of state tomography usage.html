@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Example &mdash; Qpca  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Example of state tomography usage" href="Example_tomography_modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Qpca
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="modules.html">QPCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Example_tomography_modules.html">Example of state tomography usage</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Example</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Qpca</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="Example_tomography_modules.html">Example of state tomography usage</a></li>
+      <li class="breadcrumb-item active">Example</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Example of state tomography usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="example">
+<h1>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h1>
+<p>In the <a class="reference internal" href="QUtilities.html#module-QPCA.quantumUtilities" title="QPCA.quantumUtilities"><code class="xref py py-mod docutils literal notranslate"><span class="pre">quantumUtilities</span></code></a> module, you will find the implementation of the vector state tomography algorithm described in the paper
+<a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>. Here below there is an example of a possible general usage
+of this algorithm.</p>
+<p>First, a quantum circuit is generated with the following code. This is the quantum circuit that encodes the
+quantum state that you want to reconstruct.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">Aer</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span> <span class="nn">qiskit.visualization</span> <span class="kn">import</span> <span class="n">array_to_latex</span>
+<span class="kn">from</span> <span class="nn">QPCA.quantumUtilities.quantum_utilities</span> <span class="kn">import</span> <span class="n">state_vector_tomography</span>
+
+<span class="n">qc</span><span class="o">=</span><span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/tomography.png" src="_images/tomography.png" />
+<p>Then, using the statevector simulator provided by Aer backend, you are able to extract the true statevector of this
+circuit. This is only to check the result that you are going to obtain by executing the tomography procedure.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">aer</span><span class="o">=</span><span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;statevector_simulator&#39;</span><span class="p">)</span>
+<span class="n">statevector</span><span class="o">=</span><span class="n">aer</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">aer</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
+<span class="n">array_to_latex</span><span class="p">(</span><span class="n">statevector</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/statevector.png" src="_images/statevector.png" />
+<p>Therefore, you can execute the tomography procedure by passing the quantum circuit as parameter and the number
+of shots as the number of times that you want to measure the quantum state. The higher the number of measures,
+the more accurate the estimates.
+The output will be an estimate of the statevector in the form of a dictionary: the keys are the
+quantum states and the values the corresponding amplitudes with sign.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">state_vector_tomography</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span><span class="n">drawing_amplitude_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">drawing_sign_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="s1">&#39;00&#39;</span><span class="p">:</span> <span class="mf">0.5054700782440045</span><span class="p">,</span>
+   <span class="s1">&#39;01&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4978704650810289</span><span class="p">,</span>
+   <span class="s1">&#39;10&#39;</span><span class="p">:</span> <span class="mf">0.5016223679223246</span><span class="p">,</span>
+   <span class="s1">&#39;11&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4949747468305833</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In the tomography function, you can also specify the drawing_amplitude_circuit flag, which if set to True returns as
+output the plot of the circuit that implements the amplitude estimation procedure (step 1 of the algorithm provided in <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>).</p>
+<img alt="_images/amplitude_tomo.png" src="_images/amplitude_tomo.png" />
+<p>If you set to True even the drawing_sign_circuit flag, the function returns the plot of the circuit that implements the sign estimation procedure (step 2 of the algorithm provided in <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>).</p>
+<img alt="_images/sign_tomo.png" src="_images/sign_tomo.png" />
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tommaso.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
