@@ -146,9 +146,6 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
                 peaks.append(el['lambda'])
     
     mean_threshold=(left_thresholds+right_thresholds)/2
-    #print(mean_threshold)
-    #print(nums_peaks)
-    #print('sorted_mean',sorted(mean_threshold,reverse=True))
     sorted_peaks=np.array(peaks)[mean_threshold.argsort()[::-1]]
     sorted_num_peaks=np.array(nums_peaks)[mean_threshold.argsort()[::-1]]
     return sorted_peaks,sorted_num_peaks,sorted(mean_threshold,reverse=True)

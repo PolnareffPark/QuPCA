@@ -384,9 +384,7 @@ class QPCA():
         -----
         This method should be executed after the execution of eigenvectors_benchmarking() method in the spectral_benchmarking, just to visualize better in specific plots the trends of the reconstruction error for each reconstructed eigenvectors. More precisely, it should be executed after executing eigenvectors_benchmarking method for a different number of shots such that you can visualize better the error trend. You can also use this method to visualize the trends of the reconstruction error for a different number of shots at the increasing of the number of resolution qubits. The important thing to take into consideration is that you need to pass as argument the two dictionary described in the documentation (see the benchmark notebook for a more practical example)
         """
-        
-        '''e_list=[sub for e in errors_list for sub in e]
-        dict__ = {k: [v for k1, v in e_list if k1 == k] for k, v in e_list}'''
+
         eigenValues,eigenVectors=np.linalg.eig(self.input_matrix)
         idx = eigenValues.argsort()[::-1]   
         original_eigenValues = eigenValues[idx]
