@@ -4,9 +4,7 @@ QPCA package
 Module contents
 ---------------
 
-.. toctree::
-   :maxdepth: 2
-
-   QPCA._decomposition
- 
-
+.. automodule:: QPCA._decomposition
+   :members:
+   :undoc-members:
+   :show-inheritance:

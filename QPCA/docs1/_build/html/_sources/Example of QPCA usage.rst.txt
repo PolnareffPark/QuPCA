@@ -24,12 +24,12 @@ set the matrix dimension and a seed for the reproducibility of the execution.
 ..  code-block:: python
 
    print(input_matrix)
-   ======================
-   [[0.59 0.13]
-   [0.13 0.08]]
+   
+   >>> [[0.59 0.13]
+       [0.13 0.08]]
 
-   eigenvalue: 0.04912229458049476 - eigenvector: [-0.233  0.973]
-   eigenvalue: 0.6199503657038241 - eigenvector: [0.973 0.233]
+       eigenvalue: 0.04912229458049476 - eigenvector: [-0.233  0.973]
+       eigenvalue: 0.6199503657038241 - eigenvector: [0.973 0.233]
 
 Once you have your input matrix, you can fit your QPCA model, specifying the number of resolution qubit 
 that you need for the phase estimation process. Remember that a higher resolution generally means better 
@@ -43,10 +43,10 @@ accuracy results but lower performance.
 ..  code-block:: python
 
    print(np.linalg.eig(qpca.input_matrix))
-   ======================
-   (array([0.92658152, 0.07341848]),
-   array([[ 0.9725247 , -0.23279972],
-        [ 0.23279972,  0.9725247 ]]))
+  
+   >>> (array([0.92658152, 0.07341848]),
+       array([[ 0.9725247 , -0.23279972],
+            [ 0.23279972,  0.9725247 ]]))
 
 If you set the boolean flag plot_qram and plot_pe_circuit to True as in the example before, you are able to see
 two plots like the ones below.
@@ -77,9 +77,9 @@ if you want to plot the output of the phase estimation which represent the most 
 ..  code-block:: python
 
    print(eig)
-   ======================
-   [(0.92578125, array([0.97252803, 0.23287312])),
-   (0.07421875, array([-0.23333264,  0.97138455]))]
+   
+   >>> [(0.92578125, array([0.97252803, 0.23287312])),
+      (0.07421875, array([-0.23333264,  0.97138455]))]
 
 With the boolean flag :obj:`~QPCA.decomposition.QPCA.plot_peaks` set to True, you can visualize a plot like the 
 one below, where you can see the peaks that represent the eigenvalues that phase estimation approximates with high probability.
@@ -98,6 +98,6 @@ Finally, you can reconstruct the original input matrix using :meth:`~QPCA.decomp
 ..  code-block:: python
 
    print(rec_input_matrix)
-   ======================
-   array([[0.5892648 , 0.12654384],
-   [0.12654384, 0.07984454]])
+   
+   >>> array([[0.5892648 , 0.12654384],
+            [0.12654384, 0.07984454]])
