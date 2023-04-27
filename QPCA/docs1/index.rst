@@ -16,6 +16,8 @@ The package is organized in 4 modules:
 
 * :mod:`~QPCA.postprocessingUtilities` module: in this module, you find the :meth:`~QPCA.postprocessingUtilities.general_postprocessing` method which is used by Qpca algorithm to recontruct the eigenvectors/eigenvalues using the information provided by quantum state tomography.
 
+* :mod:`~QPCA.benchmark` module: in this module, you find the methods to benchmark the execution of Qpca algorithm. 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

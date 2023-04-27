@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>benchmark &mdash; Qpca  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example of QPCA usage" href="Example_modules.html" />
+    <link rel="prev" title="postprocessingUtilities" href="Q_postprocessing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Qpca
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">QPCA</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="QPCA.html">decomposition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QUtilities.html">quantumUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">preprocessingUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">postprocessingUtilities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-QPCA.benchmark">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA.benchmark.eigenvalues_benchmarking"><code class="docutils literal notranslate"><span class="pre">eigenvalues_benchmarking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA.benchmark.eigenvectors_benchmarking"><code class="docutils literal notranslate"><span class="pre">eigenvectors_benchmarking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA.benchmark.error_benchmark"><code class="docutils literal notranslate"><span class="pre">error_benchmark()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA.benchmark.sign_reconstruction_benchmarking"><code class="docutils literal notranslate"><span class="pre">sign_reconstruction_benchmarking()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example_tomography_modules.html">Example of state tomography usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Qpca</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">QPCA</a></li>
+      <li class="breadcrumb-item active">benchmark</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/benchmark.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="benchmark">
+<h1>benchmark<a class="headerlink" href="#benchmark" title="Permalink to this heading"></a></h1>
+<section id="module-QPCA.benchmark">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-QPCA.benchmark" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA.benchmark.eigenvalues_benchmarking">
+<span class="sig-prename descclassname"><span class="pre">QPCA.benchmark.</span></span><span class="sig-name descname"><span class="pre">eigenvalues_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reconstructed_eigenvalue_eigenvector_tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_eigenvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_error</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.benchmark.eigenvalues_benchmarking" title="Permalink to this definition"></a></dt>
+<dd><p>Method to benchmark the quality of the reconstructed eigenvalues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reconstructed_eigenvalue_eigenvector_tuple</strong> (<em>array-like</em>) – Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.</p></li>
+<li><p><strong>original_eigenvalues</strong> (<em>array-like</em>) – Array representing the original eigenvalues of the input matrix.</p></li>
+<li><p><strong>mean_threshold</strong> (<em>array-like</em>) – This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.</p></li>
+<li><p><strong>print_error</strong> (<em>bool value</em>) – If True, a table showing the absolute reconstruction error for each eigenvalue is reported</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA.benchmark.eigenvectors_benchmarking">
+<span class="sig-prename descclassname"><span class="pre">QPCA.benchmark.</span></span><span class="sig-name descname"><span class="pre">eigenvectors_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reconstructed_eigenvalue_eigenvector_tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_eigenvectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_eigenvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_first_eigenvectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_with_sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hide_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.benchmark.eigenvectors_benchmarking" title="Permalink to this definition"></a></dt>
+<dd><p>Method to benchmark the quality of the reconstructed eigenvectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reconstructed_eigenvalue_eigenvector_tuple</strong> (<em>array-like</em>) – Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.</p></li>
+<li><p><strong>original_eigenvectors</strong> (<em>array-like</em>) – Array representing the original eigenvectors of the input matrix.</p></li>
+<li><p><strong>original_eigenvalues</strong> (<em>array-like</em>) – Array representing the original eigenvalues of the input matrix.</p></li>
+<li><p><strong>mean_threshold</strong> (<em>array-like</em>) – This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.</p></li>
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix on which you want to apply QPCA divided by its trace, where <cite>n_samples</cite> is the number of samples
+and <cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>n_shots</strong> (<em>int value</em>) – Number of measures performed in the tomography process.</p></li>
+<li><p><strong>print_distances</strong> (<em>bool value</em><em>, </em><em>default=True</em>) – If True, the distance (defined by distance_type value) between the original and reconstructed eigenvector is printed in the legend.</p></li>
+<li><p><strong>only_first_eigenvectors</strong> (<em>bool value</em><em>, </em><em>default=True.</em>) – If True, the function returns only the plot relative to the first eigenvalues. Otherwise, all the plot are showed.</p></li>
+<li><p><strong>plot_delta</strong> (<em>bool value</em><em>, </em><em>default=False</em>) – If True, the function also returns the plot that shows how the tomography error decreases as the number of shots increases.</p></li>
+<li><p><strong>distance_type</strong> (<em>string value</em><em>, </em><em>default='l2'</em>) – <p>It defines the distance measure used to benchmark the eigenvectors:</p>
+<blockquote>
+<div><p>-‘l2’: the l2 distance between original and reconstructed eigenvectors is computed.</p>
+<p>-‘cosine’: the cosine distance between original and reconstructed eigenvectors is computed.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>error_with_sign</strong> (<em>bool value</em><em>, </em><em>default=False</em>) – If True, the benchmarking is performed considering the reconstructed sign of the eigenvectors. Otherwise, the benchmarking is performed between absolute values of eigenvectors.</p></li>
+<li><p><strong>hide_plot</strong> (<em>bool value</em><em>, </em><em>default=False</em>) – If True, the plot showing the eigenvector’s benchmarking is not showed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>save_list</strong> (<em>array-like</em>) – List of tuples where the first element is the eigenvalue and the second is the distance between the corresponding reconstructed eigenvector and the original one.</p></li>
+<li><p><strong>delta</strong> (<em>float value</em>) – The tomography error value.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The execution of this method shows the distance between original and reconstructed eigenvector’s values and allows to visualize the tomography error. In this way, you can check that the reconstruction of the eigenvectors always takes place with an error conforming to the one expressed in the tomography algorithm in the “A Quantum Interior Point Method for LPs and SDPs” paper.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA.benchmark.error_benchmark">
+<span class="sig-prename descclassname"><span class="pre">QPCA.benchmark.</span></span><span class="sig-name descname"><span class="pre">error_benchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shots_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_original_eigenvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.benchmark.error_benchmark" title="Permalink to this definition"></a></dt>
+<dd><p>Method to benchmark the eigenvector’s reconstruction error. The execution of this function shows the trend of the error as the number of shots increases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shots_dict</strong> (<em>dict-like</em>) – Dictionary that contains as keys the reconstructed eigenvalues and as values the list of shots for which you are able to reconstruct the corresponding eigenvalue.</p></li>
+<li><p><strong>error_dict</strong> (<em>dict-like</em>) – Dictionary that contains as keys the reconstructed eigenvalues and as values the list of reconstruction errors for the corresponding eigenvectors as the number of shots increases.</p></li>
+<li><p><strong>dict_original_eigenvalues</strong> (<em>dict-like</em>) – Dictionary that contains as key the original eigenvalue and as value its index (ordered position).</p></li>
+<li><p><strong>delta_list</strong> (<em>array-like</em><em>, </em><em>default=None</em>) – List that contains all the tomography error computed for each different number of shots. If None, the plot of the tomography error is not showed.</p></li>
+<li><p><strong>plot_delta</strong> (<em>bool value</em><em>, </em><em>default=False</em>) – If True, the function also returns the plot that shows how the tomography error decreases as the number of shots increases.</p></li>
+<li><p><strong>label_error</strong> (<em>string value</em><em>, </em><em>default='l2'</em>) – <p>It defines the distance measure used to benchmark the eigenvectors:</p>
+<blockquote>
+<div><p>-‘l2’: the l2 distance between original and reconstructed eigenvectors is computed.</p>
+<p>-‘cosine’: the cosine distance between original and reconstructed eigenvectors is computed.</p>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="QPCA.benchmark.sign_reconstruction_benchmarking">
+<span class="sig-prename descclassname"><span class="pre">QPCA.benchmark.</span></span><span class="sig-name descname"><span class="pre">sign_reconstruction_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_eigenvectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconstructed_eigenvalue_eigenvector_tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_eigenvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shots</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.benchmark.sign_reconstruction_benchmarking" title="Permalink to this definition"></a></dt>
+<dd><p>Method to benchmark the quality of the sign reconstruction for the reconstructed eigenvectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix on which you want to apply QPCA divided by its trace, where <cite>n_samples</cite> is the number of samples
+and <cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>original_eigenvectors</strong> (<em>array-like</em>) – Array representing the original eigenvectors of the input matrix.</p></li>
+<li><p><strong>reconstructed_eigenvalue_eigenvector_tuple</strong> (<em>array-like</em>) – Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.</p></li>
+<li><p><strong>original_eigenvalues</strong> (<em>array-like</em>) – Array representing the original eigenvalues of the input matrix.</p></li>
+<li><p><strong>mean_threshold</strong> (<em>array-like</em>) – This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.</p></li>
+<li><p><strong>n_shots</strong> (<em>int value</em>) – The number of measures performed for the reconstruction of the eigenvectors.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tommaso.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
