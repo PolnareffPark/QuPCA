@@ -25,6 +25,7 @@ The package is organized in 4 modules:
    modules
    Example_modules
    Example_tomography_modules
+   Example_benchmark
 
 Indices and tables
 ==================

@@ -42,12 +42,12 @@ quantum states and the values the corresponding amplitudes with sign.
 
 .. code-block:: python
 
-   state_vector_tomography(qc,n_shots=8000,drawing_amplitude_circuit=True,drawing_sign_circuit=True)
+   >>> state_vector_tomography(qc,n_shots=8000,drawing_amplitude_circuit=True,drawing_sign_circuit=True)
 
-   >>> {'00': 0.5054700782440045,
-      '01': -0.4978704650810289,
-      '10': 0.5016223679223246,
-      '11': -0.4949747468305833}
+   {'00': 0.5054700782440045,
+   '01': -0.4978704650810289,
+   '10': 0.5016223679223246,
+   '11': -0.4949747468305833}
 
 In the tomography function, you can also specify the drawing_amplitude_circuit flag, which if set to True returns as
 output the plot of the circuit that implements the amplitude estimation procedure (step 1 of the algorithm provided in `A Quantum Interior Point Method for LPs and SDPs <https://arxiv.org/abs/1808.09266>`_). 

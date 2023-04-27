@@ -17,6 +17,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example of benchmark" href="Example_benchmark.html" />
     <link rel="prev" title="Example of state tomography usage" href="Example_tomography_modules.html" /> 
 </head>
 
@@ -41,10 +42,64 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="modules.html">QPCA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">QPCA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="QPCA.html">decomposition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="QPCA.html#module-QPCA.decomposition">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA"><code class="docutils literal notranslate"><span class="pre">QPCA</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="QUtilities.html">quantumUtilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="QUtilities.html#module-QPCA.quantumUtilities">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="QUtilities.html#QPCA.quantumUtilities.from_binary_tree_to_qcircuit"><code class="docutils literal notranslate"><span class="pre">from_binary_tree_to_qcircuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="QUtilities.html#QPCA.quantumUtilities.state_vector_tomography"><code class="docutils literal notranslate"><span class="pre">state_vector_tomography()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="QUtilities.html#QPCA.quantumUtilities.thetas_computation"><code class="docutils literal notranslate"><span class="pre">thetas_computation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">preprocessingUtilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Q_preprocessing.html#module-QPCA.preprocessingUtilities">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Q_preprocessing.html#QPCA.preprocessingUtilities.generate_matrix"><code class="docutils literal notranslate"><span class="pre">generate_matrix()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">postprocessingUtilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Q_postprocessing.html#module-QPCA.postprocessingUtilities">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Q_postprocessing.html#QPCA.postprocessingUtilities.general_postprocessing"><code class="docutils literal notranslate"><span class="pre">general_postprocessing()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark.html">benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="benchmark.html#module-QPCA.benchmark">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="benchmark.html#QPCA.benchmark.eigenvalues_benchmarking"><code class="docutils literal notranslate"><span class="pre">eigenvalues_benchmarking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="benchmark.html#QPCA.benchmark.eigenvectors_benchmarking"><code class="docutils literal notranslate"><span class="pre">eigenvectors_benchmarking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="benchmark.html#QPCA.benchmark.error_benchmark"><code class="docutils literal notranslate"><span class="pre">error_benchmark()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="benchmark.html#QPCA.benchmark.sign_reconstruction_benchmarking"><code class="docutils literal notranslate"><span class="pre">sign_reconstruction_benchmarking()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Example%20of%20QPCA%20usage.html">Example</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="reference internal" href="Example_tomography_modules.html">Example of state tomography usage</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Example_benchmark.html">Example of benchmark</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Example%20of%20benchmark.html">Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Example%20of%20benchmark.html#eigenvectors-benchmark">Eigenvectors benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Example%20of%20benchmark.html#eigenvalues-benchmark">Eigenvalues benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Example%20of%20benchmark.html#eigenvectors-reconstruction-error-benchmark">Eigenvectors reconstruction error benchmark</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -107,12 +162,12 @@ of shots as the number of times that you want to measure the quantum state. The 
 the more accurate the estimates.
 The output will be an estimate of the statevector in the form of a dictionary: the keys are the
 quantum states and the values the corresponding amplitudes with sign.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">state_vector_tomography</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span><span class="n">drawing_amplitude_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">drawing_sign_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state_vector_tomography</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span><span class="n">drawing_amplitude_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">drawing_sign_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="s1">&#39;00&#39;</span><span class="p">:</span> <span class="mf">0.5054700782440045</span><span class="p">,</span>
-   <span class="s1">&#39;01&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4978704650810289</span><span class="p">,</span>
-   <span class="s1">&#39;10&#39;</span><span class="p">:</span> <span class="mf">0.5016223679223246</span><span class="p">,</span>
-   <span class="s1">&#39;11&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4949747468305833</span><span class="p">}</span>
+<span class="go">{&#39;00&#39;: 0.5054700782440045,</span>
+<span class="go">&#39;01&#39;: -0.4978704650810289,</span>
+<span class="go">&#39;10&#39;: 0.5016223679223246,</span>
+<span class="go">&#39;11&#39;: -0.4949747468305833}</span>
 </pre></div>
 </div>
 <p>In the tomography function, you can also specify the drawing_amplitude_circuit flag, which if set to True returns as
