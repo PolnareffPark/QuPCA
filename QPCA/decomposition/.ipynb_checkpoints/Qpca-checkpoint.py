@@ -1,13 +1,10 @@
 import numpy as np
-import itertools
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
-import random
 import warnings
 from qiskit.algorithms.linear_solvers.matrices.numpy_matrix import NumPyMatrix
 from qiskit.circuit.library import PhaseEstimation
-from qiskit import Aer, transpile, execute
 import math
-from ..quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,state_vector_tomography#,q_ram_pHe_quantum_circuit_generation
+from ..quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,state_vector_tomography
 from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
 from ..preprocessingUtilities.preprocessing_matrix_utilities import next_power_of_2
 from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking,distance_function_wrapper
@@ -230,7 +227,7 @@ class QPCA():
         self.mean_threshold=mean_threshold
         self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
         
-        #OPTIMIZATION: TODO CHECK
+        #OPTIMIZATION: CHECK
         reconstructed_eigenvalues=np.array([])
         reconstructed_eigenvectors=np.array([])
         for t in self.reconstructed_eigenvalue_eigenvector_tuple:
@@ -264,16 +261,6 @@ class QPCA():
         ----------
         Using the reconstructed eigenvectors and eigenvalues from QPCA, we can reconstruct the original input matrix using the reverse procedure of SVD.
         """
-        
-        '''reconstructed_eigenvalues=np.array([])
-        reconstructed_eigenvectors=np.array([])
-        for t in self.reconstructed_eigenvalue_eigenvector_tuple:
-            reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])
-            reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1])
-        try:
-            reconstructed_eigenvectors=reconstructed_eigenvectors.reshape(len(reconstructed_eigenvalues),len(reconstructed_eigenvalues),order='F')
-        except:
-            raise Exception('Ops! QPCA was not able to reconstruct all the eigenvectors! Please check that you are not considering eigenvalues near to zero. In that case, you can both increase the number of shots or the resolution for the phase estimation.')'''
         
         k = self.reconstructed_eigenvalues.argsort()[::-1]   
         reconstructed_eigenvalues = self.reconstructed_eigenvalues[k]
