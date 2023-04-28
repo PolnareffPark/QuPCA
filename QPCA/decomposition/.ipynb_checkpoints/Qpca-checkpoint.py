@@ -232,8 +232,15 @@ class QPCA():
         reconstructed_eigenvectors=np.array([])
         for t in self.reconstructed_eigenvalue_eigenvector_tuple:
             reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])
-            reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1])
+            if len(eigenvalue_eigenvector_tuple)!=len(t[1]):
+                reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1][:len(self.true_input_matrix)])
+            else:
+                reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1])
+        #print(reconstructed_eigenvectors)
         try:
+            '''if len(reconstructed_eigenvalues)!=len(t[1]):
+                for i in range(len(reconstructed_eigenvectors)):
+                    reconstructed_eigenvectors[i]=reconstructed_eigenvectors[i][:len(self.true_input_matrix)]'''
             reconstructed_eigenvectors=reconstructed_eigenvectors.reshape(len(reconstructed_eigenvalues),len(reconstructed_eigenvalues),order='F')
         except:
             raise Exception('Ops! QPCA was not able to reconstruct all the eigenvectors! Please check that you are not considering eigenvalues near to zero. In that case, you can both increase the number of shots or the resolution for the phase estimation.')
