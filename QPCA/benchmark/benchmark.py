@@ -1,18 +1,20 @@
 import numpy as np
 import warnings
 import matplotlib.pyplot as plt
-from texttable import Texttable
+#from texttable import Texttable
 from scipy.spatial import distance 
 
-def eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, original_eigenvectors, original_eigenvalues, mean_threshold, input_matrix, 
+def eigenvectors_benchmarking(input_matrix, original_eigenvectors, original_eigenvalues, reconstructed_eigenvalues, reconstructed_eigenvectors, mean_threshold, 
                               n_shots, print_distances=True, only_first_eigenvectors=True, plot_delta=False, distance_type='l2', error_with_sign=False, hide_plot=False):
 
     """ Method to benchmark the quality of the reconstructed eigenvectors.
 
     Parameters
     ----------
-    reconstructed_eigenvalue_eigenvector_tuple: array-like
-                Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.
+    
+    input_matrix: array-like of shape (n_samples, n_features)
+                Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
+                and `n_features` is the number of features.
     
     original_eigenvectors: array-like
                 Array representing the original eigenvectors of the input matrix.
@@ -20,12 +22,14 @@ def eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, origin
     original_eigenvalues: array-like
                 Array representing the original eigenvalues of the input matrix.
     
+    reconstructed_eigenvalues: array-like
+                Array of reconstructed eigenvalues.
+    
+    reconstructed_eigenvectors: array-like
+                Array of reconstructed eigenvectors.
+    
     mean_threshold: array-like
                 This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.
-                
-    input_matrix: array-like of shape (n_samples, n_features)
-                Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                and `n_features` is the number of features.
     
     n_shots: int value
                 Number of measures performed in the tomography process.
@@ -67,13 +71,11 @@ def eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, origin
     """
     
     save_list=[]
-    #print('rec',reconstructed_eigenvalue_eigenvector_tuple)
-    lambdas_num=[eig[0] for eig in reconstructed_eigenvalue_eigenvector_tuple]
-    #print(lambdas_num)
-    correct_reconstructed_eigenvalues=__remove_usless_peaks(lambdas_num,mean_threshold,original_eigenvalues)
-    #print('correct',correct_reconstructed_eigenvalues)
-    correct_reconstructed_eigenvectors=[r[1] for c_r_e in correct_reconstructed_eigenvalues for r in reconstructed_eigenvalue_eigenvector_tuple if c_r_e==r[0]]
-    #print(correct_reconstructed_eigenvectors)
+
+    correct_reconstructed_eigenvalues=__remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
+
+    correct_reconstructed_eigenvectors=[reconstructed_eigenvectors[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues)) if c_r_e==reconstructed_eigenvalues[j]]
+
     original_eigenValues,original_eigenVectors=__reorder_original_eigenvalues_eigenvectors(input_matrix,original_eigenvectors,original_eigenvalues,correct_reconstructed_eigenvalues)
    
     fig, ax = plt.subplots(1,len(correct_reconstructed_eigenvalues),figsize=(30, 10))
@@ -184,17 +186,17 @@ def eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, origin
 
     return save_list,delta
 
-def eigenvalues_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, original_eigenvalues, mean_threshold, print_error):
+def eigenvalues_benchmarking(original_eigenvalues, reconstructed_eigenvalues, mean_threshold, print_error):
     """ Method to benchmark the quality of the reconstructed eigenvalues. 
 
     Parameters
     ----------
     
-    reconstructed_eigenvalue_eigenvector_tuple: array-like
-                Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.
-    
     original_eigenvalues: array-like
                 Array representing the original eigenvalues of the input matrix.
+    
+    reconstructed_eigenvalues: array-like
+                Array of reconstructed eigenvalues.
     
     mean_threshold: array-like
                 This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.
@@ -208,11 +210,11 @@ def eigenvalues_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, origina
     Notes
     -----
     """    
+    #reconstructed_eigenvalues=[eig[0] for eig in reconstructed_eigenvalue_eigenvector_tuple]
 
     fig, ax = plt.subplots(figsize=(10, 10))
     
-    lambdas_num=[eig[0] for eig in reconstructed_eigenvalue_eigenvector_tuple]
-    correct_reconstructed_eigenvalues=__remove_usless_peaks(lambdas_num,mean_threshold,original_eigenvalues)
+    correct_reconstructed_eigenvalues=__remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
     dict_original_eigenvalues = {original_eigenvalues[e]:e+1 for e in range(len(original_eigenvalues))}
     idx_list=[]
     if print_error:
@@ -235,7 +237,7 @@ def eigenvalues_benchmarking(reconstructed_eigenvalue_eigenvector_tuple, origina
     
 
             
-def sign_reconstruction_benchmarking(input_matrix, original_eigenvectors, reconstructed_eigenvalue_eigenvector_tuple, original_eigenvalues, mean_threshold, n_shots):
+def sign_reconstruction_benchmarking(input_matrix, original_eigenvalues, original_eigenvectors, reconstructed_eigenvalues, reconstructed_eigenvectors, mean_threshold, n_shots):
     
     """ Method to benchmark the quality of the sign reconstruction for the reconstructed eigenvectors. 
 
@@ -246,14 +248,17 @@ def sign_reconstruction_benchmarking(input_matrix, original_eigenvectors, recons
                 Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
                 and `n_features` is the number of features.
     
+    original_eigenvalues: array-like
+                Array representing the original eigenvalues of the input matrix.
+    
     original_eigenvectors: array-like
                 Array representing the original eigenvectors of the input matrix.
     
-    reconstructed_eigenvalue_eigenvector_tuple:array-like
-                Array of tuples where the first element corresponds to an eigenvalue and the second to the corresponding eigenvector.
+    reconstructed_eigenvalues: array-like
+                Array of reconstructed eigenvalues.
     
-    original_eigenvalues: array-like
-                Array representing the original eigenvalues of the input matrix.
+     reconstructed_eigenvectors: array-like
+                Array of reconstructed eigenvectors.
     
     mean_threshold: array-like
                 This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.
@@ -269,14 +274,15 @@ def sign_reconstruction_benchmarking(input_matrix, original_eigenvectors, recons
     -----
     """ 
     
-    lambdas_num=[eig[0] for eig in reconstructed_eigenvalue_eigenvector_tuple]
+    #reconstructed_eigenvalues=[eig[0] for eig in reconstructed_eigenvalue_eigenvector_tuple]
     
-    correct_reconstructed_eigenvalues=__remove_usless_peaks(lambdas_num,mean_threshold,original_eigenvalues)
+    correct_reconstructed_eigenvalues=__remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
     
-    correct_reconstructed_eigenvectors=[r[1] for c_r_e in correct_reconstructed_eigenvalues for r in reconstructed_eigenvalue_eigenvector_tuple if c_r_e==r[0]]
-
+    correct_reconstructed_eigenvectors=[reconstructed_eigenvectors[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues)) if c_r_e==reconstructed_eigenvalues[j]]
+    
+    #correct_reconstructed_eigenvectors=[r[1][:len(input_matrix)] for c_r_e in correct_reconstructed_eigenvalues for r in reconstructed_eigenvalue_eigenvector_tuple if c_r_e==r[0]]
+    
     original_eigenValues,original_eigenVectors=__reorder_original_eigenvalues_eigenvectors(input_matrix,original_eigenvectors,original_eigenvalues,correct_reconstructed_eigenvalues)
-    
     
     t = Texttable()
     for e in range(len(correct_reconstructed_eigenvalues)):
@@ -369,78 +375,6 @@ def error_benchmark(shots_dict, error_dict, dict_original_eigenvalues, delta_lis
     plt.show()
     
     
-def error_benchmark1(shots_dict,error_dict,delta_list=None,plot_delta=False,label_error='l2'):
-
-    """ Method to benchmark the eigenvector's reconstruction error. The execution of this function shows the trend of the error as the number of shots increases.
-
-    Parameters
-    ----------
-            
-    shots_dict: dict-like
-            Dictionary that contains as keys the reconstructed eigenvalues and as values the list of shots for which you are able to reconstruct the corresponding eigenvalue.
-    
-    error_dict: dict-like
-            Dictionary that contains as keys the reconstructed eigenvalues and as values the list of reconstruction errors for the corresponding eigenvectors as the number of shots increases.
-
-    delta_list: array-like, default=None
-            List that contains all the tomography error computed for each different number of shots. If None, the plot of the tomography error is not showed. 
-
-    plot_delta: bool value, default=False
-            If True, the function also returns the plot that shows how the tomography error decreases as the number of shots increases. 
-
-    label_error: string value, default='l2'
-            It defines the distance measure used to benchmark the eigenvectors:
-
-                    -'l2': the l2 distance between original and reconstructed eigenvectors is computed.
-
-                    -'cosine': the cosine distance between original and reconstructed eigenvectors is computed.
-
-    Returns
-    -------
-
-    Notes
-    -----
-    """
- 
-    if plot_delta==False and delta_list:
-        warnings.warn("Attention! delta_list that you passed has actually no effect since the flag plot_delta is set to False. Please set it to True if you want to get the delta decreasing plot.")
-    
-    fig, ax = plt.subplots(1,len(error_dict),figsize=(30, 10))
-    fig.tight_layout()
-
-    for e,chart in enumerate(ax.reshape(-1)):
-
-        for res in error_dict:
-            
-            e_list=[sub for e_ in error_dict[res] for sub in e_]
-            dict__ = {k: [v for k1, v in e_list if k1 == k] for k, v in e_list}
-            
-            try:
-                chart.plot(shots_dict[res][list(dict__.keys())[e]],dict__[list(dict__.keys())[e]],'-o')
-                chart.set_xticks(shots_dict[res][list(dict__.keys())[e]])
-                chart.set_xscale('log')
-                chart.set_xlabel('n_shots')
-                chart.set_ylabel(label_error+'_error')
-                chart.set_title(label_error+'_error for eigenvector wrt the eigenvalues {}'.format(list(dict__.keys())[e]))
-            except:
-                continue
-
-    fig, ax = plt.subplots(figsize=(10, 10))
-    if plot_delta:
-        if delta_list==None:
-             raise Exception('You need to provide a delta error list!')
-        else:
-            shots_list = shots_dict[max(shots_dict, key= lambda x: len(set(shots_dict[x])))]
-            plt.plot(shots_list,delta_list,'-o')
-            plt.xticks(shots_list)
-            plt.xscale('log')
-            plt.xlabel('n_shots')
-            plt.ylabel(r'$\delta$')
-            plt.title(r'Tomography error')
-
-    plt.show()
-
-    
 def __reorder_original_eigenvalues_eigenvectors(input_matrix, original_eigenVectors, original_eigenValues, lambdas_num):
     
     check_eigenvalues={}
@@ -482,33 +416,29 @@ def __remove_usless_peaks(lambdas_num, mean_threshold, original_eig):
     
     for i in original_eig:
             check_eigenvalues.update({i:0}) 
-    
+            
     if len(np.array(lambdas_num)[np.argwhere(mean_threshold == np.amin(mean_threshold))])>1:
-
         not_equal_threshold=np.array(lambdas_num)[np.argwhere(mean_threshold != np.amin(mean_threshold))]
         equal_thresholds=np.array(lambdas_num)[np.argwhere(mean_threshold == np.amin(mean_threshold))]
-        #print(not_equal_threshold,equal_thresholds)
         dict_for_equal_threshold={}
         
         for n_e_t in not_equal_threshold:
-            #print('net',n_e_t)
             x,min_=__find_nearest(original_eig,n_e_t)
             if check_eigenvalues[x]==0:
                 check_eigenvalues.update({x:1})
                 peaks_to_keep.append(n_e_t)
             else:
                 peaks_not_to_keep.append(n_e_t)
-        #print('peaks_after_not_equal_threshold',peaks_to_keep)
+
         for e_t in equal_thresholds:
             x,min_=__find_nearest(original_eig,e_t)
             tuple_=(e_t,min_)
             dict_for_equal_threshold.setdefault(x, []).append(tuple_)
-        #print(dict_for_equal_threshold)
+       
         for d_d in dict_for_equal_threshold:
             minimum_to_keep=min(dict_for_equal_threshold[d_d], key = lambda t: t[1])[0]
             not_minimum_to_discard=[e[0] for e in dict_for_equal_threshold[d_d] if e[0]!= minimum_to_keep]
-            #print('minimum_to_keep',minimum_to_keep)
-            #print('not_minimum_to_keep',not_minimum_to_discard)
+
             if check_eigenvalues[d_d]==0:   
                 check_eigenvalues.update({d_d:1})
                 peaks_to_keep.append(minimum_to_keep)
@@ -516,8 +446,6 @@ def __remove_usless_peaks(lambdas_num, mean_threshold, original_eig):
             
                 peaks_not_to_keep.append(minimum_to_keep)
             peaks_not_to_keep+=not_minimum_to_discard
-            #print('peaks_to_keep',peaks_to_keep)
-            #print('peaks_not_to_keep',peaks_not_to_keep)
     else:
         for n_p in lambdas_num:
             x,min_=__find_nearest(original_eig,n_p)

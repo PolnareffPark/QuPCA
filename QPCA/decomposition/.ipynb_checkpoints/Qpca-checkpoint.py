@@ -104,7 +104,7 @@ class QPCA():
 
         """
         
-        u_circuit = NumPyMatrix(self.input_matrix, evolution_time=2*np.pi)#/2**resolution
+        u_circuit = NumPyMatrix(self.input_matrix, evolution_time=2*np.pi)
         pe = PhaseEstimation(self.resolution, u_circuit, name = "PE")
         tot_qubit = pe.qregs[0].size+self.qram_circuit.qregs[0].size
         qr_total = QuantumRegister(tot_qubit, 'total')
@@ -146,9 +146,9 @@ class QPCA():
         ----------
         """
         
-        self.true_input_matrix=input_matrix
-        
+        true_input_matrix=input_matrix
         matrix_dimension=len(input_matrix)
+        
         if ((matrix_dimension & (matrix_dimension-1) == 0) and matrix_dimension != 0)==False:
             zeros=np.zeros((matrix_dimension,1))
             zeros_r=np.zeros((1,next_power_of_2(matrix_dimension)))
@@ -159,6 +159,7 @@ class QPCA():
         
         self.input_matrix_trace=np.trace(input_matrix)
         self.input_matrix=input_matrix/np.trace(input_matrix)
+        self.true_input_matrix=true_input_matrix/np.trace(true_input_matrix)
         self.resolution=resolution
         
         qc=self.__generate_qram_circuit()
@@ -224,33 +225,26 @@ class QPCA():
         statevector_dictionary=wrapper_state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots)
         eigenvalue_eigenvector_tuple,mean_threshold=general_postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,
                                                                            resolution=self.resolution,n_shots=self.n_shots,plot_peaks=plot_peaks)
-        self.mean_threshold=mean_threshold
-        self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
         
-        #OPTIMIZATION: CHECK
+        self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
+        self.mean_threshold=mean_threshold[:len(self.true_input_matrix)]
+        
         reconstructed_eigenvalues=np.array([])
         reconstructed_eigenvectors=np.array([])
-        for t in self.reconstructed_eigenvalue_eigenvector_tuple:
-            reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])
-            if len(eigenvalue_eigenvector_tuple)!=len(t[1]):
-                reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1][:len(self.true_input_matrix)])
-            else:
-                reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1])
-        #print(reconstructed_eigenvectors)
-        try:
-            '''if len(reconstructed_eigenvalues)!=len(t[1]):
-                for i in range(len(reconstructed_eigenvectors)):
-                    reconstructed_eigenvectors[i]=reconstructed_eigenvectors[i][:len(self.true_input_matrix)]'''
-            reconstructed_eigenvectors=reconstructed_eigenvectors.reshape(len(reconstructed_eigenvalues),len(reconstructed_eigenvalues),order='F')
-        except:
-            raise Exception('Ops! QPCA was not able to reconstruct all the eigenvectors! Please check that you are not considering eigenvalues near to zero. In that case, you can both increase the number of shots or the resolution for the phase estimation.')
-        if len(self.true_input_matrix)!=len(self.input_matrix):
-            reconstructed_eigenvalues=reconstructed_eigenvalues[:len(self.true_input_matrix)]
-            reconstructed_eigenvectors=reconstructed_eigenvectors[:len(self.true_input_matrix),:len(self.true_input_matrix)]
-        self.reconstructed_eigenvectors=reconstructed_eigenvectors
-        self.reconstructed_eigenvalues=reconstructed_eigenvalues
         
-        return reconstructed_eigenvalues,reconstructed_eigenvectors
+        for t in self.reconstructed_eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]:
+            
+            reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])    
+            reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1][:len(self.true_input_matrix)])
+        try:
+            reconstructed_eigenvectors=reconstructed_eigenvectors.reshape(len(self.true_input_matrix),len(reconstructed_eigenvalues),order='F')
+        except:
+            raise Exception('QPCA was not able to correctly reconstruct the eigenvectors! Check that you are not considering eigenvalues near to zero. In that case, you can both increase the number of shots or the resolution for the phase estimation.')
+        
+        self.reconstructed_eigenvalues=reconstructed_eigenvalues
+        self.reconstructed_eigenvectors=reconstructed_eigenvectors
+        
+        return reconstructed_eigenvalues,reconstructed_eigenvectors#eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]
     
     def quantum_input_matrix_reconstruction(self):
         
@@ -268,6 +262,7 @@ class QPCA():
         ----------
         Using the reconstructed eigenvectors and eigenvalues from QPCA, we can reconstruct the original input matrix using the reverse procedure of SVD.
         """
+        
         
         k = self.reconstructed_eigenvalues.argsort()[::-1]   
         reconstructed_eigenvalues = self.reconstructed_eigenvalues[k]
@@ -334,23 +329,26 @@ class QPCA():
             -----
             """
 
-            eigenValues,eigenVectors=np.linalg.eig(self.input_matrix)
+            eigenValues,eigenVectors=np.linalg.eig(self.true_input_matrix)
             idx = eigenValues.argsort()[::-1]   
             original_eigenValues = eigenValues[idx]
             original_eigenVectors = eigenVectors[:,idx]
 
 
             if eigenvector_benchmarking:
-                error_list, delta=eigenvectors_benchmarking(reconstructed_eigenvalue_eigenvector_tuple=self.reconstructed_eigenvalue_eigenvector_tuple,
-                                                             original_eigenvectors=original_eigenVectors,original_eigenvalues=original_eigenValues,mean_threshold=self.mean_threshold,
-                                                             input_matrix=self.input_matrix,n_shots=self.n_shots,print_distances=print_distances,
-                                                             only_first_eigenvectors=only_first_eigenvectors,plot_delta=plot_delta,distance_type=distance_type,error_with_sign=error_with_sign,hide_plot=hide_plot)
+                error_list, delta=eigenvectors_benchmarking(input_matrix=self.true_input_matrix, original_eigenvalues=original_eigenValues, original_eigenvectors=original_eigenVectors,
+                                                            reconstructed_eigenvalues=self.reconstructed_eigenvalues, reconstructed_eigenvectors=self.reconstructed_eigenvectors,
+                                                            mean_threshold=self.mean_threshold, n_shots=self.n_shots,print_distances=print_distances, only_first_eigenvectors=only_first_eigenvectors,
+                                                            plot_delta=plot_delta,distance_type=distance_type,error_with_sign=error_with_sign,hide_plot=hide_plot)
             if eigenvalues_benchmarching:
-                eigenvalues_benchmarking(reconstructed_eigenvalue_eigenvector_tuple=self.reconstructed_eigenvalue_eigenvector_tuple,original_eigenvalues=original_eigenValues,mean_threshold=self.mean_threshold,print_error=print_error)
+                eigenvalues_benchmarking(original_eigenvalues=original_eigenValues,
+                                         reconstructed_eigenvalues=self.reconstructed_eigenvalues,
+                                         mean_threshold=self.mean_threshold, print_error=print_error)
 
             if sign_benchmarking:
-                sign_reconstruction_benchmarking(original_eigenvectors=original_eigenVectors,reconstructed_eigenvalue_eigenvector_tuple=self.reconstructed_eigenvalue_eigenvector_tuple
-                                                 ,original_eigenvalues=original_eigenValues,mean_threshold=self.mean_threshold,input_matrix=self.input_matrix,n_shots=self.n_shots)
+                sign_reconstruction_benchmarking(input_matrix=self.true_input_matrix, original_eigenvalues=original_eigenValues, original_eigenvectors=original_eigenVectors,
+                                                 reconstructed_eigenvalues=self.reconstructed_eigenvalues, reconstructed_eigenvectors=self.reconstructed_eigenvectors,
+                                                 mean_threshold=self.mean_threshold,n_shots=self.n_shots)
 
             if eigenvector_benchmarking:
                 
@@ -392,7 +390,7 @@ class QPCA():
         This method should be executed after the execution of eigenvectors_benchmarking() method in the spectral_benchmarking, just to visualize better in specific plots the trends of the reconstruction error for each reconstructed eigenvectors. More precisely, it should be executed after executing eigenvectors_benchmarking method for a different number of shots such that you can visualize better the error trend. You can also use this method to visualize the trends of the reconstruction error for a different number of shots at the increasing of the number of resolution qubits. The important thing to take into consideration is that you need to pass as argument the two dictionary described in the documentation (see the benchmark notebook for a more practical example)
         """
 
-        eigenValues,eigenVectors=np.linalg.eig(self.input_matrix)
+        eigenValues,eigenVectors=np.linalg.eig(self.true_input_matrix)
         idx = eigenValues.argsort()[::-1]   
         original_eigenValues = eigenValues[idx]
         original_eigenVectors = eigenVectors[:,idx]
