@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 import matplotlib.pyplot as plt
-#from texttable import Texttable
+from texttable import Texttable
 from scipy.spatial import distance 
 
 def eigenvectors_benchmarking(input_matrix, original_eigenvectors, original_eigenvalues, reconstructed_eigenvalues, reconstructed_eigenvectors, mean_threshold, 
@@ -274,13 +274,9 @@ def sign_reconstruction_benchmarking(input_matrix, original_eigenvalues, origina
     -----
     """ 
     
-    #reconstructed_eigenvalues=[eig[0] for eig in reconstructed_eigenvalue_eigenvector_tuple]
-    
     correct_reconstructed_eigenvalues=__remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
     
     correct_reconstructed_eigenvectors=[reconstructed_eigenvectors[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues)) if c_r_e==reconstructed_eigenvalues[j]]
-    
-    #correct_reconstructed_eigenvectors=[r[1][:len(input_matrix)] for c_r_e in correct_reconstructed_eigenvalues for r in reconstructed_eigenvalue_eigenvector_tuple if c_r_e==r[0]]
     
     original_eigenValues,original_eigenVectors=__reorder_original_eigenvalues_eigenvectors(input_matrix,original_eigenvectors,original_eigenvalues,correct_reconstructed_eigenvalues)
     

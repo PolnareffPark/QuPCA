@@ -226,6 +226,8 @@ class QPCA():
         eigenvalue_eigenvector_tuple,mean_threshold=general_postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,
                                                                            resolution=self.resolution,n_shots=self.n_shots,plot_peaks=plot_peaks)
         
+        print(mean_threshold,eigenvalue_eigenvector_tuple)
+        
         self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
         self.mean_threshold=mean_threshold[:len(self.true_input_matrix)]
         
