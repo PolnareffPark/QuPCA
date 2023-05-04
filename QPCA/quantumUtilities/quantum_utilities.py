@@ -52,6 +52,7 @@ def thetas_computation(input_matrix,debug=False):
                         :len(input_probabilities)]
 
     # Nodes contains all the values of the tree (except for the root)
+    
     nodes = []
     for st in all_combinations:
         starts = [general_bitstring.index(l) for l in general_bitstring if l.startswith(st)]
@@ -60,10 +61,14 @@ def thetas_computation(input_matrix,debug=False):
         nodes.append(np.sqrt(input_probabilities[starts].sum()))
 
     # add root tree
+    
     nodes.insert(0, 1)
     thetas = []
 
     idx = 0
+    
+    #compute all the thetas value for each node
+    
     for i in range(1, len(nodes), 2):
 
         right_node = i
@@ -119,11 +124,15 @@ def from_binary_tree_to_qcircuit(input_matrix, thetas, all_combinations):
             qc.ry(theta=r_l[1], qubit=target_qubit)
             continue
         not_gate = []
+        
+        #if the first qubit is 0, we put the corresponding rotation into not_gate list to remember that we have to insert an X gate before and after the control of that rotation 
+        
         for qb in range(target_qubit):
             if r_l[0][qb] == '0':
                 not_gate.append(qb)
         c_t_qubits = list(range(len(r_l[0])))
         n_controls = len(range(target_qubit))
+        
         if len(not_gate) > 0:
             qc.x(not_gate)
             c_ry = RYGate(r_l[1]).control(n_controls)
@@ -198,6 +207,8 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
             This method is used to reconstruct the amplitudes of the values of the statevector that is under consideration. In addition to this function, state vector tomography also includes a sign estimation function.
             """
         
+        #initialize a zero vector where we store the estimated probabilities
+        
         probabilities=np.zeros(2**c_size)
         quantum_regs_1=QuantumRegister(q_size)
         classical_regs_1 = ClassicalRegister(c_size, 'classical')
@@ -210,6 +221,8 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
         
         job = backend.run(transpile(tomography_circuit_1, backend=backend), shots=n_shots)
         counts = job.result().get_counts()
+        
+        #compute estimated probabilities as number of observation for the i-th state divided by the total number of shots performed
         
         for i in counts:
             counts[i]/=n_shots
@@ -253,8 +266,16 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
         n_classical_register=c_size+1
         classical_registers=ClassicalRegister(n_classical_register,'classical')
         qr_control = QuantumRegister(1, 'control_qubit')
+        
+        #creation of the first controlled operator U from the circuit that contains the matrix encoding and the phase estimation operator
+        
         op_U=quantum_circuit.to_gate(label='op_U').control()
+        
+        #initialize the second controlled operator with the estimated amplitudes computed in the first step of the tomography
+        
         op_V = StatePreparation(np.sqrt(probabilities),label='op_V').control()
+        
+        #implement the sign estimation circuit as an Hadamard test
 
         tomography_circuit_2 = QuantumCircuit(qr_total_xi,qr_control, classical_registers,name='matrix')
         tomography_circuit_2.h(qr_control)
@@ -272,6 +293,9 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
         job = backend.run(transpile(tomography_circuit_2, backend=backend), shots=n_shots)
         counts_for_sign = job.result().get_counts()
         tmp=np.zeros(2**c_size)
+        
+        #check the sign: we consider only the results with control qubit 0
+        
         for c in counts_for_sign:
             if c[0]=='0':
                 tmp[int(c[1:],2)]=counts_for_sign[c]
@@ -287,6 +311,9 @@ def state_vector_tomography(quantum_circuit,n_shots,qubits_to_be_measured=None,b
             sign_dictionary.update({bin(e)[2:].zfill(c_size):sign})
 
         statevector_dictionary={}
+        
+        #merge the results of amplitude and sign estimation in a dictionary where the keys are the states and the values are the signed amplitudes
+        
         for e,key in enumerate(sign_dictionary):
             statevector_dictionary[key]=sign_dictionary[key]*np.sqrt(probabilities[e])
         return statevector_dictionary

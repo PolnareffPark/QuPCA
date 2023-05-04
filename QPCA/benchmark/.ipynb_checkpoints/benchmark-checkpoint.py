@@ -410,13 +410,23 @@ def __remove_usless_peaks(lambdas_num, mean_threshold, original_eig):
     peaks_to_keep=[]
     peaks_not_to_keep=[]
     
+    #hashmap to store original eigenvalue 
+    
     for i in original_eig:
             check_eigenvalues.update({i:0}) 
-            
+    
+    #check if we have two eigenvalues with the same mean_threshold values: it means that one of them will be a wrong estimated one
+    
     if len(np.array(lambdas_num)[np.argwhere(mean_threshold == np.amin(mean_threshold))])>1:
+        
+        #the eigenvalues with the mean_threshold values different from each other will be taken in a different list 
+        
         not_equal_threshold=np.array(lambdas_num)[np.argwhere(mean_threshold != np.amin(mean_threshold))]
         equal_thresholds=np.array(lambdas_num)[np.argwhere(mean_threshold == np.amin(mean_threshold))]
         dict_for_equal_threshold={}
+        
+        #check if the not_equal_thresholds eigenvalues are correctly estimated: if the nearest original eigenvalue , finded using the check_eigenvalues hashmap, has value 0 it means that it has not yet been considered
+        #Therefore the corresponding estimated eigenvalue can be considered as correctly estimated. 
         
         for n_e_t in not_equal_threshold:
             x,min_=__find_nearest(original_eig,n_e_t)
@@ -425,6 +435,9 @@ def __remove_usless_peaks(lambdas_num, mean_threshold, original_eig):
                 peaks_to_keep.append(n_e_t)
             else:
                 peaks_not_to_keep.append(n_e_t)
+        
+        #same check of before but for the equal_thresholds eigenvalues, that we know having some issues due to the same mean_threshold values.
+        #In case of two very similar eigenvalues with the same mean_threshold, we keep the right one by looking at the minimum distance with respect to the original eigenvalue not already considered.
 
         for e_t in equal_thresholds:
             x,min_=__find_nearest(original_eig,e_t)
@@ -450,6 +463,9 @@ def __remove_usless_peaks(lambdas_num, mean_threshold, original_eig):
                 peaks_to_keep.append(n_p)
             else:
                 peaks_not_to_keep.append(n_p)
+    
+    #remove wrongly estimated eigenvalue
+    
     if len(peaks_not_to_keep)>0:
         idxs=[list(lambdas_num).index(x) for x in peaks_not_to_keep if x in lambdas_num]
         lambdas_num=np.delete(lambdas_num,idxs)

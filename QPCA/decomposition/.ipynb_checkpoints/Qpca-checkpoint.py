@@ -149,6 +149,8 @@ class QPCA():
         true_input_matrix=input_matrix
         matrix_dimension=len(input_matrix)
         
+        #check if the matrix dimension is 2^N. If not, pad it with 0
+        
         if ((matrix_dimension & (matrix_dimension-1) == 0) and matrix_dimension != 0)==False:
             zeros=np.zeros((matrix_dimension,1))
             zeros_r=np.zeros((1,next_power_of_2(matrix_dimension)))
@@ -158,6 +160,7 @@ class QPCA():
                 input_matrix=np.append(input_matrix,zeros_r,axis=0)
         
         self.input_matrix_trace=np.trace(input_matrix)
+        #normalize the input matrix by its trace to obtain eigenvalues between 0 and 1
         self.input_matrix=input_matrix/np.trace(input_matrix)
         self.true_input_matrix=true_input_matrix/np.trace(true_input_matrix)
         self.resolution=resolution
@@ -204,7 +207,9 @@ class QPCA():
             
             assert n_repetitions>0, "n_repetitions must be greater than 0."
             self.n_shots=n_shots
-
+            
+            #check number of repetitions: if greater than 1, repeat n times the tomography and average the results
+            
             if n_repetitions==1:
                 tomo_dict=state_vector_tomography(quantum_circuit,n_shots)
                 statevector_dictionary=tomo_dict
@@ -226,13 +231,14 @@ class QPCA():
         eigenvalue_eigenvector_tuple,mean_threshold=general_postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,
                                                                            resolution=self.resolution,n_shots=self.n_shots,plot_peaks=plot_peaks)
         
-        print(mean_threshold,eigenvalue_eigenvector_tuple)
         
         self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
         self.mean_threshold=mean_threshold[:len(self.true_input_matrix)]
         
         reconstructed_eigenvalues=np.array([])
         reconstructed_eigenvectors=np.array([])
+        
+        #reshape the reconstructed eigenvectors. In case of previous padding, remove the unnecessary zero rows/columns
         
         for t in self.reconstructed_eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]:
             
@@ -246,7 +252,7 @@ class QPCA():
         self.reconstructed_eigenvalues=reconstructed_eigenvalues
         self.reconstructed_eigenvectors=reconstructed_eigenvectors
         
-        return reconstructed_eigenvalues,reconstructed_eigenvectors#eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]
+        return reconstructed_eigenvalues,reconstructed_eigenvectors
     
     def quantum_input_matrix_reconstruction(self):
         
@@ -270,6 +276,9 @@ class QPCA():
         reconstructed_eigenvalues = self.reconstructed_eigenvalues[k]
         reconstructed_eigenvectors = self.reconstructed_eigenvectors[:,k]
         reconstructed_eigenvalues*=self.input_matrix_trace
+        
+        #reconstruct the input matrix by multiplying the eigenvectors/eigenvalues matrices 
+        
         reconstructed_input_matrix = reconstructed_eigenvectors @ np.diag(reconstructed_eigenvalues) @ reconstructed_eigenvectors.T
         return reconstructed_input_matrix
     
@@ -397,6 +406,9 @@ class QPCA():
         original_eigenValues = eigenValues[idx]
         original_eigenVectors = eigenVectors[:,idx]
         dict_original_eigenvalues={}
+        
+        # dictionary useful to make comparison betweeen the correct eigenvectors
+        
         for i in range(len(original_eigenValues)):
             dict_original_eigenvalues.update({original_eigenValues[i]:i})
             

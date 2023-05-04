@@ -40,10 +40,20 @@ def general_postprocessing(input_matrix,statevector_dictionary,resolution,n_shot
         len_input_matrix=len(input_matrix)
         probabilities=np.array([abs(statevector_dictionary[s_d])**2 for s_d in statevector_dictionary])
         bitstrings=[''.join([''.join(str(j)) for j in i]) for i in list(map(list, itertools.product([0, 1], repeat=resolution+len_input_matrix)))]
+        
+        #tuple to associate at each state (combination of 0 and 1) the corresponding probabilities
+        
         probabilities_bitstringed=list(zip(bitstrings, probabilities))
+        
         df=pd.DataFrame(probabilities_bitstringed)
         df.columns=['state','module']
+        
+        #add a "lambda" column to the dataframe that contains all the qubits where the eigenvalues are encoded (as combination of 0 and 1) in the resolution qubits specified in the phase estimation process
+        
         df['lambda']=df['state'].apply(lambda x: x[-resolution:])
+        
+        #aggregate the module for each lambda and sort them in deascending way to see which are the most probable eigenvalues that phase estimation is able to extract with the given resolution
+        
         df1=df.groupby('lambda').agg({'module':'sum'})
         df1=df1.sort_values('module',ascending=False)
         
@@ -51,18 +61,28 @@ def general_postprocessing(input_matrix,statevector_dictionary,resolution,n_shot
         tail['eigenvalue']=tail['lambda'].apply(lambda x :int(x[::-1],base=2)/(2**resolution))
         if plot_peaks:
             tail[['eigenvalue','module']].sort_values('eigenvalue').set_index('eigenvalue').plot(style='-*',figsize=(15,10))
+            
         lambdas,lambdas_num,mean_threshold=__peaks_extraction(tail,len_input_matrix,n_shots)
+        
         df.columns=['state','module','lambda']
+        
+        #add reconstructed sign to the module column
+        
         signs=np.sign(np.array(list(statevector_dictionary.values())))
         signs[np.where(signs==0)]=1
         df['sign']=signs
         df['module']=df['module'].multiply(signs, axis=0)
         df=df.fillna(0)
         
+        #for each extracted eigenvalue, reconstruct the corresponding eigenvector using the maximum of maxima procedure
+        
         l_list=[]
         save_sign=[]
         eigenvalues=[]
         for l in lambdas:
+            
+            #conversion from binary description of the eigenvalue to integer form, remembering that phase estimation encode the eigenvalue as x/2^resolution
+            
             eigenvalues.append(int(l[::-1],base=2)/(2**resolution))
             a_=np.array(df.query("state.str.endswith(@l)")['module'].values)
             save_sign.append(np.sign(a_))
@@ -130,11 +150,15 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
     offset=1/n_shots
     stop=False
     while stop==False:
+        
+        #compute the most likely peaks (eigenvalues)
+        
         p_=find_peaks(df.sort_values(['eigenvalue'])['module'],threshold=offset)
         p=p_[0]
         right_thresholds=p_[1]['right_thresholds']
         left_thresholds=p_[1]['left_thresholds']
         
+        #check if the number of peaks are equal (or less) then the expected ones since we don't want a greater number of peaks than expected
         
         if len(p)>len_input_matrix or len(p)==0:
             offset+=1/n_shots
@@ -144,6 +168,8 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
                 el = df.sort_values(['eigenvalue']).iloc[i]
                 nums_peaks.append(el['eigenvalue'])
                 peaks.append(el['lambda'])
+    
+    #mean_threshold helps in showing which are the eigenvalue that we are not able to estimate in a right way. If the phase estimation is not able to extract an eigenvalue in a correct way, this eigenvalue will have the lowest mean_threshold value
     
     mean_threshold=(left_thresholds+right_thresholds)/2
     sorted_peaks=np.array(peaks)[mean_threshold.argsort()[::-1]]

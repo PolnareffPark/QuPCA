@@ -39,15 +39,6 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
                 np.random.seed(seed)
             random_matrix=np.random.rand(matrix_dimension, matrix_dimension) 
             hermitian_matrix=np.dot(random_matrix, random_matrix.T)
-            
-            '''if ((matrix_dimension & (matrix_dimension-1) == 0) and matrix_dimension != 0)==False:
-                print('ok')
-                zeros=np.zeros((matrix_dimension,1))
-                zeros_r=np.zeros((1,next_power_of_2(len(hermitian_matrix))))
-                for i in range(next_power_of_2(len(hermitian_matrix))-len(hermitian_matrix)):
-                    hermitian_matrix=np.append(hermitian_matrix,zeros,axis=1)
-                for i in range(next_power_of_2(len(hermitian_matrix))-len(hermitian_matrix)):
-                    hermitian_matrix=np.append(hermitian_matrix,zeros_r,axis=0)'''
 
             if eigenvalues_list:
                 eig, e_v = np.linalg.eig(hermitian_matrix)
