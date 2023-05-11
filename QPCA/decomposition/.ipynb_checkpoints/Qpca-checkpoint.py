@@ -1,10 +1,9 @@
 import numpy as np
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 import warnings
-from qiskit.algorithms.linear_solvers.matrices.numpy_matrix import NumPyMatrix
-from qiskit.circuit.library import PhaseEstimation
 import math
-from ..quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit,state_vector_tomography
+from ..quantumUtilities.Tomography import StateVectorTomography
+from ..quantumUtilities.qRam_Builder import QramBuilder
+from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
 from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
 from ..preprocessingUtilities.preprocessing_matrix_utilities import next_power_of_2
 from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking,distance_function_wrapper
@@ -58,63 +57,6 @@ class QPCA():
     
     """      
     
-    def __generate_qram_circuit(self):
-        
-        """
-        Generate qram circuit.
-
-        Parameters
-        ----------
-
-        Returns
-        ----------
-        qc: QuantumCircuit 
-                    The quantum circuit that encodes the input matrix.
-                    
-        Notes
-        ----------
-        This method implements the quantum circuit generation to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
-        log2(n_samples, n_features).
-        """
-        
-        input_matrix=self.input_matrix
-        
-        thetas, all_combinations=thetas_computation(input_matrix=input_matrix)
-        
-        qc=from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations)
-        
-        self.qram_circuit=qc
-        
-        return qc
-
-    def __generate_phase_estimation_circuit(self):
-        """
-        Generate phase estimation circuit with a number of qubits provided as resolution parameter in the constructor.
-
-        Parameters
-        ----------
-
-        Returns
-        ----------
-        q_circuit: QuantumCircuit. 
-                The quantum circuit that performs the encoding of the input matrix and Phase Estimation.
-                    
-        Notes
-        ----------
-
-        """
-        
-        u_circuit = NumPyMatrix(self.input_matrix, evolution_time=2*np.pi)
-        pe = PhaseEstimation(self.resolution, u_circuit, name = "PE")
-        tot_qubit = pe.qregs[0].size+self.qram_circuit.qregs[0].size
-        qr_total = QuantumRegister(tot_qubit, 'total')
-        q_circuit = QuantumCircuit(qr_total , name='matrix')
-        q_circuit.append(self.qram_circuit.to_gate(), qr_total[pe.qregs[0].size:])
-        q_circuit.append(pe.to_gate(), qr_total[0:pe.num_qubits])
-        self.total_circuit=q_circuit
-        return q_circuit
-    
-    
     def fit(self, input_matrix, resolution, plot_qram=False,plot_pe_circuit=False):
         
         """
@@ -160,16 +102,21 @@ class QPCA():
                 input_matrix=np.append(input_matrix,zeros_r,axis=0)
         
         self.input_matrix_trace=np.trace(input_matrix)
+        
         #normalize the input matrix by its trace to obtain eigenvalues between 0 and 1
+        
         self.input_matrix=input_matrix/np.trace(input_matrix)
         self.true_input_matrix=true_input_matrix/np.trace(true_input_matrix)
         self.resolution=resolution
+    
+        qc=QramBuilder.generate_qram_circuit(self.input_matrix)
+        self.qram_circuit=qc
         
-        qc=self.__generate_qram_circuit()
         if plot_qram:
             display(qc.draw('mpl'))
         
-        pe_circuit=self.__generate_phase_estimation_circuit()
+        pe_circuit=PeCircuitBuilder.generate_PE_circuit(input_matrix=self.input_matrix,resolution=self.resolution,qram_circuit=self.qram_circuit)
+        self.total_circuit=pe_circuit
         if plot_pe_circuit:
             display(pe_circuit.draw('mpl'))
         
@@ -211,10 +158,10 @@ class QPCA():
             #check number of repetitions: if greater than 1, repeat n times the tomography and average the results
             
             if n_repetitions==1:
-                tomo_dict=state_vector_tomography(quantum_circuit,n_shots)
+                tomo_dict=StateVectorTomography.state_vector_tomography(quantum_circuit,n_shots)
                 statevector_dictionary=tomo_dict
             else:
-                tomo_dict=[state_vector_tomography(quantum_circuit,n_shots) for j in range(n_repetitions)]
+                tomo_dict=[StateVectorTomography.state_vector_tomography(quantum_circuit,n_shots) for j in range(n_repetitions)]
                 keys=list(tomo_dict[0].keys())
                 new_tomo_dict={}
                 for k in keys:

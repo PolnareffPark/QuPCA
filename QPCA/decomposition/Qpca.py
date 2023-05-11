@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 import math
-from ..quantumUtilities.quantum_utilities import state_vector_tomography
+from ..quantumUtilities.Tomography import StateVectorTomography
 from ..quantumUtilities.qRam_Builder import QramBuilder
 from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
 from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
@@ -102,19 +102,19 @@ class QPCA():
                 input_matrix=np.append(input_matrix,zeros_r,axis=0)
         
         self.input_matrix_trace=np.trace(input_matrix)
+        
         #normalize the input matrix by its trace to obtain eigenvalues between 0 and 1
+        
         self.input_matrix=input_matrix/np.trace(input_matrix)
         self.true_input_matrix=true_input_matrix/np.trace(true_input_matrix)
         self.resolution=resolution
-        
-        #qc=self.__generate_qram_circuit()
+    
         qc=QramBuilder.generate_qram_circuit(self.input_matrix)
         self.qram_circuit=qc
         
         if plot_qram:
             display(qc.draw('mpl'))
         
-        #pe_circuit=self.__generate_phase_estimation_circuit()
         pe_circuit=PeCircuitBuilder.generate_PE_circuit(input_matrix=self.input_matrix,resolution=self.resolution,qram_circuit=self.qram_circuit)
         self.total_circuit=pe_circuit
         if plot_pe_circuit:
@@ -158,10 +158,10 @@ class QPCA():
             #check number of repetitions: if greater than 1, repeat n times the tomography and average the results
             
             if n_repetitions==1:
-                tomo_dict=state_vector_tomography(quantum_circuit,n_shots)
+                tomo_dict=StateVectorTomography.state_vector_tomography(quantum_circuit,n_shots)
                 statevector_dictionary=tomo_dict
             else:
-                tomo_dict=[state_vector_tomography(quantum_circuit,n_shots) for j in range(n_repetitions)]
+                tomo_dict=[StateVectorTomography.state_vector_tomography(quantum_circuit,n_shots) for j in range(n_repetitions)]
                 keys=list(tomo_dict[0].keys())
                 new_tomo_dict={}
                 for k in keys:
