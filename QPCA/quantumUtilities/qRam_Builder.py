@@ -1,9 +1,12 @@
 from ..quantumUtilities.quantum_utilities import thetas_computation,from_binary_tree_to_qcircuit
+from qiskit.circuit.library.data_preparation.state_preparation import StatePreparation
+import numpy as np
+from qiskit import QuantumCircuit
 
 class QramBuilder():
     
     @classmethod
-    def generate_qram_circuit(class_,input_matrix):
+    def generate_qram_circuit(class_,input_matrix, optimized_qram):
         """
         Generate qram circuit.
 
@@ -13,22 +16,38 @@ class QramBuilder():
         input_matrix: array-like of shape (n_samples, n_features)
                         Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
                         and `n_features` is the number of features.
+        
+        optimized_qram: bool value
+                        If True, it returns an optimized version of the preprocessing circuit. Otherwise, a custom implementation of a Qram is returned.
+                        Unless necessary, it is recommended to keep the optimized version of this circuit.
 
         Returns
         ----------
         qc: QuantumCircuit 
-                    The quantum circuit that encodes the input matrix.
-                    
+                    Preprocessing circuit.
+        
         Notes
         ----------
-        This method implements the quantum circuit generation to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
-        log2(n_samples, n_features).
+        This method implements the quantum circuit generation to encode a generic input matrix. For the custom implementation, it is important to note the spatial complexity of the circuit is in the order of log2(n_samples, n_features).
+                    
         """
+        if optimized_qram:
+
+            flattened_matrix = input_matrix.flatten()
+            norm = np.linalg.norm(flattened_matrix)
+            state_preparation = StatePreparation(flattened_matrix / norm)
+
+            num_qubits = int(np.sqrt(len(flattened_matrix)))
+            qc = QuantumCircuit(num_qubits)
+
+            qc.append(state_preparation, [i for i in range(num_qubits-1,-1,-1)])
+            
+        else:
+            
+            thetas, all_combinations=thetas_computation(input_matrix=input_matrix)
         
-        thetas, all_combinations=thetas_computation(input_matrix=input_matrix)
-        
-        qc=from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations)
-        
+            qc=from_binary_tree_to_qcircuit(input_matrix,thetas, all_combinations)      
+
         return qc
 
     
