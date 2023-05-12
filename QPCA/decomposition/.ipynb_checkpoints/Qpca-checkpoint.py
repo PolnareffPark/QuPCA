@@ -57,7 +57,7 @@ class QPCA():
     
     """      
     
-    def fit(self, input_matrix, resolution, plot_qram=False,plot_pe_circuit=False):
+    def fit(self, input_matrix, resolution, optimized_qram=True, plot_qram=False,plot_pe_circuit=False):
         
         """
         Fit Qpca model. This method generates the encoding matrix circuit and apply the phase estimation operator.
@@ -71,6 +71,10 @@ class QPCA():
                     
         resolution: int value
                     Number of qubits used for the phase estimation process to encode the eigenvalues.
+                    
+        optimized_qram: bool value, default=True
+                        If True, it returns an optimized version of the preprocessing circuit. Otherwise, a custom implementation of a Qram is returned.
+                        Unless necessary, it is recommended to keep the optimized version of this circuit.
                     
         plot_qram: bool value, default=False
                     If True, it returns a plot of the Qram circuit that encodes the input matrix.
@@ -109,7 +113,7 @@ class QPCA():
         self.true_input_matrix=true_input_matrix/np.trace(true_input_matrix)
         self.resolution=resolution
     
-        qc=QramBuilder.generate_qram_circuit(self.input_matrix)
+        qc=QramBuilder.generate_qram_circuit(self.input_matrix, optimized_qram=optimized_qram)
         self.qram_circuit=qc
         
         if plot_qram:
