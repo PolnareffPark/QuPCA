@@ -29,6 +29,6 @@ html_theme =  'sphinx_rtd_theme'#'alabaster'
 html_static_path = ['_static']
 html_theme_options = {
     'prev_next_buttons_location': None,
-    'collapse_navigation': False,
+    'collapse_navigation': True,
     'sticky_navigation': True,
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>quantumUtilities &mdash; Qpca  documentation</title>
@@ -17,7 +17,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="preprocessingUtilities" href="Q_preprocessing.html" />
+    <link rel="next" title="State Vector Tomography" href="Tomography.html" />
     <link rel="prev" title="decomposition" href="QPCA.html" /> 
 </head>
 
@@ -43,56 +43,21 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">QPCA</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="QPCA.html">decomposition</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="QPCA.html#module-contents">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="QPCA.html">decomposition</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">quantumUtilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-QPCA.quantumUtilities">Module contents</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#QPCA.quantumUtilities.from_binary_tree_to_qcircuit"><code class="docutils literal notranslate"><span class="pre">from_binary_tree_to_qcircuit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#QPCA.quantumUtilities.state_vector_tomography"><code class="docutils literal notranslate"><span class="pre">state_vector_tomography()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#QPCA.quantumUtilities.thetas_computation"><code class="docutils literal notranslate"><span class="pre">thetas_computation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tomography.html">State Vector Tomography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PE.html">Phase Estimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Qram.html">QRAM</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">preprocessingUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">postprocessingUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark.html">benchmark</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">preprocessingUtilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Q_preprocessing.html#module-QPCA.preprocessingUtilities">Module contents</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Q_preprocessing.html#QPCA.preprocessingUtilities.generate_matrix"><code class="docutils literal notranslate"><span class="pre">generate_matrix()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">postprocessingUtilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Q_postprocessing.html#module-QPCA.postprocessingUtilities">Module contents</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Q_postprocessing.html#QPCA.postprocessingUtilities.general_postprocessing"><code class="docutils literal notranslate"><span class="pre">general_postprocessing()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="benchmark.html">benchmark</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmark.html#module-contents">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Example%20of%20QPCA%20usage.html">Example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Example_tomography_modules.html">Example of state tomography usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Example%20of%20state%20tomography%20usage.html">Example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Example_benchmark.html">Example of benchmark</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Example%20of%20benchmark.html">Example</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Example%20of%20benchmark.html#eigenvectors-benchmark">Eigenvectors benchmark</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Example%20of%20benchmark.html#eigenvalues-benchmark">Eigenvalues benchmark</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Example%20of%20benchmark.html#eigenvectors-reconstruction-error-benchmark">Eigenvectors reconstruction error benchmark</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example_tomography_modules.html">Example of state tomography usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example_benchmark.html">Example of benchmark</a></li>
 </ul>
 
         </div>
@@ -122,83 +87,13 @@
              
   <section id="quantumutilities">
 <h1>quantumUtilities<a class="headerlink" href="#quantumutilities" title="Permalink to this heading"></a></h1>
-<section id="module-QPCA.quantumUtilities">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-QPCA.quantumUtilities" title="Permalink to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="QPCA.quantumUtilities.from_binary_tree_to_qcircuit">
-<span class="sig-prename descclassname"><span class="pre">QPCA.quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">from_binary_tree_to_qcircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_combinations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.quantumUtilities.from_binary_tree_to_qcircuit" title="Permalink to this definition"></a></dt>
-<dd><p>Preprocessing quantum circuit generation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
-<li><p><strong>thetas</strong> (<em>array-like</em>) – List of all the computed thetas for the unitary rotations R_ys to encode the input matrix.</p></li>
-<li><p><strong>all_combinations</strong> (<em>array-like</em>) – List of all the possibile combinations of bitstrings up to length log2(n_samples*n_features)</p></li>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Tomography.html">State Vector Tomography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PE.html">Phase Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Qram.html">QRAM</a></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>qc</strong> – The quantum circuit that encodes the input matrix.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>QuantumCircuit.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method generalize the implementation of a quantum circuit to encode a generic input matrix. It is important to note the spatial complexity of the circuit that is in the order of
-log2(n_samples*n_features).</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="QPCA.quantumUtilities.state_vector_tomography">
-<span class="sig-prename descclassname"><span class="pre">QPCA.quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">state_vector_tomography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quantum_circuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubits_to_be_measured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drawing_amplitude_circuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drawing_sign_circuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.quantumUtilities.state_vector_tomography" title="Permalink to this definition"></a></dt>
-<dd><p>State vector tomography to estimate real vectors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>quantum_circuit</strong> (<em>QuantumCircuit</em>) – The quantum circuit to be reconstructed.</p></li>
-<li><p><strong>n_shots</strong> (<em>int value</em>) – Number of measures performed in the tomography process.</p></li>
-<li><p><strong>qubits_to_be_measured</strong> (<em>Union</em><em>[</em><em>Qubit</em><em>, </em><em>QuantumRegister</em><em>, </em><em>int</em><em>, </em><em>slice</em><em>, </em><em>Sequence</em><em>[</em><em>Union</em><em>[</em><em>Qubit</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>)</em><em>, </em><em>default=None.</em>) – Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).</p></li>
-<li><p><strong>backend</strong> (<em>Qiskit backend</em><em>, </em><em>default value=None.</em>) – The Qiskit backend used to execute the circuit. If None, the qasm simulator is used by default.</p></li>
-<li><p><strong>drawing_amplitude_circuit</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, a drawing of the amplitude estimation circuit of the tomography algorithm is displayed. Otherwise, only the reconstructed statevector is returned.</p></li>
-<li><p><strong>drawing_sign_circuit</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, a drawing of the sign estimation circuit of the tomography algorithm is displayed. Otherwise, only the reconstructed statevector is returned.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>statevector_dictionary</strong> – The reconstructed statevector of the input quantum circuit.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict-like.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method reconstruct the real statevector of the input quantum circuit. It is an implementation of the Algorithm 4.1 in “A Quantum Interior Point Method for LPs and SDPs” paper, and it is composed of
-two parts: amplitudes estimation and sign estimation.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="QPCA.quantumUtilities.thetas_computation">
-<span class="sig-prename descclassname"><span class="pre">QPCA.quantumUtilities.</span></span><span class="sig-name descname"><span class="pre">thetas_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.quantumUtilities.thetas_computation" title="Permalink to this definition"></a></dt>
-<dd><p>Thetas computation-Preprocessing phase.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix that has to be encoded in quantum circuit to perform QPCA.</p></li>
-<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>default=False.</em>) – If True, print the amplitudes for each state. If False, nothing happens.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>thetas</strong> (<em>array-like.</em>) – List of all the computed thetas for the unitary rotations R_y to encode the input matrix.</p></li>
-<li><p><strong>all_combinations</strong> (<em>array-like.</em>) – List of all the possibile combinations of bitstrings up to length log2(p*q), with p number of rows and q number of columns of the input matrix.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method is part of the preprocessing stage to compute all the thetas (angles) necessary to perform the unitary rotations in the circuit to store the input matrix.</p>
-</dd></dl>
-
-</section>
+</div>
 </section>
 
 

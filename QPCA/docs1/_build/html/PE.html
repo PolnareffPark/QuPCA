@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>preprocessingUtilities &mdash; Qpca  documentation</title>
+  <title>Phase Estimation &mdash; Qpca  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,8 +17,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="postprocessingUtilities" href="Q_postprocessing.html" />
-    <link rel="prev" title="QRAM" href="Qram.html" /> 
+    <link rel="next" title="QRAM" href="Qram.html" />
+    <link rel="prev" title="Tomography" href="Tomography.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,14 +44,16 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">QPCA</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="QPCA.html">decomposition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="QUtilities.html">quantumUtilities</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">preprocessingUtilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-QPCA.preprocessingUtilities">Module contents</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#QPCA.preprocessingUtilities.generate_matrix"><code class="docutils literal notranslate"><span class="pre">generate_matrix()</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="QUtilities.html">quantumUtilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Tomography.html">Tomography</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Phase Estimation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#QPCA.quantumUtilities.qPe_Builder.PeCircuitBuilder"><code class="docutils literal notranslate"><span class="pre">PeCircuitBuilder</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="Qram.html">QRAM</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="Q_preprocessing.html">preprocessingUtilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Q_postprocessing.html">postprocessingUtilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="benchmark.html">benchmark</a></li>
 </ul>
@@ -76,9 +78,10 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="modules.html">QPCA</a></li>
-      <li class="breadcrumb-item active">preprocessingUtilities</li>
+          <li class="breadcrumb-item"><a href="QUtilities.html">quantumUtilities</a></li>
+      <li class="breadcrumb-item active">Phase Estimation</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/Q_preprocessing.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/PE.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -86,37 +89,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="preprocessingutilities">
-<h1>preprocessingUtilities<a class="headerlink" href="#preprocessingutilities" title="Permalink to this heading"></a></h1>
-<section id="module-QPCA.preprocessingUtilities">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-QPCA.preprocessingUtilities" title="Permalink to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="QPCA.preprocessingUtilities.generate_matrix">
-<span class="sig-prename descclassname"><span class="pre">QPCA.preprocessingUtilities.</span></span><span class="sig-name descname"><span class="pre">generate_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix_dimension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvalues_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replicate_paper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.preprocessingUtilities.generate_matrix" title="Permalink to this definition"></a></dt>
-<dd><p>Hermitian matrix generation.</p>
+  <section id="phase-estimation">
+<h1>Phase Estimation<a class="headerlink" href="#phase-estimation" title="Permalink to this heading"></a></h1>
+<span class="target" id="module-QPCA.quantumUtilities.qPe_Builder"></span><dl class="py class">
+<dt class="sig sig-object py" id="QPCA.quantumUtilities.qPe_Builder.PeCircuitBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">QPCA.quantumUtilities.qPe_Builder.</span></span><span class="sig-name descname"><span class="pre">PeCircuitBuilder</span></span><a class="headerlink" href="#QPCA.quantumUtilities.qPe_Builder.PeCircuitBuilder" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="QPCA.quantumUtilities.qPe_Builder.PeCircuitBuilder.generate_PE_circuit">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_PE_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qram_circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.quantumUtilities.qPe_Builder.PeCircuitBuilder.generate_PE_circuit" title="Permalink to this definition"></a></dt>
+<dd><p>Generate phase estimation circuit with a number of qubits provided as resolution parameter in the constructor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>matrix_dimension</strong> (<em>int value.</em>) – Dimension of the matrix that you want to generate. Since the matrix need to be squared, this value represent the number of rows and number of columns.</p></li>
-<li><p><strong>eigenvalues_list</strong> (<em>array-like</em><em>, </em><em>default=None.</em>) – List of eigenvalues that you want to set in your matrix. This is to facilitate the integer eigenvalues setting for the matrix. If None, the matrix will
-have its own eigenvalues.</p></li>
-<li><p><strong>replicate_paper</strong> (<em>bool</em><em>, </em><em>default=True.</em>) – If True means that you are going to replicate the experiments with the matrix proposed in the paper (2x2 or 4x4 based on the dimension_matrix value).
-If False, you are going to generate a new random matrix.</p></li>
-<li><p><strong>seed</strong> (<em>int value</em><em>, </em><em>default=None.</em>) – Value to pass if you want a reproducible experiment. If None, every time you execute this method, a different matrix is generated.</p></li>
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix on which you want to apply QPCA divided by its trace, where <cite>n_samples</cite> is the number of samples
+and <cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>resolution</strong> (<em>int value</em>) – Number of qubits used for the phase estimation process to encode the eigenvalues.</p></li>
+<li><p><strong>qram_circuit</strong> (<em>QuantumCircuit</em>) – The quantum circuit that encodes the input matrix.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>input_matrix</strong></p>
+<dd class="field-even"><p><strong>q_circuit</strong> – The quantum circuit that performs the encoding of the input matrix and Phase Estimation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array-like. The input matrix that you are going to use in the experiments.</p>
+<dd class="field-odd"><p>QuantumCircuit.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>With this method you can generate a new random hermitian matrix or the matrices presented in the paper “A Low Complexity Quantum Principal Component Analysis Algorithm” paper.</p>
 </dd></dl>
 
-</section>
+</dd></dl>
+
 </section>
 
 

@@ -1,9 +1,9 @@
 quantumUtilities
 ============
 
-Module contents
----------------
+.. toctree::
+   :maxdepth: 1
 
-.. automodule:: QPCA.quantumUtilities
-   :members:
-   :undoc-members:
+   Tomography
+   PE
+   Qram
