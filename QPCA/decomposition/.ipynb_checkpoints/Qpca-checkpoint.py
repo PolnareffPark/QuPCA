@@ -16,12 +16,7 @@ class QPCA():
 
     Parameters
     ----------
-    input_matrix : array-like of shape (n_samples, n_features)
-            Input hermitian matrix on which you want to apply QPCA, where `n_samples` is the number of samples
-            and `n_features` is the number of features.
-        
-    resolution : int value
-            Number of qubits used for the phase estimation process to encode the eigenvalues.
+    
     
     Attributes
     ----------
@@ -31,7 +26,13 @@ class QPCA():
     
     input_matrix : array-like of shape (n_samples, n_features)
                         Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                        and `n_features` is the number of features.
+                        and `n_features` is the number of features. In case of non-2^N Hermitian matrix, a zero-padding method is applied to make it a 2^N matrix.
+    
+    true_input_matrix : array-like of shape (n_samples, n_features)
+                        This is the true input matrix that is given as input. 
+    
+    resolution : int value
+                        Number of qubits used for the phase estimation process to encode the eigenvalues.
     
     qram_circuit : QuantumCircuit 
                         The quantum circuit that encodes the input matrix.
@@ -42,14 +43,14 @@ class QPCA():
     n_shots : int value
                         Number of measures performed in the tomography process.
     
-    reconstructed_eigenvalue_eigenvector_tuple : array-like
-                        Array of tuples of the form [(e_1,v_1),(e_2,v_2),..] where e_s are the eigenvalues and v_s are the reconstructed eigenvectors.
+    mean_threshold: array-like
+                        This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is used for the benchmark process to cut out the bad reconstructed eigenvalues.
     
-    original_eigenValues : array-like
-                        Original eigenvalues of the input matrix.
-                
-    original_eigenVectors : array-like
-                        Orignal eigenvectors of the input matrix.
+    reconstructed_eigenvalues : array-like
+                        Reconstructed eigenvalues.
+    
+    reconstructed_eigenvectors : array-like
+                        Reconstructed eigenvectors.
     
     Notes
     ----------
@@ -145,8 +146,11 @@ class QPCA():
         
         Returns
         ----------
-        eigenvalue_eigenvector_tuple: array-like. 
-                List of tuples containing as first value the reconstructed eigenvalue and as second value the reconstructed eigenvector.
+        reconstructed_eigenvalues : array-like
+                        Reconstructed eigenvalues.
+    
+        reconstructed_eigenvectors : array-like
+                            Reconstructed eigenvectors.
                     
         Notes
         ----------
@@ -154,36 +158,14 @@ class QPCA():
         way, the statevector of the quantum state is reconstructed and a postprocessing method is executed to get the eigenvectors from the reconstructed statevector.
         """
         
-        def wrapper_state_vector_tomography(quantum_circuit,n_shots):
-            
-            assert n_repetitions>0, "n_repetitions must be greater than 0."
-            self.n_shots=n_shots
-            
-            #check number of repetitions: if greater than 1, repeat n times the tomography and average the results
-            
-            if n_repetitions==1:
-                tomo_dict=StateVectorTomography.state_vector_tomography(quantum_circuit,n_shots)
-                statevector_dictionary=tomo_dict
-            else:
-                tomo_dict=[StateVectorTomography.state_vector_tomography(quantum_circuit,n_shots) for j in range(n_repetitions)]
-                keys=list(tomo_dict[0].keys())
-                new_tomo_dict={}
-                for k in keys:
-                    tmp=[]
-                    for d in tomo_dict:
-                        tmp.append(d[k])
-                    mean=np.mean(tmp)
-                    new_tomo_dict.update({k:mean})
-                    statevector_dictionary=new_tomo_dict
-
-            return statevector_dictionary
         
-        statevector_dictionary=wrapper_state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots)
+        self.n_shots=n_shots
+        
+        statevector_dictionary=StateVectorTomography.state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots,n_repetitions=n_repetitions)
+        
         eigenvalue_eigenvector_tuple,mean_threshold=general_postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,
                                                                            resolution=self.resolution,n_shots=self.n_shots,plot_peaks=plot_peaks)
         
-        
-        self.reconstructed_eigenvalue_eigenvector_tuple=eigenvalue_eigenvector_tuple
         self.mean_threshold=mean_threshold[:len(self.true_input_matrix)]
         
         reconstructed_eigenvalues=np.array([])
@@ -191,7 +173,7 @@ class QPCA():
         
         #reshape the reconstructed eigenvectors. In case of previous padding, remove the unnecessary zero rows/columns
         
-        for t in self.reconstructed_eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]:
+        for t in reconstructed_eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]:
             
             reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])    
             reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1][:len(self.true_input_matrix)])
