@@ -148,7 +148,7 @@ class StateVectorTomography():
         return statevector_dictionary
     
     @classmethod
-    def state_vector_tomography(class_,quantum_circuit,n_shots,qubits_to_be_measured=None,backend=None,drawing_amplitude_circuit=False,drawing_sign_circuit=False):
+    def state_vector_tomography(class_,quantum_circuit,n_shots,n_repetitions,qubits_to_be_measured=None,backend=None,drawing_amplitude_circuit=False,drawing_sign_circuit=False):
         """
         State vector tomography to estimate real vectors.
 
@@ -160,6 +160,10 @@ class StateVectorTomography():
 
         n_shots: int value
                     Number of measures performed in the tomography process.
+        
+        n_repetitions: int value
+                Number of times that state vector tomography will be executed. If > 1, the final result will be the average result
+                of all the execution of the tomography.
                     
         qubits_to_be_measured: Union[Qubit, QuantumRegister, int, slice, Sequence[Union[Qubit, int]]]), default=None.
                     Qubits to be measured. If None, all the qubits will be measured (like measure_all() instruction).
@@ -184,20 +188,34 @@ class StateVectorTomography():
         two parts: amplitudes estimation and sign estimation.
         """
         
-        if backend==None:
-            backend = Aer.get_backend("qasm_simulator")
-            
-        q_size=quantum_circuit.qregs[0].size
-        if qubits_to_be_measured==None:
-            c_size=q_size
-            qubits_to_be_measured=list(range(q_size))
-        elif isinstance(qubits_to_be_measured,int):
-            c_size=1
-        else:
-            tmp_array=np.array(list(range(q_size)))
-            c_size=len(tmp_array[qubits_to_be_measured])
+        
+        tomography_list_dict=[]
+        
+        for j in range(n_repetitions):
 
-        probabilities=class_.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
-        statevector_dictionary=class_.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured)
+            if backend==None:
+                backend = Aer.get_backend("qasm_simulator")
+            q_size=quantum_circuit.qregs[0].size
+            if qubits_to_be_measured==None:
+                c_size=q_size
+                qubits_to_be_measured=list(range(q_size))
+            elif isinstance(qubits_to_be_measured,int):
+                c_size=1
+            else:
+                tmp_array=np.array(list(range(q_size)))
+                c_size=len(tmp_array[qubits_to_be_measured])
+
+            probabilities=class_.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
+            tomography_list_dict.append(class_.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured))
+
+        states=list(tomography_list_dict[0].keys())
+        new_tomography_dict={}
+        for s in states:
+            tmp=[]
+            for d in tomography_list_dict:
+                tmp.append(d[s])
+            mean=np.mean(tmp)
+            new_tomography_dict.update({s:mean})
+            statevector_dictionary=new_tomography_dict
 
         return statevector_dictionary
