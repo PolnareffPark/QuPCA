@@ -3,12 +3,6 @@ import itertools
 from qiskit.circuit.library.standard_gates import RYGate
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 
-from qiskit.algorithms.linear_solvers.matrices.numpy_matrix import NumPyMatrix
-from qiskit.circuit.library import PhaseEstimation
-from qiskit import Aer, transpile, execute
-import matplotlib.pyplot as plt
-from qiskit.circuit.library.data_preparation.state_preparation import StatePreparation
-
 def thetas_computation(input_matrix,debug=False):
     
     """ Thetas computation-Preprocessing phase.

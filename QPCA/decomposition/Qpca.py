@@ -6,7 +6,7 @@ from ..quantumUtilities.qRam_Builder import QramBuilder
 from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
 from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
 from ..preprocessingUtilities.preprocessing_matrix_utilities import next_power_of_2
-from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking,distance_function_wrapper
+from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
 
