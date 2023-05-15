@@ -173,7 +173,7 @@ class QPCA():
         
         #reshape the reconstructed eigenvectors. In case of previous padding, remove the unnecessary zero rows/columns
         
-        for t in reconstructed_eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]:
+        for t in eigenvalue_eigenvector_tuple[:len(self.true_input_matrix)]:
             
             reconstructed_eigenvalues=np.append(reconstructed_eigenvalues,t[0])    
             reconstructed_eigenvectors=np.append(reconstructed_eigenvectors,t[1][:len(self.true_input_matrix)])
