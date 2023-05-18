@@ -5,6 +5,7 @@ from ..quantumUtilities.Tomography import StateVectorTomography
 from ..quantumUtilities.qRam_Builder import QramBuilder
 from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
 from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
+from ..preprocessingUtilities.preprocessing_matrix_utilities import check_matrix_dimension
 from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
@@ -93,27 +94,16 @@ class QPCA():
         """
         
         true_input_matrix=input_matrix
-        matrix_dimension=len(input_matrix)
         
-        #check if the matrix dimension is 2^N. If not, pad it with 0
+        # 2^N matrix optimization
         
-        if ((matrix_dimension & (matrix_dimension-1) == 0) and matrix_dimension != 0)==False:
-            zeros=np.zeros((matrix_dimension,1))
-            if matrix_dimension==0:
-                next_power=1
-            else:
-                next_power=2**math.ceil(math.log2(matrix_dimension))
-            zeros_r=np.zeros((1,next_power))
-            for i in range(next_power-matrix_dimension):
-                input_matrix=np.append(input_matrix,zeros,axis=1)
-            for i in range(next_power-matrix_dimension):
-                input_matrix=np.append(input_matrix,zeros_r,axis=0)
+        input_matrix=check_matrix_dimension(input_matrix)
         
         self.input_matrix_trace=np.trace(input_matrix)
         
         #normalize the input matrix by its trace to obtain eigenvalues between 0 and 1
         
-        self.input_matrix=input_matrix/np.trace(input_matrix)
+        self.input_matrix=input_matrix/self.input_matrix_trace
         self.true_input_matrix=true_input_matrix/np.trace(true_input_matrix)
         self.resolution=resolution
     
