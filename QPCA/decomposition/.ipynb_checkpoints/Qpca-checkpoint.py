@@ -6,7 +6,8 @@ from ..quantumUtilities.qRam_Builder import QramBuilder
 from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
 from ..postprocessingUtilities.postprocessing import general_postprocessing
 from ..preprocessingUtilities.preprocessing import check_matrix_dimension
-from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking
+from ..benchmark.benchmark import Benchmark_Manager
+#from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
 
@@ -209,8 +210,8 @@ class QPCA():
         return reconstructed_input_matrix
     
     
-    def spectral_benchmarking(self, eigenvector_benchmarking=True, eigenvalues_benchmarching=False,sign_benchmarking=False,print_distances=True,only_first_eigenvectors=True,plot_delta=False,
-                                  distance_type='l2',error_with_sign=False,hide_plot=False,print_error=False):
+    def spectral_benchmarking(self, eigenvector_benchmarking=False, eigenvalues_benchmarching=False, sign_benchmarking=False, print_distances=True,
+                              only_first_eigenvectors=False, plot_delta=False, distance_type='l2', error_with_sign=False, hide_plot=False, print_error=False):
 
             """ Method to benchmark the reconstructed eigenvectors/eigenvalues.
 
@@ -265,77 +266,15 @@ class QPCA():
             Notes
             -----
             """
-
-            eigenValues,eigenVectors=np.linalg.eig(self.true_input_matrix)
-            idx = eigenValues.argsort()[::-1]   
-            original_eigenValues = eigenValues[idx]
-            original_eigenVectors = eigenVectors[:,idx]
-
-
-            if eigenvector_benchmarking:
-                error_list, delta=eigenvectors_benchmarking(input_matrix=self.true_input_matrix, original_eigenvalues=original_eigenValues, original_eigenvectors=original_eigenVectors,
-                                                            reconstructed_eigenvalues=self.reconstructed_eigenvalues, reconstructed_eigenvectors=self.reconstructed_eigenvectors,
-                                                            mean_threshold=self.mean_threshold, n_shots=self.n_shots,print_distances=print_distances, only_first_eigenvectors=only_first_eigenvectors,
-                                                            plot_delta=plot_delta,distance_type=distance_type,error_with_sign=error_with_sign,hide_plot=hide_plot)
-            if eigenvalues_benchmarching:
-                eigenvalues_benchmarking(original_eigenvalues=original_eigenValues,
-                                         reconstructed_eigenvalues=self.reconstructed_eigenvalues,
-                                         mean_threshold=self.mean_threshold, print_error=print_error)
-
-            if sign_benchmarking:
-                sign_reconstruction_benchmarking(input_matrix=self.true_input_matrix, original_eigenvalues=original_eigenValues, original_eigenvectors=original_eigenVectors,
-                                                 reconstructed_eigenvalues=self.reconstructed_eigenvalues, reconstructed_eigenvectors=self.reconstructed_eigenvectors,
-                                                 mean_threshold=self.mean_threshold,n_shots=self.n_shots)
-
-            if eigenvector_benchmarking:
-                
-                return error_list, delta
+            
+            bench_manager=Benchmark_Manager(eigenvector_benchmarking_=eigenvector_benchmarking, eigenvalues_benchmarching_=eigenvalues_benchmarching, sign_benchmarking_=sign_benchmarking, print_distances_=print_distances,
+                                            only_first_eigenvectors_=only_first_eigenvectors, plot_delta_=plot_delta, distance_type_=distance_type, error_with_sign_=error_with_sign, hide_plot_=hide_plot, print_error_=print_error)
+            
+            results=bench_manager.benchmark(input_matrix_=self.true_input_matrix, reconstructed_eigenvalues_=self.reconstructed_eigenvalues, 
+                                            reconstructed_eigenvectors_=self.reconstructed_eigenvectors, mean_threshold_=self.mean_threshold, 
+                                            n_shots_=self.n_shots)
+            
+            
+            return results
+            
     
-            
-            
-    def error_benchmarking(self,shots_dict=None,errors_dict=None,delta_list=None,plot_delta=False,distance_type='l2'):
-        
-        """ Method to benchmark the error of the reconstructed eigenvectors.
-
-        Parameters
-        ----------
-        
-        shots_dict: dict-like
-                Dictionary that contains the number of shots executed for each reconstructed eigenvalues for a specific resolution value.
-                
-        errors_dict: dict-like
-                Dictionary where a specific value of the resolution used in the phase estimation (key) is associated with a list of tuples where each tuple contains the specific reconstructed eigenvalue with all the error of the related reconstructed eigenvector (for each number of shots).
-        
-        delta_list: array-like
-                List of all the delta (tomography) error for each number of shots executed in the experiments.
-                
-        plot_delta: bool value, default=False.
-                If True, a plot showing the trend of the tomography error is showed.
-                
-        distance_type: string value, default='l2'
-            It defines the distance measure used to benchmark the eigenvectors:
-
-                    -'l2': the l2 distance between original and reconstructed eigenvectors is computed.
-
-                    -'cosine': the cosine distance between original and reconstructed eigenvectors is computed.
-
-        Returns
-        -------
-                    
-        Notes
-        -----
-        This method should be executed after the execution of eigenvectors_benchmarking() method in the spectral_benchmarking, just to visualize better in specific plots the trends of the reconstruction error for each reconstructed eigenvectors. More precisely, it should be executed after executing eigenvectors_benchmarking method for a different number of shots such that you can visualize better the error trend. You can also use this method to visualize the trends of the reconstruction error for a different number of shots at the increasing of the number of resolution qubits. The important thing to take into consideration is that you need to pass as argument the two dictionary described in the documentation (see the benchmark notebook for a more practical example)
-        """
-
-        eigenValues,eigenVectors=np.linalg.eig(self.true_input_matrix)
-        idx = eigenValues.argsort()[::-1]   
-        original_eigenValues = eigenValues[idx]
-        original_eigenVectors = eigenVectors[:,idx]
-        dict_original_eigenvalues={}
-        
-        # dictionary useful to make comparison betweeen the correct eigenvectors
-        
-        for i in range(len(original_eigenValues)):
-            dict_original_eigenvalues.update({original_eigenValues[i]:i})
-            
-        error_benchmark(shots_dict=shots_dict,error_dict=errors_dict,dict_original_eigenvalues=dict_original_eigenvalues,delta_list=delta_list,plot_delta=plot_delta,label_error=distance_type)
