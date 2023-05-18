@@ -36,8 +36,6 @@ class QramBuilder():
             flattened_matrix = input_matrix.flatten()
             norm = np.linalg.norm(flattened_matrix)
             state_preparation = StatePreparation(flattened_matrix / norm)
-
-            #num_qubits = int(np.sqrt(len(flattened_matrix)))
             num_qubits=int(np.ceil(np.log2(len(flattened_matrix))))
 
             qc = QuantumCircuit(num_qubits)
