@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Example &mdash; Qpca  documentation</title>
@@ -89,7 +89,7 @@ set the matrix dimension and a seed for the reproducibility of the execution.</p
   <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
   <span class="kn">import</span> <span class="nn">random</span>
   <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-  <span class="kn">from</span> <span class="nn">QPCA.preprocessingUtilities.preprocessing_matrix_utilities</span> <span class="kn">import</span> <span class="n">generate_matrix</span>
+  <span class="kn">from</span> <span class="nn">QPCA.preprocessingUtilities.preprocessing</span> <span class="kn">import</span> <span class="n">generate_matrix</span>
 
   <span class="n">matrix_dimension</span><span class="o">=</span><span class="mi">2</span>
   <span class="n">seed</span><span class="o">=</span><span class="mi">19</span>
@@ -121,7 +121,11 @@ accuracy results but lower performance.</p>
 </div>
 <p>If you set the boolean flag plot_qram and plot_pe_circuit to True as in the example before, you are able to see
 two plots like the ones below.</p>
-<p>Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers.
+<p>Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers. By default, an optimized version
+of the encoding circuit is implemented using StatePreparation class of Qiskit.</p>
+<img alt="_images/optimized_qram.png" src="_images/optimized_qram.png" />
+<p>If you specify <code class="xref py py-obj docutils literal notranslate"><span class="pre">optimized_qram</span></code> as False in the <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.fit" title="QPCA.decomposition.QPCA.fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a> method, a custom version
+of the encoding circuit is implemented.
 As you can see, the number of qubit required to store the matrix is in the order of log(n*m), where n and m
 are the number of rows and columns of the input matrix.</p>
 <img alt="_images/qram.png" src="_images/qram.png" />

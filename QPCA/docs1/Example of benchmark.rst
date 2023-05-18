@@ -13,7 +13,7 @@ the eigenvectors reconstruction is set to 1000000.
    from QPCA.decomposition.Qpca import QPCA
    import numpy as np
    import matplotlib.pyplot as plt
-   from QPCA.preprocessingUtilities.preprocessing_matrix_utilities import generate_matrix
+   from QPCA.preprocessingUtilities.preprocessing import generate_matrix
 
    seed=4747
    resolutions=[8]

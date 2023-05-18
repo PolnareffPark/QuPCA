@@ -13,7 +13,7 @@ quantum state that you want to reconstruct.
    from qiskit import QuantumCircuit
    from qiskit import Aer, transpile
    from qiskit.visualization import array_to_latex
-   from QPCA.quantumUtilities.quantum_utilities import state_vector_tomography
+   from QPCA.quantumUtilities.Tomography import StateVectorTomography
 
    qc=QuantumCircuit(2)
    qc.x(0)
@@ -42,7 +42,7 @@ quantum states and the values the corresponding amplitudes with sign.
 
 .. code-block:: python
 
-   >>> state_vector_tomography(qc,n_shots=8000,drawing_amplitude_circuit=True,drawing_sign_circuit=True)
+   >>> StateVectorTomography.state_vector_tomography(qc,n_shots=8000,n_repetitions=1,drawing_amplitude_circuit=True,drawing_sign_circuit=True)
 
    {'00': 0.5054700782440045,
    '01': -0.4978704650810289,

@@ -15,7 +15,7 @@ set the matrix dimension and a seed for the reproducibility of the execution.
       import matplotlib.pyplot as plt
       import random
       import pandas as pd
-      from QPCA.preprocessingUtilities.preprocessing_matrix_utilities import generate_matrix
+      from QPCA.preprocessingUtilities.preprocessing import generate_matrix
 
       matrix_dimension=2
       seed=19
@@ -51,7 +51,13 @@ accuracy results but lower performance.
 If you set the boolean flag plot_qram and plot_pe_circuit to True as in the example before, you are able to see
 two plots like the ones below.
 
-Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers.
+Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers. By default, an optimized version 
+of the encoding circuit is implemented using StatePreparation class of Qiskit.
+
+.. image:: Images/optimized_qram.png
+
+If you specify :obj:`~QPCA.decomposition.QPCA.optimized_qram` as False in the :meth:`~QPCA.decomposition.QPCA.fit` method, a custom version 
+of the encoding circuit is implemented.
 As you can see, the number of qubit required to store the matrix is in the order of log(n*m), where n and m 
 are the number of rows and columns of the input matrix.
 
