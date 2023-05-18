@@ -4,8 +4,8 @@ import math
 from ..quantumUtilities.Tomography import StateVectorTomography
 from ..quantumUtilities.qRam_Builder import QramBuilder
 from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
-from ..postprocessingUtilities.postprocessing_eig_reconstruction import general_postprocessing
-from ..preprocessingUtilities.preprocessing_matrix_utilities import check_matrix_dimension
+from ..postprocessingUtilities.postprocessing import general_postprocessing
+from ..preprocessingUtilities.preprocessing import check_matrix_dimension
 from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
