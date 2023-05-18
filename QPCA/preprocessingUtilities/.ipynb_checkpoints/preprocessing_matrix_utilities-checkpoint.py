@@ -63,3 +63,22 @@ def generate_matrix(matrix_dimension,eigenvalues_list=None,replicate_paper=True,
 
         return input_matrix
     
+def check_matrix_dimension(input_matrix):
+    
+    matrix_dimension=len(input_matrix)
+        
+    #check if the matrix dimension is 2^N. If not, pad it with 0
+
+    if ((matrix_dimension & (matrix_dimension-1) == 0) and matrix_dimension != 0)==False:
+        zeros=np.zeros((matrix_dimension,1))
+        if matrix_dimension==0:
+            next_power=1
+        else:
+            next_power=2**math.ceil(math.log2(matrix_dimension))
+        zeros_r=np.zeros((1,next_power))
+        for i in range(next_power-matrix_dimension):
+            input_matrix=np.append(input_matrix,zeros,axis=1)
+        for i in range(next_power-matrix_dimension):
+            input_matrix=np.append(input_matrix,zeros_r,axis=0)
+            
+    return input_matrix
