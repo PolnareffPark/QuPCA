@@ -7,7 +7,6 @@ from ..quantumUtilities.qPe_Builder import PeCircuitBuilder
 from ..postprocessingUtilities.postprocessing import general_postprocessing
 from ..preprocessingUtilities.preprocessing import check_matrix_dimension
 from ..benchmark.benchmark import Benchmark_Manager
-#from ..benchmark.benchmark import eigenvectors_benchmarking,eigenvalues_benchmarking,error_benchmark,sign_reconstruction_benchmarking
 from scipy.spatial import distance
 #warnings.filterwarnings("ignore")
 
@@ -256,23 +255,24 @@ class QPCA():
 
             Returns
             -------
-            If eigenvector_benchmarking is True:
-
-                - save_list: array-like. 
-                    List of distances between all the original and reconsructed eigenvectors.
-                - delta: float value.
-                    The tomography error value.
+            results: array-like
+                    If eigenvector_benchmarking is True, it contains a list of two elements:
+                    
+                        - error_list: array-like. 
+                            List of distances between the original and reconstructed eigenvectors.
+                        - delta: float value.
+                            Tomography error value.
 
             Notes
             -----
             """
             
-            bench_manager=Benchmark_Manager(eigenvector_benchmarking_=eigenvector_benchmarking, eigenvalues_benchmarching_=eigenvalues_benchmarching, sign_benchmarking_=sign_benchmarking, print_distances_=print_distances,
-                                            only_first_eigenvectors_=only_first_eigenvectors, plot_delta_=plot_delta, distance_type_=distance_type, error_with_sign_=error_with_sign, hide_plot_=hide_plot, print_error_=print_error)
+            bench_manager=Benchmark_Manager(eigenvector_benchmarking=eigenvector_benchmarking, eigenvalues_benchmarching=eigenvalues_benchmarching, sign_benchmarking=sign_benchmarking, print_distances=print_distances,
+                                            only_first_eigenvectors=only_first_eigenvectors, plot_delta=plot_delta, distance_type=distance_type, error_with_sign=error_with_sign, hide_plot=hide_plot, print_error=print_error)
             
-            results=bench_manager.benchmark(input_matrix_=self.true_input_matrix, reconstructed_eigenvalues_=self.reconstructed_eigenvalues, 
-                                            reconstructed_eigenvectors_=self.reconstructed_eigenvectors, mean_threshold_=self.mean_threshold, 
-                                            n_shots_=self.n_shots)
+            results=bench_manager.benchmark(input_matrix=self.true_input_matrix, reconstructed_eigenvalues=self.reconstructed_eigenvalues, 
+                                            reconstructed_eigenvectors=self.reconstructed_eigenvectors, mean_threshold=self.mean_threshold, 
+                                            n_shots=self.n_shots)
             
             
             return results
