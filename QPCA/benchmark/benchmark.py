@@ -7,46 +7,131 @@ from .benchmark_utility import *
 
 class Benchmark_Manager():
     
-    def __init__(self,eigenvector_benchmarking_=False, eigenvalues_benchmarching_=False, sign_benchmarking_=False, print_distances_=False, 
-                 only_first_eigenvectors_=False, plot_delta_=False, distance_type_=None, error_with_sign_=False, hide_plot_=False, print_error_=False):
+    """ Benchmark class.
+    
+    It manages all the possible benchmarking for the QPCA algorithm.
+
+    Attributes
+    ----------
+    
+    eigenvector_benchmarking : bool value, default=False
+                                If True, it executes the eigenvectors benchmarking to see the reconstruction error of the QPCA algorithm with respect to the classical one.
+    
+    eigenvalues_benchmarching : bool value, default=False
+                                If True, it executes the eigenvalues benchmarking to see the reconstruction error of the QPCA algorithm with respect to the classical one.
+                                
+    sign_benchmarking : bool value, default=False
+                                If True, it executes the sign benchmarking for the eigenvectors to see the reconstruction error of the QPCA algorithm with respect to the classical one.
+                                
+    print_distances : bool value, default=True
+                                If True, the distance (defined by the parameter distance_type) between the reconstructed and original eigenvectors is reported.
+                                
+    only_first_eigenvectors : bool value, default=True
+                    If True, the benchmarking is performed only for the first eigenvector. Otherwise, all the eigenvectors are considered.
+
+    plot_delta : bool value, default=False
+            If True, a plot showing the trend of the tomography error is showed.
+
+    distance_type : string value, default='l2'
+            It defines the distance measure used to benchmark the eigenvectors:
+
+                -'l2': the l2 distance between original and reconstructed eigenvectors is computed.
+
+                -'cosine': the cosine distance between original and reconstructed eigenvectors is computed.
+
+    error_with_sign : bool value, default=False
+            If True, the eigenvectors' benchmarking is performed considering the reconstructed sign. Otherwise, the benchmark is performed only for the absolute values of the eigenvectors (which means reconstructed eigenvectors with no 
+            reconstructed sign). If True, it has effect only if the eigenvector_benchmarking flag is True.
+
+    hide_plot : bool value, default=False
+            If True, the plot for the eigenvector reconstruction benchmarking is not showed. This is useful to have a cleaner output when executing the eigenvectors reconstruction benchmarking more times (for example for different matrices). 
+
+    print_error : bool value, default=False
+            If True, a table showing the absolute error between the original eigenvalues and the reconstructed ones is shown.
+    
+    
+    Notes
+    ----------
+    
+    """
+    
+    def __init__(self,eigenvector_benchmarking=False, eigenvalues_benchmarching=False, sign_benchmarking=False, print_distances=True, 
+                 only_first_eigenvectors=False, plot_delta=False, distance_type='l2', error_with_sign=False, hide_plot=False, print_error=False):
         
-        self.eigenvector_benchmarking=eigenvector_benchmarking_
-        self.eigenvalues_benchmarching=eigenvalues_benchmarching_
-        self.sign_benchmarking=sign_benchmarking_
-        self.print_distances=print_distances_
-        self.only_first_eigenvectors=only_first_eigenvectors_
-        self.plot_delta=plot_delta_
-        self.distance_type=distance_type_
-        self.error_with_sign=error_with_sign_
-        self.hide_plot=hide_plot_
-        self.print_error=print_error_
+        self.eigenvector_benchmarking=eigenvector_benchmarking
+        self.eigenvalues_benchmarching=eigenvalues_benchmarching
+        self.sign_benchmarking=sign_benchmarking
+        self.print_distances=print_distances
+        self.only_first_eigenvectors=only_first_eigenvectors
+        self.plot_delta=plot_delta
+        self.distance_type=distance_type
+        self.error_with_sign=error_with_sign
+        self.hide_plot=hide_plot
+        self.print_error=print_error
         
                     
-    def benchmark(self, input_matrix_=None,reconstructed_eigenvalues_=None, reconstructed_eigenvectors_=None, mean_threshold_=None, n_shots_=1000):
+    def benchmark(self, input_matrix=None,reconstructed_eigenvalues=None, reconstructed_eigenvectors=None, mean_threshold=None, n_shots=1000):
         
-        eigenValues,eigenVectors=np.linalg.eig(input_matrix_)
+        
+        """ Method to benchmark the reconstructed eigenvectors/eigenvalues.
+
+            Parameters
+            ----------
+            
+            input_matrix: array-like of shape (n_samples, n_features)
+                        Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
+                        and `n_features` is the number of features.
+            
+            reconstructed_eigenvalues : array-like
+                        Reconstructed eigenvalues from QPCA algorithm.
+    
+            reconstructed_eigenvectors : array-like
+                        Reconstructed eigenvectors from QPCA algorithm.
+                        
+            mean_threshold : array-like
+                        This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is used to cut out the bad reconstructed eigenvalues.
+            
+            n_shots : int value
+                        Number of measures performed in the tomography process.
+                        
+
+            Returns
+            -------
+            returning_results_wrapper: array-like
+                    If eigenvector_benchmarking is True, it contains a list of two elements:
+                    
+                        - error_list: array-like. 
+                            List of distances between the original and reconstructed eigenvectors.
+                        - delta: float value.
+                            Tomography error value.
+
+            Notes
+            -----
+            """
+        
+        
+        eigenValues,eigenVectors=np.linalg.eig(input_matrix)
         idx = eigenValues.argsort()[::-1]   
-        original_eigenvalues_ = eigenValues[idx]
-        original_eigenvectors_ = eigenVectors[:,idx]
+        original_eigenvalues = eigenValues[idx]
+        original_eigenvectors = eigenVectors[:,idx]
         
         returning_results_wrapper=[]
         
         if self.eigenvector_benchmarking:
             
-            error_list,delta=self.__eigenvectors_benchmarking(input_matrix=input_matrix_, original_eigenvalues=original_eigenvalues_, original_eigenvectors=original_eigenvectors_,
-                                                            reconstructed_eigenvalues=reconstructed_eigenvalues_, reconstructed_eigenvectors=reconstructed_eigenvectors_,
-                                                            mean_threshold=mean_threshold_, n_shots=n_shots_,print_distances=self.print_distances, only_first_eigenvectors=self.only_first_eigenvectors,
-                                                            plot_delta=self.plot_delta,distance_type=self.distance_type,error_with_sign=self.error_with_sign,hide_plot=self.hide_plot)
+            error_list,delta=self.__eigenvectors_benchmarking(input_matrix_=input_matrix, original_eigenvalues_=original_eigenvalues, original_eigenvectors_=original_eigenvectors,
+                                                            reconstructed_eigenvalues_=reconstructed_eigenvalues, reconstructed_eigenvectors_=reconstructed_eigenvectors,
+                                                            mean_threshold_=mean_threshold, n_shots_=n_shots)
             returning_results_wrapper.append([error_list,delta])
             
         if self.eigenvalues_benchmarching:
-            _=self.__eigenvalues_benchmarking(original_eigenvalues=original_eigenvalues_, reconstructed_eigenvalues=reconstructed_eigenvalues_,
-                                            mean_threshold=mean_threshold_, print_error=self.print_error)
+            _=self.__eigenvalues_benchmarking(original_eigenvalues_=original_eigenvalues, reconstructed_eigenvalues_=reconstructed_eigenvalues,
+                                            mean_threshold_=mean_threshold)
 
         
         if self.sign_benchmarking:
-            _=self.__sign_reconstruction_benchmarking(input_matrix=input_matrix_, original_eigenvalues=original_eigenvalues_, original_eigenvectors=original_eigenvectors_,
-                                                      reconstructed_eigenvalues=reconstructed_eigenvalues_, reconstructed_eigenvectors=reconstructed_eigenvectors_, mean_threshold=mean_threshold_,n_shots=n_shots_)
+            _=self.__sign_reconstruction_benchmarking(input_matrix_=input_matrix, original_eigenvalues_=original_eigenvalues, original_eigenvectors_=original_eigenvectors,
+                                                      reconstructed_eigenvalues_=reconstructed_eigenvalues, reconstructed_eigenvectors_=reconstructed_eigenvectors, mean_threshold_=mean_threshold,n_shots_=n_shots)
             
     
         return returning_results_wrapper     
@@ -55,19 +140,20 @@ class Benchmark_Manager():
     @classmethod
     def error_benchmark(self, input_matrix, shots_dict, error_dict, label_error='l2'):
 
-        """ Method to benchmark the eigenvector's reconstruction error. The execution of this function shows the trend of the error as the number of shots increases.
+        """ Method to benchmark the eigenvector's reconstruction error. The execution of this function shows the trend of the error as the number of shots and resolution qubits increase.
 
         Parameters
         ----------
+        
+        input_matrix : array-like of shape (n_samples, n_features)
+                        Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
+                        and `n_features` is the number of features.
 
         shots_dict: dict-like
                 Dictionary that contains as keys the reconstructed eigenvalues and as values the list of shots for which you are able to reconstruct the corresponding eigenvalue.
 
         error_dict: dict-like
                 Dictionary that contains as keys the reconstructed eigenvalues and as values the list of reconstruction errors for the corresponding eigenvectors as the number of shots increases.
-
-        dict_original_eigenvalues: dict-like
-                Dictionary that contains as key the original eigenvalue and as value its index (ordered position).
 
         label_error: string value, default='l2'
                 It defines the distance measure used to benchmark the eigenvectors:
@@ -81,6 +167,7 @@ class Benchmark_Manager():
 
         Notes
         -----
+        This method is annotated as @classmethod since it is independent from the QPCA algorithm and it can be called after the benchmarking process to visually assess the error trend as the resolution and number of shots increase.
         """
         
         eigenValues,eigenVectors=np.linalg.eig(input_matrix/np.trace(input_matrix))
@@ -124,8 +211,8 @@ class Benchmark_Manager():
 
         plt.show()
     
-    def __eigenvectors_benchmarking(self,input_matrix, original_eigenvectors, original_eigenvalues, reconstructed_eigenvalues, reconstructed_eigenvectors, mean_threshold, 
-                                  n_shots, print_distances, only_first_eigenvectors, plot_delta, distance_type, error_with_sign, hide_plot):
+    def __eigenvectors_benchmarking(self,input_matrix_, original_eigenvectors_, original_eigenvalues_, reconstructed_eigenvalues_, reconstructed_eigenvectors_, mean_threshold_, 
+                                  n_shots_):
 
         """ Method to benchmark the quality of the reconstructed eigenvectors.
 
@@ -154,29 +241,6 @@ class Benchmark_Manager():
         n_shots: int value
                     Number of measures performed in the tomography process.
 
-        print_distances: bool value, default=True
-                If True, the distance (defined by distance_type value) between the original and reconstructed eigenvector is printed in the legend.
-
-        only_first_eigenvectors: bool value, default=True.
-                If True, the function returns only the plot relative to the first eigenvalues. Otherwise, all the plot are showed.
-
-        plot_delta: bool value, default=False
-                If True, the function also returns the plot that shows how the tomography error decreases as the number of shots increases. 
-
-        distance_type: string value, default='l2'
-                It defines the distance measure used to benchmark the eigenvectors:
-
-                        -'l2': the l2 distance between original and reconstructed eigenvectors is computed.
-
-                        -'cosine': the cosine distance between original and reconstructed eigenvectors is computed.
-
-        error_with_sign: bool value, default=False
-                If True, the benchmarking is performed considering the reconstructed sign of the eigenvectors. Otherwise, the benchmarking is performed between absolute values of eigenvectors.
-
-        hide_plot: bool value, default=False
-                If True, the plot showing the eigenvector's benchmarking is not showed.
-
-
         Returns
         -------
         save_list: array-like
@@ -192,71 +256,71 @@ class Benchmark_Manager():
 
         save_list=[]
 
-        correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
+        correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues_,mean_threshold_,original_eigenvalues_)
 
-        correct_reconstructed_eigenvectors=[reconstructed_eigenvectors[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues)) if c_r_e==reconstructed_eigenvalues[j]]
+        correct_reconstructed_eigenvectors=[reconstructed_eigenvectors_[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues_)) if c_r_e==reconstructed_eigenvalues_[j]]
 
-        original_eigenValues,original_eigenVectors=reorder_original_eigenvalues_eigenvectors(input_matrix,original_eigenvectors,original_eigenvalues,correct_reconstructed_eigenvalues)
+        original_eigenValues,original_eigenVectors=reorder_original_eigenvalues_eigenvectors(input_matrix_,original_eigenvectors_,original_eigenvalues_,correct_reconstructed_eigenvalues)
 
         fig, ax = plt.subplots(1,len(correct_reconstructed_eigenvalues),figsize=(30, 10))
         if len(correct_reconstructed_eigenvalues)>1:
 
             for e,chart in enumerate(ax.reshape(-1,order='F')):
-                delta=np.sqrt((36*len(original_eigenVectors[:,e%len(input_matrix)])*np.log(len(original_eigenVectors[:,e%len(input_matrix)])))/(n_shots))
+                delta=np.sqrt((36*len(original_eigenVectors[:,e%len(input_matrix_)])*np.log(len(original_eigenVectors[:,e%len(input_matrix_)])))/(n_shots_))
 
-                if error_with_sign==True:
+                if self.error_with_sign==True:
 
-                    sign_original=np.sign(original_eigenVectors[:,e%len(input_matrix)])
+                    sign_original=np.sign(original_eigenVectors[:,e%len(input_matrix_)])
                     sign_original[sign_original==0]=1
-                    sign_reconstructed=np.sign(correct_reconstructed_eigenvectors[e%len(input_matrix)])
+                    sign_reconstructed=np.sign(correct_reconstructed_eigenvectors[e%len(input_matrix_)])
                     sign_reconstructed[sign_reconstructed==0]=1
                     inverse_sign_original=sign_original*-1       
                     sign_difference=(sign_original==sign_reconstructed).sum()
                     inverse_sign_difference=(inverse_sign_original==sign_reconstructed).sum()
 
                     if sign_difference>=inverse_sign_difference:
-                        original_eigenvector=original_eigenVectors[:,e%len(input_matrix)]
+                        original_eigenvector=original_eigenVectors[:,e%len(input_matrix_)]
                     else:
-                        original_eigenvector=original_eigenVectors[:,e%len(input_matrix)]*-1
-                    reconstructed_eigenvector=correct_reconstructed_eigenvectors[e%len(input_matrix)]
+                        original_eigenvector=original_eigenVectors[:,e%len(input_matrix_)]*-1
+                    reconstructed_eigenvector=correct_reconstructed_eigenvectors[e%len(input_matrix_)]
                 else:
-                    original_eigenvector=abs(original_eigenVectors[:,e%len(input_matrix)])
-                    reconstructed_eigenvector=abs(correct_reconstructed_eigenvectors[e%len(input_matrix)])
-                if plot_delta:
+                    original_eigenvector=abs(original_eigenVectors[:,e%len(input_matrix_)])
+                    reconstructed_eigenvector=abs(correct_reconstructed_eigenvectors[e%len(input_matrix_)])
+                if self.plot_delta:
 
-                    for i in range(len(original_eigenVectors[:,(e%len(input_matrix))])):
+                    for i in range(len(original_eigenVectors[:,(e%len(input_matrix_))])):
                         circle=plt.Circle((i+1,original_eigenvector[i]),np.sqrt(7)*delta,color='g',alpha=0.1)
                         chart.add_patch(circle)
                         chart.axis("equal")
                         chart.hlines(original_eigenvector[i],xmin=i+1,xmax=i+1+(np.sqrt(7)*delta))
                         chart.text(i+1+((i+1+(np.sqrt(7)*delta))-(i+1))/2,original_eigenvector[i]+0.01,r'$\sqrt{7}\delta$')
                     chart.plot([], [], ' ', label=r'$\delta$='+str(round(delta,4)))   
-                    chart.plot(list(range(1,len(input_matrix)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
-                    chart.plot(list(range(1,len(input_matrix)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
+                    chart.plot(list(range(1,len(input_matrix_)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
+                    chart.plot(list(range(1,len(input_matrix_)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
                 else:
-                    chart.plot(list(range(1,len(input_matrix)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
-                    chart.plot(list(range(1,len(input_matrix)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
+                    chart.plot(list(range(1,len(input_matrix_)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
+                    chart.plot(list(range(1,len(input_matrix_)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
 
 
-                if print_distances:
+                if self.print_distances:
 
-                    distance=distance_function_wrapper(distance_type,reconstructed_eigenvector,original_eigenvector)
-                    chart.plot([], [], ' ', label=distance_type+"_error "+str(np.round(distance,4)))
+                    distance=distance_function_wrapper(self.distance_type,reconstructed_eigenvector,original_eigenvector)
+                    chart.plot([], [], ' ', label=self.distance_type+"_error "+str(np.round(distance,4)))
                 else:
                     distance=np.nan
 
-                save_list.append((correct_reconstructed_eigenvalues[e%len(input_matrix)],np.round(distance,4)))
-                chart.plot([], [], ' ', label="n_shots "+str(n_shots))
+                save_list.append((correct_reconstructed_eigenvalues[e%len(input_matrix_)],np.round(distance,4)))
+                chart.plot([], [], ' ', label="n_shots "+str(n_shots_))
                 chart.legend()
                 chart.set_ylabel("eigenvector's values")
-                chart.set_title('Eigenvectors corresponding to eigenvalues '+str(correct_reconstructed_eigenvalues[e%len(input_matrix)]))
-                if only_first_eigenvectors:
+                chart.set_title('Eigenvectors corresponding to eigenvalues '+str(correct_reconstructed_eigenvalues[e%len(input_matrix_)]))
+                if self.only_first_eigenvectors:
                     break
         else:
 
-            delta=np.sqrt((36*len(original_eigenVectors[:,0])*np.log(len(original_eigenVectors[:,0])))/(n_shots))
+            delta=np.sqrt((36*len(original_eigenVectors[:,0])*np.log(len(original_eigenVectors[:,0])))/(n_shots_))
 
-            if error_with_sign==True:
+            if self.error_with_sign==True:
 
                 sign_original=np.sign(original_eigenVectors[:,0])
                 sign_original[sign_original==0]=1
@@ -274,7 +338,7 @@ class Benchmark_Manager():
             else:
                 original_eigenvector=abs(original_eigenVectors[:,0])
                 reconstructed_eigenvector=abs(correct_reconstructed_eigenvectors[0])
-            if plot_delta:
+            if self.plot_delta:
 
                 for i in range(len(original_eigenVectors[:,0])):
                     circle=plt.Circle((i+1,original_eigenvector[i]),np.sqrt(7)*delta,color='g',alpha=0.1)
@@ -283,26 +347,26 @@ class Benchmark_Manager():
                     ax.hlines(original_eigenvector[i],xmin=i+1,xmax=i+1+(np.sqrt(7)*delta))
                     ax.text(i+1+((i+1+(np.sqrt(7)*delta))-(i+1))/2,original_eigenvector[i]+0.01,r'$\sqrt{7}\delta$')
                 ax.plot([], [], ' ', label=r'$\delta$='+str(round(delta,4)))   
-                ax.plot(list(range(1,len(input_matrix)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
-                ax.plot(list(range(1,len(input_matrix)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
+                ax.plot(list(range(1,len(input_matrix_)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
+                ax.plot(list(range(1,len(input_matrix_)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
             else:
-                ax.plot(list(range(1,len(input_matrix)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
-                ax.plot(list(range(1,len(input_matrix)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
+                ax.plot(list(range(1,len(input_matrix_)+1)),reconstructed_eigenvector,marker='*',label='reconstructed',linestyle='None',markersize=12,alpha=0.5,color='r')
+                ax.plot(list(range(1,len(input_matrix_)+1)),original_eigenvector,marker='o',label='original',linestyle='None',markersize=12,alpha=0.4)
 
 
-            if print_distances:
+            if self.print_distances:
 
-                distance=distance_function_wrapper(distance_type,reconstructed_eigenvector,original_eigenvector)
-                ax.plot([], [], ' ', label=distance_type+"_error "+str(np.round(distance,4)))
+                distance=distance_function_wrapper(self.distance_type,reconstructed_eigenvector,original_eigenvector)
+                ax.plot([], [], ' ', label=self.distance_type+"_error "+str(np.round(distance,4)))
             else:
                 distance=np.nan
 
             save_list.append((correct_reconstructed_eigenvalues[0],np.round(distance,4)))
-            ax.plot([], [], ' ', label="n_shots "+str(n_shots))
+            ax.plot([], [], ' ', label="n_shots "+str(n_shots_))
             ax.legend()
             ax.set_ylabel("eigenvector's values")
             ax.set_title('Eigenvectors corresponding to eigenvalues '+str(correct_reconstructed_eigenvalues[0]))
-        if hide_plot:
+        if self.hide_plot:
             plt.close()
         else:
             fig.tight_layout()
@@ -310,23 +374,20 @@ class Benchmark_Manager():
 
         return save_list,delta
 
-    def __eigenvalues_benchmarking(self,original_eigenvalues, reconstructed_eigenvalues, mean_threshold, print_error):
+    def __eigenvalues_benchmarking(self,original_eigenvalues_, reconstructed_eigenvalues_, mean_threshold_):
         """ Method to benchmark the quality of the reconstructed eigenvalues. 
 
         Parameters
         ----------
 
-        original_eigenvalues: array-like
+        original_eigenvalues_: array-like
                     Array representing the original eigenvalues of the input matrix.
 
-        reconstructed_eigenvalues: array-like
+        reconstructed_eigenvalues_: array-like
                     Array of reconstructed eigenvalues.
 
         mean_threshold: array-like
                     This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is useful for the benchmark process to cut out the bad eigenvalues.
-
-        print_error: bool value
-                    If True, a table showing the absolute reconstruction error for each eigenvalue is reported
 
         Returns
         -------
@@ -338,31 +399,31 @@ class Benchmark_Manager():
 
         fig, ax = plt.subplots(figsize=(10, 10))
 
-        correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
-        dict_original_eigenvalues = {original_eigenvalues[e]:e+1 for e in range(len(original_eigenvalues))}
+        correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues_,mean_threshold_,original_eigenvalues_)
+        dict_original_eigenvalues = {original_eigenvalues_[e]:e+1 for e in range(len(original_eigenvalues_))}
         idx_list=[]
-        if print_error:
+        if self.print_error:
             t = Texttable()
         for eig in correct_reconstructed_eigenvalues:
-            x,min_=find_nearest(original_eigenvalues,eig)
+            x,min_=find_nearest(original_eigenvalues_,eig)
             idx_list.append(dict_original_eigenvalues[x])
-            if print_error:
+            if self.print_error:
                 error=abs(eig-x)
                 lista=[['True eigenvalue','Reconstructed eigenvalue' ,'error'], [x,eig, error]]
                 t.add_rows(lista)
         ax.plot(idx_list,correct_reconstructed_eigenvalues,marker='o',label='reconstructed',linestyle='None',markersize=25,alpha=0.3,color='r')
-        ax.plot(list(range(1,len(original_eigenvalues)+1)),original_eigenvalues,marker='x',label='original',linestyle='None',markersize=20,color='black')
+        ax.plot(list(range(1,len(original_eigenvalues_)+1)),original_eigenvalues_,marker='x',label='original',linestyle='None',markersize=20,color='black')
         ax.legend(labelspacing = 3)
         ax.set_ylabel('Eigenvalue')
         ax.set_title('Matching between original and reconstructed eigenvalues')
         plt.show()
-        if print_error:
+        if self.print_error:
             print(t.draw())
         return 
     
 
             
-    def __sign_reconstruction_benchmarking(self,input_matrix, original_eigenvalues, original_eigenvectors, reconstructed_eigenvalues, reconstructed_eigenvectors, mean_threshold, n_shots):
+    def __sign_reconstruction_benchmarking(self,input_matrix_, original_eigenvalues_, original_eigenvectors_, reconstructed_eigenvalues_, reconstructed_eigenvectors_, mean_threshold_, n_shots_):
 
         """ Method to benchmark the quality of the sign reconstruction for the reconstructed eigenvectors. 
 
@@ -373,10 +434,10 @@ class Benchmark_Manager():
                     Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
                     and `n_features` is the number of features.
 
-        original_eigenvalues: array-like
+        original_eigenvalues_: array-like
                     Array representing the original eigenvalues of the input matrix.
 
-        original_eigenvectors: array-like
+        original_eigenvectors_: array-like
                     Array representing the original eigenvectors of the input matrix.
 
         reconstructed_eigenvalues: array-like
@@ -399,11 +460,11 @@ class Benchmark_Manager():
         -----
         """ 
 
-        correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues,mean_threshold,original_eigenvalues)
+        correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues_,mean_threshold_,original_eigenvalues_)
 
-        correct_reconstructed_eigenvectors=[reconstructed_eigenvectors[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues)) if c_r_e==reconstructed_eigenvalues[j]]
+        correct_reconstructed_eigenvectors=[reconstructed_eigenvectors_[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues_)) if c_r_e==reconstructed_eigenvalues_[j]]
 
-        original_eigenValues,original_eigenVectors=reorder_original_eigenvalues_eigenvectors(input_matrix,original_eigenvectors,original_eigenvalues,correct_reconstructed_eigenvalues)
+        original_eigenValues,original_eigenVectors=reorder_original_eigenvalues_eigenvectors(input_matrix_,original_eigenvectors_,original_eigenvalues_,correct_reconstructed_eigenvalues)
 
         t = Texttable()
         for e in range(len(correct_reconstructed_eigenvalues)):
@@ -420,7 +481,7 @@ class Benchmark_Manager():
             inverse_sign_difference=(inverse_sign_original==sign_reconstructed).sum()
             correct_sign=max(sign_difference,inverse_sign_difference)
             wrong_sign=len(o_eigenvector)-correct_sign
-            lista=[['Eigenvalue','n_shots' ,'correct_sign','wrong_sign'], [eigenvalue,n_shots,correct_sign,wrong_sign ]]
+            lista=[['Eigenvalue','n_shots' ,'correct_sign','wrong_sign'], [eigenvalue,n_shots_,correct_sign,wrong_sign ]]
             t.add_rows(lista)
         print(t.draw())
         return 
