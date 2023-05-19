@@ -238,30 +238,6 @@ way, the statevector of the quantum state is reconstructed and a postprocessing 
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.error_benchmarking">
-<span class="sig-name descname"><span class="pre">error_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shots_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.error_benchmarking" title="Permalink to this definition"></a></dt>
-<dd><p>Method to benchmark the error of the reconstructed eigenvectors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>shots_dict</strong> (<em>dict-like</em>) – Dictionary that contains the number of shots executed for each reconstructed eigenvalues for a specific resolution value.</p></li>
-<li><p><strong>errors_dict</strong> (<em>dict-like</em>) – Dictionary where a specific value of the resolution used in the phase estimation (key) is associated with a list of tuples where each tuple contains the specific reconstructed eigenvalue with all the error of the related reconstructed eigenvector (for each number of shots).</p></li>
-<li><p><strong>delta_list</strong> (<em>array-like</em>) – List of all the delta (tomography) error for each number of shots executed in the experiments.</p></li>
-<li><p><strong>plot_delta</strong> (<em>bool value</em><em>, </em><em>default=False.</em>) – If True, a plot showing the trend of the tomography error is showed.</p></li>
-<li><p><strong>distance_type</strong> (<em>string value</em><em>, </em><em>default='l2'</em>) – <p>It defines the distance measure used to benchmark the eigenvectors:</p>
-<blockquote>
-<div><p>-‘l2’: the l2 distance between original and reconstructed eigenvectors is computed.</p>
-<p>-‘cosine’: the cosine distance between original and reconstructed eigenvectors is computed.</p>
-</div></blockquote>
-</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method should be executed after the execution of eigenvectors_benchmarking() method in the spectral_benchmarking, just to visualize better in specific plots the trends of the reconstruction error for each reconstructed eigenvectors. More precisely, it should be executed after executing eigenvectors_benchmarking method for a different number of shots such that you can visualize better the error trend. You can also use this method to visualize the trends of the reconstruction error for a different number of shots at the increasing of the number of resolution qubits. The important thing to take into consideration is that you need to pass as argument the two dictionary described in the documentation (see the benchmark notebook for a more practical example)</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="QPCA.decomposition.QPCA.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimized_qram</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_qram</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_pe_circuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fit Qpca model. This method generates the encoding matrix circuit and apply the phase estimation operator.</p>
@@ -305,7 +281,7 @@ Unless necessary, it is recommended to keep the optimized version of this circui
 
 <dl class="py method">
 <dt class="sig sig-object py" id="QPCA.decomposition.QPCA.spectral_benchmarking">
-<span class="sig-name descname"><span class="pre">spectral_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eigenvector_benchmarking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvalues_benchmarching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign_benchmarking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_first_eigenvectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_with_sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hide_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.spectral_benchmarking" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">spectral_benchmarking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eigenvector_benchmarking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvalues_benchmarching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign_benchmarking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_first_eigenvectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_with_sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hide_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.spectral_benchmarking" title="Permalink to this definition"></a></dt>
 <dd><p>Method to benchmark the reconstructed eigenvectors/eigenvalues.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -329,22 +305,26 @@ reconstructed sign). If True, it has effect only if the eigenvector_benchmarking
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
+<dd class="field-even"><p><p><strong>results</strong> –</p>
+<p>If eigenvector_benchmarking is True, it contains a list of two elements:</p>
+<blockquote>
+<div><ul class="simple">
 <li><dl class="simple">
-<dt>save_list: array-like.</dt><dd><p>List of distances between all the original and reconsructed eigenvectors.</p>
+<dt>error_list: array-like.</dt><dd><p>List of distances between the original and reconstructed eigenvectors.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>delta: float value.</dt><dd><p>The tomography error value.</p>
+<dt>delta: float value.</dt><dd><p>Tomography error value.</p>
 </dd>
 </dl>
 </li>
 </ul>
+</div></blockquote>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>If eigenvector_benchmarking is True</p>
+<dd class="field-odd"><p>array-like</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

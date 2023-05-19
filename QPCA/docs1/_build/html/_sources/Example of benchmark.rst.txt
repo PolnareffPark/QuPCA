@@ -14,6 +14,7 @@ the eigenvectors reconstruction is set to 1000000.
    import numpy as np
    import matplotlib.pyplot as plt
    from QPCA.preprocessingUtilities.preprocessing import generate_matrix
+   from QPCA.benchmark.benchmark import Benchmark_Manager
 
    seed=4747
    resolutions=[8]
@@ -31,7 +32,7 @@ The first reference example concerns the accuracy of reconstructing eigenvectors
       qpca=QPCA().fit(input_matrix,resolution=resolution)
       for s in shots_numbers:
          reconstructed_eigenvalues,reconstructed_eigenvectors=qpca.eigenvectors_reconstruction(n_shots=s,n_repetitions=1)
-         eig_evec_tuple,delta=qpca.spectral_benchmarking(eigenvector_benchmarking=True,sign_benchmarking=False ,eigenvalues_benchmarching=False,print_distances=True,only_first_eigenvectors=False,
+         results=qpca.spectral_benchmarking(eigenvector_benchmarking=True,sign_benchmarking=False ,eigenvalues_benchmarching=False,print_distances=True,only_first_eigenvectors=False,
                                                         plot_delta=True,distance_type='l2',error_with_sign=True,hide_plot=False,print_error=False)
 
 Eigenvectors benchmark
@@ -53,9 +54,9 @@ original ones (black crosses) is shown. If the :obj:`~QPCA.benchmark.eigenvector
 Eigenvectors reconstruction error benchmark
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Using the :meth:`~QPCA.decomposition.QPCA.error_benchmarking` method, you can visualize better the trend of the reconstruction error for each eigenvectors as the number of measures and number of 
+Using the :meth:`~QPCA.benchmark.Benchmark_Manager.error_benchmark` method, you can visualize better the trend of the reconstruction error for each eigenvectors as the number of measures and number of 
 resolution qubits increase. As before, once the number of measures and resolution qubits are chosen, you can perform the fit and eigenvectors reconstruction procedures. 
-Pay attention: it is important to save the results of the benchmark into specific dictionary, as in the code below. This is because the :meth:`~QPCA.decomposition.QPCA.error_benchmarking` function 
+Pay attention: it is important to save the results of the benchmark into specific dictionary, as in the code below. This is because the :meth:`~QPCA.benchmark.Benchmark_Manager.error_benchmark` function 
 expects dictionaries as parameters.
 
 .. code-block:: python
@@ -72,7 +73,7 @@ expects dictionaries as parameters.
       for s in shots_numbers:
          
          reconstructed_eigenvalues,reconstructed_eigenvectors=qpca.eigenvectors_reconstruction(n_shots=s,n_repetitions=1)
-         eig_evec_tuple,delta=qpca.spectral_benchmarking(eigenvector_benchmarking=True,sign_benchmarking=False ,eigenvalues_benchmarching=False,print_distances=True,only_first_eigenvectors=False,
+         results=qpca.spectral_benchmarking(eigenvector_benchmarking=True,sign_benchmarking=False ,eigenvalues_benchmarching=False,print_distances=True,only_first_eigenvectors=False,
                                                          plot_delta=True,distance_type='l2',error_with_sign=True,hide_plot=False,print_error=False)
          for e in eig_evec_tuple:
                shots_dict.setdefault(e[0], []).append(s)
@@ -82,7 +83,7 @@ expects dictionaries as parameters.
       resolution_dictionary_shots.update({resolution:shots_dict})
       resolution_dictionary.update({resolution:error_list})
 
-   qpca.error_benchmarking(errors_dict=resolution_dictionary,shots_dict=resolution_dictionary_shots,distance_type='l2')
+   Benchmark_Manager.error_benchmark(input_matrix=input_matrix, shots_dict=resolution_dictionary_shots, error_dict=resolution_dictionary)
 
 
 .. image:: Images/benchmark3.png
