@@ -330,6 +330,26 @@ reconstructed sign). If True, it has effect only if the eigenvector_benchmarking
 <p class="rubric">Notes</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="QPCA.decomposition.QPCA.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#QPCA.decomposition.QPCA.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Apply dimensionality reduction to input_matrix.</p>
+<p>Input_matrix is projected on the first principal components previously extracted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – New data, where <cite>n_samples</cite> is the number of samples
+and <cite>n_features</cite> is the number of features.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>input_matrix_transformed</strong> – Projection of input_matrix in the first principal components, where <cite>n_samples</cite>
+is the number of samples and <cite>n_components</cite> is the number of the components.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like of shape (n_samples, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
