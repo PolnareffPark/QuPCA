@@ -208,6 +208,27 @@ class QPCA():
         reconstructed_input_matrix = reconstructed_eigenvectors @ np.diag(reconstructed_eigenvalues) @ reconstructed_eigenvectors.T
         return reconstructed_input_matrix
     
+    def transform(self, input_matrix):
+        
+        """Apply dimensionality reduction to input_matrix.
+
+        Input_matrix is projected on the first principal components previously extracted.
+
+        Parameters
+        ----------
+        input_matrix : array-like of shape (n_samples, n_features)
+            New data, where `n_samples` is the number of samples
+            and `n_features` is the number of features.
+
+        Returns
+        -------
+        input_matrix_transformed : array-like of shape (n_samples, n_components)
+            Projection of input_matrix in the first principal components, where `n_samples`
+            is the number of samples and `n_components` is the number of the components.
+        """
+        
+        input_matrix_transformed=np.dot(input_matrix, self.reconstructed_eigenvectors)
+        return input_matrix_transformed
     
     def spectral_benchmarking(self, eigenvector_benchmarking=False, eigenvalues_benchmarching=False, sign_benchmarking=False, print_distances=True,
                               only_first_eigenvectors=False, plot_delta=False, distance_type='l2', error_with_sign=False, hide_plot=False, print_error=False):
