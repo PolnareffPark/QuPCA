@@ -232,8 +232,10 @@ class QPCA():
             Projection of input_matrix in the first principal components, where `n_samples`
             is the number of samples and `n_components` is the number of the components.
         """
+        k = self.reconstructed_eigenvalues.argsort()[::-1]   
+        reconstructed_eigenvectors = self.reconstructed_eigenvectors[:,k]
+        input_matrix_transformed=np.dot(input_matrix, reconstructed_eigenvectors)
         
-        input_matrix_transformed=np.dot(input_matrix, self.reconstructed_eigenvectors)
         return input_matrix_transformed
     
     def spectral_benchmarking(self, eigenvector_benchmarking=False, eigenvalues_benchmarching=False, sign_benchmarking=False, print_distances=True,
