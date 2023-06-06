@@ -266,29 +266,29 @@ class Benchmark_Manager():
         if len(correct_reconstructed_eigenvalues)>1:
 
             for e,chart in enumerate(ax.reshape(-1,order='F')):
-                delta=np.sqrt((36*len(original_eigenVectors[:,e%len(input_matrix_)])*np.log(len(original_eigenVectors[:,e%len(input_matrix_)])))/(n_shots_))
+                delta=np.sqrt((36*len(original_eigenVectors[:,e])*np.log(len(original_eigenVectors[:,e])))/(n_shots_))
 
                 if self.error_with_sign==True:
 
-                    sign_original=np.sign(original_eigenVectors[:,e%len(input_matrix_)])
+                    sign_original=np.sign(original_eigenVectors[:,e])
                     sign_original[sign_original==0]=1
-                    sign_reconstructed=np.sign(correct_reconstructed_eigenvectors[e%len(input_matrix_)])
+                    sign_reconstructed=np.sign(correct_reconstructed_eigenvectors[e])
                     sign_reconstructed[sign_reconstructed==0]=1
                     inverse_sign_original=sign_original*-1       
                     sign_difference=(sign_original==sign_reconstructed).sum()
                     inverse_sign_difference=(inverse_sign_original==sign_reconstructed).sum()
 
                     if sign_difference>=inverse_sign_difference:
-                        original_eigenvector=original_eigenVectors[:,e%len(input_matrix_)]
+                        original_eigenvector=original_eigenVectors[:,e]
                     else:
-                        original_eigenvector=original_eigenVectors[:,e%len(input_matrix_)]*-1
-                    reconstructed_eigenvector=correct_reconstructed_eigenvectors[e%len(input_matrix_)]
+                        original_eigenvector=original_eigenVectors[:,e]*-1
+                    reconstructed_eigenvector=correct_reconstructed_eigenvectors[e]
                 else:
-                    original_eigenvector=abs(original_eigenVectors[:,e%len(input_matrix_)])
-                    reconstructed_eigenvector=abs(correct_reconstructed_eigenvectors[e%len(input_matrix_)])
+                    original_eigenvector=abs(original_eigenVectors[:,e])
+                    reconstructed_eigenvector=abs(correct_reconstructed_eigenvectors[e])
                 if self.plot_delta:
 
-                    for i in range(len(original_eigenVectors[:,(e%len(input_matrix_))])):
+                    for i in range(len(original_eigenVectors[:,e])):
                         circle=plt.Circle((i+1,original_eigenvector[i]),np.sqrt(7)*delta,color='g',alpha=0.1)
                         chart.add_patch(circle)
                         chart.axis("equal")
@@ -309,11 +309,11 @@ class Benchmark_Manager():
                 else:
                     distance=np.nan
 
-                save_list.append((correct_reconstructed_eigenvalues[e%len(input_matrix_)],np.round(distance,4)))
+                save_list.append((correct_reconstructed_eigenvalues[e],np.round(distance,4)))
                 chart.plot([], [], ' ', label="n_shots "+str(n_shots_))
                 chart.legend()
                 chart.set_ylabel("eigenvector's values")
-                chart.set_title('Eigenvectors corresponding to eigenvalues '+str(correct_reconstructed_eigenvalues[e%len(input_matrix_)]))
+                chart.set_title('Eigenvectors corresponding to eigenvalues '+str(correct_reconstructed_eigenvalues[e]))
                 if self.only_first_eigenvectors:
                     break
         else:
