@@ -3,7 +3,7 @@ import itertools
 import pandas as pd
 from scipy.signal import find_peaks
     
-def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_shots, plot_peaks, eigenvalue_threshold, abs_tolerance):
+def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_shots, plot_peaks):
         
         """ Eigenvectors reconstruction process from the reconstructed statevector.
         
@@ -24,12 +24,6 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         
         plot_peaks: bool value
                         If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.
-                        
-        genvalue_threshold: float value
-                        It acts as a threshold that cut out the eigenvalues (and the corrseponding eigenvectors) that are smaller than this value.
-        
-        abs_tolerance: float value
-                        Absolute tolerance parameter used to cut out the eigenvalues estimated badly due to insufficient resolution.
         
         Returns
         -------
@@ -67,16 +61,10 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         tail['eigenvalue']=tail['lambda'].apply(lambda x :int(x[::-1],base=2)/(2**resolution))
         if plot_peaks:
             ax=tail[['eigenvalue','module']].sort_values('eigenvalue').set_index('eigenvalue').plot(style='-*',figsize=(15,10))
-            if eigenvalue_threshold:
-                ax.axvline(eigenvalue_threshold,ls='--',c='red',label='eigenvalues threshold')
-                ax.legend()
+            
             
         lambdas,lambdas_num,mean_threshold=__peaks_extraction(tail,len_input_matrix,n_shots)
         
-        bad_peaks_mask=np.isclose(mean_threshold,0,atol=abs_tolerance)
-        lambdas=lambdas[~bad_peaks_mask]
-        lambdas_num=lambdas_num[~bad_peaks_mask]
-        mean_threshold=mean_threshold[~bad_peaks_mask]
         df.columns=['state','module','lambda']
         
         #add reconstructed sign to the module column
@@ -92,9 +80,8 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         l_list=[]
         save_sign=[]
         eigenvalues=[]
-        idx_to_remove=[]
      
-        for e,l in enumerate(lambdas):
+        for l in lambdas:
             
             #conversion from binary description of the eigenvalue to integer form, remembering that phase estimation encode the eigenvalue as x/2^resolution
             eigenvalue=int(l[::-1],base=2)/(2**resolution)
@@ -102,13 +89,6 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
             a_=np.array(df.query("state.str.endswith(@l)")['module'].values)
             save_sign.append(np.sign(a_))
             l_list.append(np.sqrt(abs(a_)))
-            
-            if eigenvalue_threshold and eigenvalue<eigenvalue_threshold:
-                eigenvalues.pop()
-                save_sign.pop()
-                l_list.pop()
-                idx_to_remove.append(e)
-        mean_threshold=np.delete(mean_threshold,idx_to_remove)
   
         for i in range(len(l_list)):
             normalization_factor=np.sqrt((1/(sum(l_list[i]**2))))
