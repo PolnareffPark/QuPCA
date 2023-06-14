@@ -54,16 +54,16 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         
         #aggregate the module for each lambda and sort them in deascending way to see which are the most probable eigenvalues that phase estimation is able to extract with the given resolution
         
-        df1=df.groupby('lambda').agg({'module':'sum'})
-        df1=df1.sort_values('module',ascending=False)
+        df_aggregated=df.groupby('lambda').agg({'module':'sum'})
+        df_aggregated=df_aggregated.sort_values('module',ascending=False)
         
-        tail=df1.reset_index()
+        tail=df_aggregated.reset_index()
         tail['eigenvalue']=tail['lambda'].apply(lambda x :int(x[::-1],base=2)/(2**resolution))
         if plot_peaks:
             ax=tail[['eigenvalue','module']].sort_values('eigenvalue').set_index('eigenvalue').plot(style='-*',figsize=(15,10))
             
             
-        lambdas,lambdas_num,mean_threshold=__peaks_extraction(tail,len_input_matrix,n_shots)
+        binary_eigenvalues, mean_threshold=__peaks_extraction(tail,len_input_matrix,n_shots)
         
         df.columns=['state','module','lambda']
         
@@ -77,29 +77,29 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         
         #for each extracted eigenvalue, reconstruct the corresponding eigenvector using the maximum of maxima procedure
         
-        l_list=[]
+        statevector_list=[]
         save_sign=[]
         eigenvalues=[]
      
-        for l in lambdas:
+        for bin_eigenvalue in binary_eigenvalues:
             
             #conversion from binary description of the eigenvalue to integer form, remembering that phase estimation encode the eigenvalue as x/2^resolution
-            eigenvalue=int(l[::-1],base=2)/(2**resolution)
+            eigenvalue=int(bin_eigenvalue[::-1],base=2)/(2**resolution)
             eigenvalues.append(eigenvalue)
-            a_=np.array(df.query("state.str.endswith(@l)")['module'].values)
-            save_sign.append(np.sign(a_))
-            l_list.append(np.sqrt(abs(a_)))
+            module_list=np.array(df.query("state.str.endswith(@bin_eigenvalue)")['module'].values)
+            save_sign.append(np.sign(module_list))
+            statevector_list.append(np.sqrt(abs(module_list)))
   
-        for i in range(len(l_list)):
-            normalization_factor=np.sqrt((1/(sum(l_list[i]**2))))
-            l_list[i]*=normalization_factor
-            l_list[i]*=save_sign[i]    
+        for i in range(len(statevector_list)):
+            normalization_factor=np.sqrt((1/(sum(statevector_list[i]**2))))
+            statevector_list[i]*=normalization_factor
+            statevector_list[i]*=save_sign[i]    
 
         eigenvalue_eigenvector_tuples=[]
-        for ll, eig in zip(l_list,eigenvalues):
+        for st, eig in zip(statevector_list,eigenvalues):
             eigenvector=np.zeros(len_input_matrix)
-            save_sign=np.sign(ll)
-            statevector=abs(ll)
+            save_sign=np.sign(st)
+            statevector=abs(st)
             max_list=[]
             scaled_statevectors=[]
             for e,i in enumerate(range(0,len(statevector),len_input_matrix)):
@@ -136,9 +136,6 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
         sorted_peaks: list-like
                         List of peaks in binary format that represent eigenvalues extracted by PE.
                         
-        sorted_num_peaks: list-like
-                        List of peaks in decimal format that represent eigenvalues extracted by PE.
-                        
         mean_threshold: ndarray-like
                         This array contains the mean between the left and right peaks vertical distance to its neighbouring samples.
         
@@ -149,7 +146,6 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
     """
     
     peaks=[]
-    nums_peaks=[]
     offset=1/n_shots
     stop=False
     while stop==False:
@@ -169,13 +165,12 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
             stop=True
             for i in p:
                 el = df.sort_values(['eigenvalue']).iloc[i]
-                nums_peaks.append(el['eigenvalue'])
                 peaks.append(el['lambda'])
     
     #mean_threshold helps in showing which are the eigenvalue that we are not able to estimate in a right way. If the phase estimation is not able to extract an eigenvalue in a correct way, this eigenvalue will have the lowest mean_threshold value
     
     mean_threshold=(left_thresholds+right_thresholds)/2
     sorted_peaks=np.array(peaks)[mean_threshold.argsort()[::-1]]
-    sorted_num_peaks=np.array(nums_peaks)[mean_threshold.argsort()[::-1]]
-    return sorted_peaks,sorted_num_peaks,np.array(sorted(mean_threshold,reverse=True))
+    
+    return sorted_peaks,np.array(sorted(mean_threshold,reverse=True))
     
