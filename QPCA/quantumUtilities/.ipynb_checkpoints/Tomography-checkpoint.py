@@ -178,7 +178,7 @@ class StateVectorTomography():
 
         Returns
         -------
-        statevector_dictionary: dict-like. 
+        tomography_dict: dict-like. 
                     The reconstructed statevector of the input quantum circuit.
 
         Notes
@@ -187,37 +187,34 @@ class StateVectorTomography():
         two parts: amplitudes estimation and sign estimation.
         """
         
-        
+        if backend==None:
+            backend = Aer.get_backend("qasm_simulator")
+            
+        #Set the number of quantum and classical register for tomography procedure
+            
+        q_size=quantum_circuit.qregs[0].size
+        if qubits_to_be_measured==None:
+            c_size=q_size
+            qubits_to_be_measured=list(range(q_size))
+        elif isinstance(qubits_to_be_measured,int):
+            c_size=1
+        else:
+            tmp_array=np.array(list(range(q_size)))
+            c_size=len(tmp_array[qubits_to_be_measured])
+
         tomography_list_dict=[]
         
         for j in range(n_repetitions):
-
-            if backend==None:
-                backend = Aer.get_backend("qasm_simulator")
-            
-            #Set the number of quantum and classical register for tomography procedure
-            
-            q_size=quantum_circuit.qregs[0].size
-            if qubits_to_be_measured==None:
-                c_size=q_size
-                qubits_to_be_measured=list(range(q_size))
-            elif isinstance(qubits_to_be_measured,int):
-                c_size=1
-            else:
-                tmp_array=np.array(list(range(q_size)))
-                c_size=len(tmp_array[qubits_to_be_measured])
 
             probabilities=class_.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
             tomography_list_dict.append(class_.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured))
 
         states=list(tomography_list_dict[0].keys())
-        new_tomography_dict={}
+        tomography_dict={}
         for s in states:
-            tmp=[]
-            for d in tomography_list_dict:
-                tmp.append(d[s])
+            
+            tmp=[d[s] for d in tomography_list_dict]
             mean=np.mean(tmp)
-            new_tomography_dict.update({s:mean})
-            statevector_dictionary=new_tomography_dict
+            tomography_dict.update({s:mean})
 
-        return statevector_dictionary
+        return tomography_dict
