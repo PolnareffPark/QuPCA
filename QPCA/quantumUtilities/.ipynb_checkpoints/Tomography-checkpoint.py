@@ -38,16 +38,16 @@ class StateVectorTomography():
         #initialize a zero vector where we store the estimated probabilities
         
         probabilities=np.zeros(2**c_size)
-        quantum_regs_1=QuantumRegister(q_size)
-        classical_regs_1 = ClassicalRegister(c_size, 'classical')
-        tomography_circuit_1 = QuantumCircuit(quantum_regs_1,classical_regs_1)
-        tomography_circuit_1.append(quantum_circuit,quantum_regs_1)
-        tomography_circuit_1.measure(quantum_regs_1[qubits_to_be_measured],classical_regs_1)
+        quantum_regs=QuantumRegister(q_size)
+        classical_regs = ClassicalRegister(c_size, 'classical')
+        amplitude_estimation_circuit = QuantumCircuit(quantum_regs,classical_regs)
+        amplitude_estimation_circuit.append(quantum_circuit,quantum_regs)
+        amplitude_estimation_circuit.measure(quantum_regs[qubits_to_be_measured],classical_regs)
         
         if drawing_amplitude_circuit:
-            display(tomography_circuit_1.draw('mpl'))
+            display(amplitude_estimation_circuit.draw('mpl'))
         
-        job = backend.run(transpile(tomography_circuit_1, backend=backend), shots=n_shots)
+        job = backend.run(transpile(amplitude_estimation_circuit, backend=backend), shots=n_shots)
         counts = job.result().get_counts()
         
         #compute estimated probabilities as number of observation for the i-th state divided by the total number of shots performed
@@ -105,20 +105,20 @@ class StateVectorTomography():
         
         #implement the sign estimation circuit as an Hadamard test
 
-        tomography_circuit_2 = QuantumCircuit(qr_total_xi,qr_control, classical_registers,name='matrix')
-        tomography_circuit_2.h(qr_control)
-        tomography_circuit_2.x(qr_control)
-        tomography_circuit_2.append(op_U, qr_control[:]+qr_total_xi[:])
-        tomography_circuit_2.x(qr_control)
-        tomography_circuit_2.append(op_V, qr_control[:]+qr_total_xi[qubits_to_be_measured])
-        tomography_circuit_2.h(qr_control)
-        tomography_circuit_2.measure(qr_total_xi[qubits_to_be_measured],classical_registers[0:n_classical_register-1])
-        tomography_circuit_2.measure(qr_control,classical_registers[n_classical_register-1])
+        sign_estimation_circuit = QuantumCircuit(qr_total_xi,qr_control, classical_registers,name='matrix')
+        sign_estimation_circuit.h(qr_control)
+        sign_estimation_circuit.x(qr_control)
+        sign_estimation_circuit.append(op_U, qr_control[:]+qr_total_xi[:])
+        sign_estimation_circuit.x(qr_control)
+        sign_estimation_circuit.append(op_V, qr_control[:]+qr_total_xi[qubits_to_be_measured])
+        sign_estimation_circuit.h(qr_control)
+        sign_estimation_circuit.measure(qr_total_xi[qubits_to_be_measured],classical_registers[0:n_classical_register-1])
+        sign_estimation_circuit.measure(qr_control,classical_registers[n_classical_register-1])
     
         if drawing_sign_circuit:
-            display(tomography_circuit_2.draw('mpl'))
+            display(sign_estimation_circuit.draw('mpl'))
 
-        job = backend.run(transpile(tomography_circuit_2, backend=backend), shots=n_shots)
+        job = backend.run(transpile(sign_estimation_circuit, backend=backend), shots=n_shots)
         counts_for_sign = job.result().get_counts()
         tmp=np.zeros(2**c_size)
         
@@ -194,6 +194,9 @@ class StateVectorTomography():
 
             if backend==None:
                 backend = Aer.get_backend("qasm_simulator")
+            
+            #Set the number of quantum and classical register for tomography procedure
+            
             q_size=quantum_circuit.qregs[0].size
             if qubits_to_be_measured==None:
                 c_size=q_size
