@@ -121,16 +121,16 @@ class QPCA():
         return self
 
 
-    def eigenvectors_reconstruction(self,n_shots=50000,n_repetitions=1,plot_peaks=False):
+    def eigenvectors_reconstruction(self,n_shots=10000,n_repetitions=1,plot_peaks=False):
         
         """ Method that reconstructs the eigenvalues/eigenvectors once performed Phase Estimation. 
 
         Parameters
         ----------
-        n_shots: int value, default=50000.
+        n_shots: int value, default=10000
                 Number of measures performed in the tomography process.
                 
-        n_repetitions: int value, default=1.
+        n_repetitions: int value, default=1
                 Number of times that state vector tomography will be executed. If > 1, the final result will be the average result
                 of all the execution of the tomography.
                 
@@ -151,7 +151,9 @@ class QPCA():
         way, the statevector of the quantum state is reconstructed and a postprocessing method is executed to get the eigenvectors from the reconstructed statevector.
         """
         
-        
+        if n_shots<10000:
+            warnings.warn("You are performing the tomography procedure with less than 10.000 measures. Note that to obtain accurate estimates, it is recommended to carry out at least 10.000 measurements.")
+            
         self.n_shots=n_shots
         
         statevector_dictionary=StateVectorTomography.state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots,n_repetitions=n_repetitions)

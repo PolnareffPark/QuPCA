@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Example &mdash; Qpca  documentation</title>
@@ -124,7 +124,7 @@ two plots like the ones below.</p>
 <p>Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers. By default, an optimized version
 of the encoding circuit is implemented using StatePreparation class of Qiskit.</p>
 <img alt="_images/optimized_qram.png" src="_images/optimized_qram.png" />
-<p>If you specify <code class="xref py py-obj docutils literal notranslate"><span class="pre">optimized_qram</span></code> as False in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code> method, a custom version
+<p>If you specify <code class="xref py py-obj docutils literal notranslate"><span class="pre">optimized_qram</span></code> as False in the <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.fit" title="QPCA.decomposition.QPCA.fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a> method, a custom version
 of the encoding circuit is implemented.
 As you can see, the number of qubit required to store the matrix is in the order of log(n*m), where n and m
 are the number of rows and columns of the input matrix.</p>
@@ -134,8 +134,8 @@ Notice that the number of qubits used for the phase estimation in this case are 
 parameter to encode the eigenvalues and 1 to encode the eigenvectors. In general, you will have the qubits specified
 in the resolution parameter plus half of the qubits used for the matrix encoding.</p>
 <img alt="_images/pe.png" src="_images/pe.png" />
-<p>The core part of this library is the eigenvector reconstruction that you can perform using <code class="xref py py-meth docutils literal notranslate"><span class="pre">eigenvectors_reconstruction()</span></code>. You can
-specify, as input parameters, <code class="xref py py-obj docutils literal notranslate"><span class="pre">n_shots</span></code> which is the number of measure that you
+<p>The core part of this library is the eigenvector reconstruction that you can perform using <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.eigenvectors_reconstruction" title="QPCA.decomposition.QPCA.eigenvectors_reconstruction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eigenvectors_reconstruction()</span></code></a>. You can
+specify, as input parameters, <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.n_shots" title="QPCA.decomposition.QPCA.n_shots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_shots</span></code></a> which is the number of measure that you
 want to perform in the state vector tomography, <code class="xref py py-obj docutils literal notranslate"><span class="pre">n_repetitions</span></code> which is the
 number of times that you want to repeat the tomography process, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_peaks</span></code>
 if you want to plot the output of the phase estimation which represent the most valuable approximated eigenvalues.</p>
@@ -153,7 +153,7 @@ one below, where you can see the peaks that represent the eigenvalues that phase
 As you can see, here the two peaks are 0.92 and 0.07 which are the two eigenvalues that you are able to
 estimate with the resolution and the number of shots that you provide.</p>
 <img alt="_images/peaks.png" src="_images/peaks.png" />
-<p>Finally, you can reconstruct the original input matrix using <code class="xref py py-meth docutils literal notranslate"><span class="pre">quantum_input_matrix_reconstruction()</span></code>.</p>
+<p>Finally, you can reconstruct the original input matrix using <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction" title="QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">quantum_input_matrix_reconstruction()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rec_input_matrix</span><span class="o">=</span><span class="n">qpca</span><span class="o">.</span><span class="n">quantum_input_matrix_reconstruction</span><span class="p">()</span>
 </pre></div>
 </div>
