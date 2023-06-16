@@ -147,7 +147,7 @@ class StateVectorTomography():
         return statevector_dictionary
     
     @classmethod
-    def state_vector_tomography(class_,quantum_circuit,n_shots,n_repetitions,qubits_to_be_measured=None,backend=None,drawing_amplitude_circuit=False,drawing_sign_circuit=False):
+    def state_vector_tomography(cls,quantum_circuit,n_shots,n_repetitions,qubits_to_be_measured=None,backend=None,drawing_amplitude_circuit=False,drawing_sign_circuit=False):
         """
         State vector tomography to estimate real vectors.
 
@@ -206,8 +206,8 @@ class StateVectorTomography():
         
         for j in range(n_repetitions):
 
-            probabilities=class_.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
-            tomography_list_dict.append(class_.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured))
+            probabilities=cls.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
+            tomography_list_dict.append(cls.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured))
 
         states=list(tomography_list_dict[0].keys())
         tomography_dict={}
