@@ -121,7 +121,7 @@ class QPCA():
         return self
 
 
-    def eigenvectors_reconstruction(self,n_shots=10000,n_repetitions=1,plot_peaks=False):
+    def eigenvectors_reconstruction(self,n_shots=10000,n_repetitions=1,plot_peaks=False, backend=None):
         
         """ Method that reconstructs the eigenvalues/eigenvectors once performed Phase Estimation. 
 
@@ -136,6 +136,9 @@ class QPCA():
                 
         plot_peaks: bool value, defualt=False
                         If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.
+        
+        backend: Qiskit backend, default value=None.
+                    The Qiskit backend used to execute the circuit. If None, the qasm simulator is used by default.
         
         Returns
         ----------
@@ -156,7 +159,7 @@ class QPCA():
             
         self.n_shots=n_shots
         
-        statevector_dictionary=StateVectorTomography.state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots,n_repetitions=n_repetitions)
+        statevector_dictionary=StateVectorTomography.state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots,n_repetitions=n_repetitions, backend=backend)
         
         eigenvalue_eigenvector_tuple,mean_threshold=general_postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,resolution=self.resolution,
                                                                            n_shots=self.n_shots,plot_peaks=plot_peaks)
