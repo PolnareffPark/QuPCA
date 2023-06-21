@@ -1,9 +1,11 @@
 import numpy as np
 import itertools
 import pandas as pd
+import time
 from scipy.signal import find_peaks
-    
-def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_shots, plot_peaks):
+from ..warnings_utils.warning_utility import *
+
+def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_shots, plot_peaks, eigenvalue_threshold, abs_tolerance):
         
         """ Eigenvectors reconstruction process from the reconstructed statevector.
         
@@ -24,6 +26,12 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         
         plot_peaks: bool value
                         If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.
+                        
+        eigenvalue_threshold: float value, default=None
+                        It acts as a threshold that cut out the eigenvalues (and the corrseponding eigenvectors) that are smaller than this value.
+        
+        abs_tolerance: float value, default=None
+                        Absolute tolerance parameter used to cut out the eigenvalues estimated badly due to insufficient resolution.
         
         Returns
         -------
@@ -62,8 +70,25 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         if plot_peaks:
             ax=tail[['eigenvalue','module']].sort_values('eigenvalue').set_index('eigenvalue').plot(style='-*',figsize=(15,10))
             
+            if eigenvalue_threshold:
+                ax.axvline(eigenvalue_threshold,ls='--',c='red',label='eigenvalues threshold')
+                ax.legend()
+            
             
         binary_eigenvalues, mean_threshold=__peaks_extraction(tail,len_input_matrix,n_shots)
+        
+        if abs_tolerance==None:
+            abs_tolerance=1/n_shots
+            
+        bad_peaks_mask=np.isclose(mean_threshold,0,atol=abs_tolerance)
+        
+        with warnings.catch_warnings():
+            warnings.simplefilter('always')
+            if not any(bad_peaks_mask):
+                customWarning.warn(f'You set an absolute tolerance of {abs_tolerance}. If some output eigenvalues are not the expected ones, it is recommended to increase the absolute tolerance to cut away the noisy eigenvalues.')
+                
+        binary_eigenvalues=binary_eigenvalues[~bad_peaks_mask]
+        mean_threshold=mean_threshold[~bad_peaks_mask]
         
         df.columns=['state','module','lambda']
         
@@ -80,37 +105,48 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         statevector_list=[]
         save_sign=[]
         eigenvalues=[]
-     
-        for bin_eigenvalue in binary_eigenvalues:
-            
-            #conversion from binary description of the eigenvalue to integer form, remembering that phase estimation encode the eigenvalue as x/2^resolution
-            eigenvalue=int(bin_eigenvalue[::-1],base=2)/(2**resolution)
-            eigenvalues.append(eigenvalue)
-            module_list=np.array(df.query("state.str.endswith(@bin_eigenvalue)")['module'].values)
-            save_sign.append(np.sign(module_list))
-            statevector_list.append(np.sqrt(abs(module_list)))
-  
-        for i in range(len(statevector_list)):
-            normalization_factor=np.sqrt((1/(sum(statevector_list[i]**2))))
-            statevector_list[i]*=normalization_factor
-            statevector_list[i]*=save_sign[i]    
+        idx_to_remove=[]
+        
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+        
+            for e, bin_eigenvalue in enumerate(binary_eigenvalues):
 
-        eigenvalue_eigenvector_tuples=[]
-        for st, eig in zip(statevector_list,eigenvalues):
-            eigenvector=np.zeros(len_input_matrix)
-            save_sign=np.sign(st)
-            statevector=abs(st)
-            max_list=[]
-            scaled_statevectors=[]
-            for e,i in enumerate(range(0,len(statevector),len_input_matrix)):
-                max_list.append(max(statevector[i:i+len_input_matrix]))
-                scaled_statevectors.append(statevector[i:i+len_input_matrix]/max_list[e])
-            
-            idx_max=np.argmax(max_list)
-            max_max=max_list[idx_max]
-            value=np.sqrt(max_max)
-            eigenvector=scaled_statevectors[idx_max]*value*save_sign[len_input_matrix*idx_max:len_input_matrix*idx_max+len_input_matrix]
-            eigenvalue_eigenvector_tuples.append((eig,eigenvector))
+                #conversion from binary description of the eigenvalue to integer form, remembering that phase estimation encode the eigenvalue as x/2^resolution
+                eigenvalue=int(bin_eigenvalue[::-1],base=2)/(2**resolution)
+                eigenvalues.append(eigenvalue)
+                module_list=np.array(df.query("state.str.endswith(@bin_eigenvalue)")['module'].values)
+                save_sign.append(np.sign(module_list))
+                statevector_list.append(np.sqrt(abs(module_list)))
+
+                if eigenvalue_threshold and eigenvalue < eigenvalue_threshold:
+                    eigenvalues.pop()
+                    save_sign.pop()
+                    statevector_list.pop()
+                    idx_to_remove.append(e)
+            mean_threshold=np.delete(mean_threshold,idx_to_remove)
+
+            for i in range(len(statevector_list)):
+                normalization_factor=np.sqrt((1/(sum(statevector_list[i]**2))))
+                statevector_list[i]*=normalization_factor
+                statevector_list[i]*=save_sign[i]    
+
+            eigenvalue_eigenvector_tuples=[]
+            for st, eig in zip(statevector_list,eigenvalues):
+                eigenvector=np.zeros(len_input_matrix)
+                save_sign=np.sign(st)
+                statevector=abs(st)
+                max_list=[]
+                scaled_statevectors=[]
+                for e,i in enumerate(range(0,len(statevector),len_input_matrix)):
+                    max_list.append(max(statevector[i:i+len_input_matrix]))
+                    scaled_statevectors.append(statevector[i:i+len_input_matrix]/max_list[e])
+
+                idx_max=np.argmax(max_list)
+                max_max=max_list[idx_max]
+                value=np.sqrt(max_max)
+                eigenvector=scaled_statevectors[idx_max]*value*save_sign[len_input_matrix*idx_max:len_input_matrix*idx_max+len_input_matrix]
+                eigenvalue_eigenvector_tuples.append((eig,eigenvector))
         
         return eigenvalue_eigenvector_tuples,mean_threshold
     
@@ -148,29 +184,39 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
     peaks=[]
     offset=1/n_shots
     stop=False
-    while stop==False:
+    start=time.time()
+    
+    with warnings.catch_warnings():
+        warnings.simplefilter('always')
         
-        #compute the most likely peaks (eigenvalues)
-        
-        p_=find_peaks(df.sort_values(['eigenvalue'])['module'],threshold=offset)
-        p=p_[0]
-        right_thresholds=p_[1]['right_thresholds']
-        left_thresholds=p_[1]['left_thresholds']
-        
-        #check if the number of peaks are equal (or less) then the expected ones since we don't want a greater number of peaks than expected
-        
-        if len(p)>len_input_matrix or len(p)==0:
-            offset+=1/n_shots
-        else:
-            stop=True
-            for i in p:
-                el = df.sort_values(['eigenvalue']).iloc[i]
-                peaks.append(el['lambda'])
+        while stop==False:
+            
+            #check if the peaks finder is enter in an infinite loop
+
+            if time.time()-start>30:
+                customWarning.warn("The extraction of the eigenvalues is taking a long time. You may have hit a plateau and therefore you may need to restart the execution by increasing the number of resolution qubits and/or the number of measurements performed.")
+                warnings.simplefilter('ignore')
+                
+            #compute the most likely peaks (eigenvalues)
+
+            p_=find_peaks(df.sort_values(['eigenvalue'])['module'],threshold=offset)
+            p=p_[0]
+            right_thresholds=p_[1]['right_thresholds']
+            left_thresholds=p_[1]['left_thresholds']
+
+            #check if the number of peaks are equal (or less) then the expected ones since we don't want a greater number of peaks than expected
+
+            if len(p)>len_input_matrix or len(p)==0:
+                offset+=1/n_shots
+            else:
+                stop=True
+                for i in p:
+                    el = df.sort_values(['eigenvalue']).iloc[i]
+                    peaks.append(el['lambda'])
     
     #mean_threshold helps in showing which are the eigenvalue that we are not able to estimate in a right way. If the phase estimation is not able to extract an eigenvalue in a correct way, this eigenvalue will have the lowest mean_threshold value
     
     mean_threshold=(left_thresholds+right_thresholds)/2
     sorted_peaks=np.array(peaks)[mean_threshold.argsort()[::-1]]
-    
     return sorted_peaks,np.array(sorted(mean_threshold,reverse=True))
     

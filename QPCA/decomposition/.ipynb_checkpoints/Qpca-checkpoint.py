@@ -1,5 +1,4 @@
 import numpy as np
-import warnings
 import math
 from ..quantumUtilities.Tomography import StateVectorTomography
 from ..quantumUtilities.qRam_Builder import QramBuilder
@@ -8,6 +7,7 @@ from ..postprocessingUtilities.postprocessing import general_postprocessing
 from ..preprocessingUtilities.preprocessing import check_matrix_dimension
 from ..benchmark.benchmark import Benchmark_Manager
 from scipy.spatial import distance
+from ..warnings_utils.warning_utility import *
 #warnings.filterwarnings("ignore")
 
 class QPCA():
@@ -93,6 +93,12 @@ class QPCA():
         ----------
         """
         
+        with warnings.catch_warnings():
+            warnings.simplefilter('always')
+            
+            if resolution<len(input_matrix):
+                customWarning.warn(f'You chose {resolution} qubits of resolution but the matrix dimension is {len(input_matrix)}. Note that to estimate correctly all the {len(input_matrix)} eigenvalues/eigenvectors, you need to set at least {len(input_matrix)} resolution qubits. Moreover, since with {resolution} qubits you have an accuracy of {1/2**resolution}, if you know that some eigenvalues are smaller than {1/2**resolution}, please increase the resolution qubits to get better estimates.')
+        
         true_input_matrix=input_matrix
         
         # 2^N matrix optimization
@@ -121,7 +127,7 @@ class QPCA():
         return self
 
 
-    def eigenvectors_reconstruction(self,n_shots=10000,n_repetitions=1,plot_peaks=False):
+    def eigenvectors_reconstruction(self,n_shots=10000,n_repetitions=1,plot_peaks=False, backend=None, eigenvalue_threshold=None, abs_tolerance=None):
         
         """ Method that reconstructs the eigenvalues/eigenvectors once performed Phase Estimation. 
 
@@ -137,6 +143,15 @@ class QPCA():
         plot_peaks: bool value, defualt=False
                         If True, it returns a plot of the peaks which correspond to the eigenvalues finded by the phase estimation procedure.
         
+        backend: Qiskit backend, default value=None.
+                    The Qiskit backend used to execute the circuit. If None, the qasm simulator is used by default.
+        
+        eigenvalue_threshold: float value, default=None
+                        It acts as a threshold that cut out the eigenvalues (and the corrseponding eigenvectors) that are smaller than this value.
+        
+        abs_tolerance: float value, default=None
+                        Absolute tolerance parameter used to cut out the eigenvalues estimated badly due to insufficient resolution.
+        
         Returns
         ----------
         reconstructed_eigenvalues : array-like
@@ -151,15 +166,18 @@ class QPCA():
         way, the statevector of the quantum state is reconstructed and a postprocessing method is executed to get the eigenvectors from the reconstructed statevector.
         """
         
-        if n_shots<10000:
-            warnings.warn("You are performing the tomography procedure with less than 10.000 measures. Note that to obtain accurate estimates, it is recommended to carry out at least 10.000 measurements.")
+        with warnings.catch_warnings():
+            warnings.simplefilter('always')
+            
+            if n_shots<10000:
+                customWarning.warn("You are performing the tomography procedure with less than 10.000 measures. Note that to obtain accurate estimates, it is recommended to carry out at least 10.000 measurements.")
             
         self.n_shots=n_shots
         
-        statevector_dictionary=StateVectorTomography.state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots,n_repetitions=n_repetitions)
+        statevector_dictionary=StateVectorTomography.state_vector_tomography(quantum_circuit=self.total_circuit,n_shots=n_shots,n_repetitions=n_repetitions, backend=backend)
         
         eigenvalue_eigenvector_tuple,mean_threshold=general_postprocessing(input_matrix=self.input_matrix,statevector_dictionary=statevector_dictionary,resolution=self.resolution,
-                                                                           n_shots=self.n_shots,plot_peaks=plot_peaks)
+                                                                           n_shots=self.n_shots,plot_peaks=plot_peaks,eigenvalue_threshold=eigenvalue_threshold,abs_tolerance=abs_tolerance)
         
         self.mean_threshold=mean_threshold[:len(self.true_input_matrix)]
         
