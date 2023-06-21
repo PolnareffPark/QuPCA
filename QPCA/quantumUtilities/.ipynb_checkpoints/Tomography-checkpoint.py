@@ -5,6 +5,7 @@ from qiskit.circuit.library import PhaseEstimation
 from qiskit import Aer, transpile
 import matplotlib.pyplot as plt
 from qiskit.circuit.library.data_preparation.state_preparation import StatePreparation
+from ..warnings_utils.warning_utility import *
 
 class StateVectorTomography():
 
@@ -204,10 +205,13 @@ class StateVectorTomography():
 
         tomography_list_dict=[]
         
-        for j in range(n_repetitions):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            
+            for j in range(n_repetitions):
 
-            probabilities=cls.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
-            tomography_list_dict.append(cls.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured))
+                probabilities=cls.__computing_amplitudes(quantum_circuit,q_size,c_size,n_shots,drawing_amplitude_circuit,backend,qubits_to_be_measured)
+                tomography_list_dict.append(cls.__sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured))
 
         states=list(tomography_list_dict[0].keys())
         tomography_dict={}
