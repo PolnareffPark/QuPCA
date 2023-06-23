@@ -8,7 +8,7 @@ from ..preprocessingUtilities.preprocessing import check_matrix_dimension
 from ..benchmark.benchmark import Benchmark_Manager
 from scipy.spatial import distance
 from ..warnings_utils.warning_utility import *
-#warnings.filterwarnings("ignore")
+
 
 class QPCA():
     """Quantum Principal component analysis (QPCA).

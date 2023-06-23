@@ -3,13 +3,14 @@ import warnings
 class customWarning():
     
     """
-    Class to customize the warning messages. It override the warn method reporting only the desired warning message.
+    Class to customize the warning messages. 
 
-        Parameters
-        ----------
-        
-        Notes
-        ----------
+    Parameters
+    ----------
+
+    Notes
+    ----------
+    It override the warn method reporting only the desired warning message.
     """
     
     
