@@ -44,7 +44,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="modules.html">QPCA</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="Example_modules.html">Example of QPCA usage</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Example</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#threshold-optimization">Threshold optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#absolute-tolerance">Absolute tolerance</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Example_tomography_modules.html">Example of state tomography usage</a></li>
@@ -78,6 +83,8 @@
              
   <section id="example">
 <h1>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h1>
+<section id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading"></a></h2>
 <p>First, you have to import the necessary modules from the package and then you can generate a random Hermitian
 matrix using <a class="reference internal" href="Q_preprocessing.html#QPCA.preprocessingUtilities.generate_matrix" title="QPCA.preprocessingUtilities.generate_matrix"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_matrix()</span></code></a> method provided in the package. You can
 set the matrix dimension and a seed for the reproducibility of the execution.</p>
@@ -107,7 +114,7 @@ set the matrix dimension and a seed for the reproducibility of the execution.</p
 </div>
 <p>Once you have your input matrix, you can fit your QPCA model, specifying the number of resolution qubit
 that you need for the phase estimation process. Remember that a higher resolution generally means better
-accuracy results but lower performance.</p>
+accuracy results but lower performance. Remember that the input matrix will be normalized by its trace, therefore the eigenvalues could change.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">resolution</span><span class="o">=</span><span class="mi">8</span>
 <span class="n">qpca</span><span class="o">=</span><span class="n">QPCA</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_matrix</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span><span class="n">plot_qram</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">plot_pe_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -124,7 +131,7 @@ two plots like the ones below.</p>
 <p>Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers. By default, an optimized version
 of the encoding circuit is implemented using StatePreparation class of Qiskit.</p>
 <img alt="_images/optimized_qram.png" src="_images/optimized_qram.png" />
-<p>If you specify <code class="xref py py-obj docutils literal notranslate"><span class="pre">optimized_qram</span></code> as False in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code> method, a custom version
+<p>If you specify <code class="xref py py-obj docutils literal notranslate"><span class="pre">optimized_qram</span></code> as False in the <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.fit" title="QPCA.decomposition.QPCA.fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a> method, a custom version
 of the encoding circuit is implemented.
 As you can see, the number of qubit required to store the matrix is in the order of log(n*m), where n and m
 are the number of rows and columns of the input matrix.</p>
@@ -134,8 +141,8 @@ Notice that the number of qubits used for the phase estimation in this case are 
 parameter to encode the eigenvalues and 1 to encode the eigenvectors. In general, you will have the qubits specified
 in the resolution parameter plus half of the qubits used for the matrix encoding.</p>
 <img alt="_images/pe.png" src="_images/pe.png" />
-<p>The core part of this library is the eigenvector reconstruction that you can perform using <code class="xref py py-meth docutils literal notranslate"><span class="pre">eigenvectors_reconstruction()</span></code>. You can
-specify, as input parameters, <code class="xref py py-obj docutils literal notranslate"><span class="pre">n_shots</span></code> which is the number of measure that you
+<p>The core part of this library is the eigenvector reconstruction that you can perform using <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.eigenvectors_reconstruction" title="QPCA.decomposition.QPCA.eigenvectors_reconstruction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eigenvectors_reconstruction()</span></code></a>. You can
+specify, as input parameters, <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.n_shots" title="QPCA.decomposition.QPCA.n_shots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_shots</span></code></a> which is the number of measure that you
 want to perform in the state vector tomography, <code class="xref py py-obj docutils literal notranslate"><span class="pre">n_repetitions</span></code> which is the
 number of times that you want to repeat the tomography process, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_peaks</span></code>
 if you want to plot the output of the phase estimation which represent the most valuable approximated eigenvalues.</p>
@@ -144,8 +151,9 @@ if you want to plot the output of the phase estimation which represent the most 
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span>
 
-<span class="go">[(0.92578125, array([0.97252803, 0.23287312])),</span>
-<span class="go">(0.07421875, array([-0.23333264,  0.97138455]))]</span>
+<span class="go">array([0.92578125, 0.07421875]),</span>
+<span class="go">array([[ 0.97257301, -0.22836194],</span>
+<span class="go">     [ 0.23277106,  0.97266614]])</span>
 </pre></div>
 </div>
 <p>With the boolean flag <code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_peaks</span></code> set to True, you can visualize a plot like the
@@ -153,16 +161,111 @@ one below, where you can see the peaks that represent the eigenvalues that phase
 As you can see, here the two peaks are 0.92 and 0.07 which are the two eigenvalues that you are able to
 estimate with the resolution and the number of shots that you provide.</p>
 <img alt="_images/peaks.png" src="_images/peaks.png" />
-<p>Finally, you can reconstruct the original input matrix using <code class="xref py py-meth docutils literal notranslate"><span class="pre">quantum_input_matrix_reconstruction()</span></code>.</p>
+<p>Finally, you can reconstruct the original input matrix using <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction" title="QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">quantum_input_matrix_reconstruction()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rec_input_matrix</span><span class="o">=</span><span class="n">qpca</span><span class="o">.</span><span class="n">quantum_input_matrix_reconstruction</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec_input_matrix</span><span class="p">)</span>
 
-<span class="go">array([[0.5892648 , 0.12654384],</span>
-<span class="go">       [0.12654384, 0.07984454]])</span>
+<span class="go">array([[0.5884931 , 0.12919742],</span>
+<span class="go">      [0.12919742, 0.08054153]])</span>
 </pre></div>
 </div>
+</section>
+<section id="threshold-optimization">
+<h2>Threshold optimization<a class="headerlink" href="#threshold-optimization" title="Permalink to this heading"></a></h2>
+<p>In the <a class="reference internal" href="QPCA.html#QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction" title="QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">quantum_input_matrix_reconstruction()</span></code></a> method, you can specify the <code class="xref py py-obj docutils literal notranslate"><span class="pre">eigenvalue_threshold</span></code> parameter
+to cut off the estimated eigenvalues that are smaller than the specified value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eig</span><span class="o">=</span><span class="n">qpca</span><span class="o">.</span><span class="n">eigenvectors_reconstruction</span><span class="p">(</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">n_repetitions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">plot_peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eigenvalue_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As you can see below, by specifying a threshold of 0.1, you cut off the last eigenvalue and you keep only the greatest one.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span>
+
+<span class="go">array([0.92578125]),</span>
+<span class="go">array([[0.9725207],</span>
+<span class="go">     [0.2333083]])</span>
+</pre></div>
+</div>
+<img alt="_images/threshold.png" src="_images/threshold.png" />
+<p>This type of threshold can be useful to cut out the smallest eigenvalues that we have seen to be the most problematic to estimate
+and whose associated eigenvectors are those with the highest reconstruction error.</p>
+</section>
+<section id="absolute-tolerance">
+<h2>Absolute tolerance<a class="headerlink" href="#absolute-tolerance" title="Permalink to this heading"></a></h2>
+<p>The absolute tolerance is a kind of threshold that allows to discard the noisy eigenvalues (and consequently the respective eigenvectors) that could arise when the number of resolution qubits
+and/or the number of measurements performed in the tomography are not high enough.</p>
+<p>Let’s see the following example.
+To better visualize the problem, a matrix 4x4 is considered with 6 qubits of resolution and 1000000 shots performed to reconstruct the eigenvectors.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">resolution</span><span class="o">=</span><span class="mi">6</span>
+<span class="n">matrix_dimension</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">input_matrix</span><span class="o">=</span><span class="n">generate_matrix</span><span class="p">(</span><span class="n">matrix_dimension</span><span class="o">=</span><span class="n">matrix_dimension</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">input_matrix</span><span class="p">)</span>
+
+<span class="go">   [[0.63 0.55 0.5  0.89]</span>
+<span class="go">   [0.55 1.41 1.1  1.3 ]</span>
+<span class="go">   [0.5  1.1  1.08 1.47]</span>
+<span class="go">   [0.89 1.3  1.47 2.36]]</span>
+
+<span class="go">   eigenvalue: 0.01593042549125613 - eigenvector: [ 0.23  -0.357  0.812 -0.4  ]</span>
+<span class="go">   eigenvalue: 0.2943707848528235 - eigenvector: [ 0.882  0.207 -0.303 -0.295]</span>
+<span class="go">   eigenvalue: 0.5238941243476808 - eigenvector: [-0.304  0.772  0.163 -0.534]</span>
+<span class="go">   eigenvalue: 4.647071393343875 - eigenvector: [-0.277 -0.483 -0.471 -0.685]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">qpca</span><span class="o">=</span><span class="n">QPCA</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_matrix</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span><span class="n">plot_qram</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">plot_pe_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">qpca</span><span class="o">.</span><span class="n">input_matrix</span><span class="p">))</span>
+
+<span class="go">(array([0.84780975, 0.09557902, 0.05370488, 0.00290634]),</span>
+<span class="go">array([[-0.27669967, -0.30381059,  0.88229208,  0.2295585 ],</span>
+<span class="go">      [-0.48274483,  0.77216236,  0.20746302, -0.35732594],</span>
+<span class="go">      [-0.47083591,  0.16297368, -0.30291613,  0.81240073],</span>
+<span class="go">      [-0.68462272, -0.53376399, -0.29455322, -0.39953239]]))</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eig</span><span class="o">=</span><span class="n">qpca</span><span class="o">.</span><span class="n">eigenvectors_reconstruction</span><span class="p">(</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span><span class="n">n_repetitions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">plot_peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As you can see below, there is an eigenvalue (0.265625 in this case) which doesn’t match any of the original eigenvalues. Indeed, even the peaks plot doesn’t show a peak around 0.26. Therefore,
+this is a fluctuation or a noisy eigenvalue that is due to the classical postprocessing since the classical eigenvalues extractor algorithm searches for at most 4 eigenvalues (this is because 4 is the initial matrix dimension).</p>
+<p>But as you can see, the QPCA algorithm, with the configuration specified at the beginning, found 3 peaks or “correct” eigenvalues. The fourth, that corresponds to the smallest original eigenvalue,
+is something added by the postprocessing.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span>
+
+<span class="go">array([0.84375 , 0.09375 , 0.046875, 0.265625]),</span>
+<span class="go">array([[ 0.27680417, -0.27660952,  0.80547637,  0.29495506],</span>
+<span class="go">     [ 0.48230629,  0.67785086,  0.10991118,  0.48594109],</span>
+<span class="go">     [ 0.4694504 ,  0.13039498, -0.38167556,  0.41712944],</span>
+<span class="go">     [ 0.68528434, -0.52157991, -0.38353287,  0.69620819]])</span>
+</pre></div>
+</div>
+<img alt="_images/absolute_tolerance1.png" src="_images/absolute_tolerance1.png" />
+<p>To tackle this problem, you can both increase the number of qubits of resolution and/or the number of shots. But if these numbers are already big enough
+and you can’t increase them for performance reasons, you can specify the <code class="xref py py-obj docutils literal notranslate"><span class="pre">abs_tolerance</span></code> parameter setting a specific tolerance.</p>
+<p>As you can see, by setting this parameter to 0.001, you can remove the noisy eigenvalue and return all the correct estimated eigenvalues/eigenvectors. If you also want to correctly estimate
+the smallest eigenvalue, you probably need to increase the number of qubits of resolution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eig</span><span class="o">=</span><span class="n">qpca</span><span class="o">.</span><span class="n">eigenvectors_reconstruction</span><span class="p">(</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span><span class="n">n_repetitions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">plot_peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">abs_tolerance</span><span class="o">=</span><span class="mf">1e-03</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span>
+
+<span class="go">array([0.84375 , 0.09375 , 0.046875]),</span>
+<span class="go">array([[ 0.27703224, -0.26507805,  0.81246826],</span>
+<span class="go">     [ 0.48292227,  0.68519289,  0.11092602],</span>
+<span class="go">     [ 0.46941485,  0.12992164,  0.36394397],</span>
+<span class="go">     [ 0.68487267, -0.5051309 ,  0.37952075]])</span>
+</pre></div>
+</div>
+<p>Basically, the peaks are extracted by looking at their average vertical distance from their neighbors means. Therefore, specifying an absolute tolerance means specifying the average vertical height
+below which a peak is no longer considered a peak but is seen as a fluctuation or noise.
+So, how to chose the absolute tolerance parameter? If you don’t specify, it takes a default value of 1/n_shots. This is because the average vertical distance from the neighbors is in some sense related
+to the number of shots performed in the tomography. But due to the statistical variance in measuring, this is not always the case. So the best thing to do if an unexpected eigenvalue occurs is to try
+increasing the tolerance by an order of magnitude with respect to 1/n_shots (clearly the best solution would be to increase the resolution, where possible).</p>
+</section>
 </section>
 
 
