@@ -137,7 +137,7 @@ As you can see below, by specifying a threshold of 0.1, you cut off the last eig
 
 .. image:: Images/threshold.png
 
-This type of threshold can be useful to cut out the smallest eigenvalues that we have seen to be the most problematic to estimate
+This type of threshold can be useful to cut out the smallest eigenvalues that are the most problematic to estimate
 and whose associated eigenvectors are those with the highest reconstruction error.
 
 +++++++++++++++
@@ -148,7 +148,7 @@ The absolute tolerance is a kind of threshold that allows to discard the noisy e
 and/or the number of measurements performed in the tomography are not high enough.
 
 Let's see the following example.
-To better visualize the problem, a matrix 4x4 is considered with 6 qubits of resolution and 1000000 shots performed to reconstruct the eigenvectors.
+To better visualize the problem, a 4x4 matrix is considered with 6 qubits of resolution and 1000000 shots performed to reconstruct the eigenvectors.
 
 ..  code-block:: python
 

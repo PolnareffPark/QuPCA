@@ -188,7 +188,7 @@ to cut off the estimated eigenvalues that are smaller than the specified value.<
 </pre></div>
 </div>
 <img alt="_images/threshold.png" src="_images/threshold.png" />
-<p>This type of threshold can be useful to cut out the smallest eigenvalues that we have seen to be the most problematic to estimate
+<p>This type of threshold can be useful to cut out the smallest eigenvalues that are the most problematic to estimate
 and whose associated eigenvectors are those with the highest reconstruction error.</p>
 </section>
 <section id="absolute-tolerance">
@@ -196,7 +196,7 @@ and whose associated eigenvectors are those with the highest reconstruction erro
 <p>The absolute tolerance is a kind of threshold that allows to discard the noisy eigenvalues (and consequently the respective eigenvectors) that could arise when the number of resolution qubits
 and/or the number of measurements performed in the tomography are not high enough.</p>
 <p>Let’s see the following example.
-To better visualize the problem, a matrix 4x4 is considered with 6 qubits of resolution and 1000000 shots performed to reconstruct the eigenvectors.</p>
+To better visualize the problem, a 4x4 matrix is considered with 6 qubits of resolution and 1000000 shots performed to reconstruct the eigenvectors.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">resolution</span><span class="o">=</span><span class="mi">6</span>
 <span class="n">matrix_dimension</span><span class="o">=</span><span class="mi">4</span>
 <span class="n">input_matrix</span><span class="o">=</span><span class="n">generate_matrix</span><span class="p">(</span><span class="n">matrix_dimension</span><span class="o">=</span><span class="n">matrix_dimension</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
