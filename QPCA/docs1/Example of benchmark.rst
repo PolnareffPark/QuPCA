@@ -1,12 +1,11 @@
 Example
 ====
 
-In the :mod:`~QPCA.benchmark` module, you will find 4 methods to benchmark the execution of Qpca algorithm.
-Here below there are reported some possible usage of the methods of benchmarking.
+In the :mod:`~QPCA.benchmark` module, there are four methods available to benchmark the execution of the Qpca algorithm. 
+Below are some examples illustrating the usage of these benchmarking methods.
 
-First, a seed is set for the reproducibility of the experiments. Then, the resolution is set to 8 qubits and 
-the matrix that will be considered is a 4x4 matrix with a custom list of eigenvalues. The number of measures for 
-the eigenvectors reconstruction is set to 1000000.
+First, you set a seed to ensure the reproducibility of the experiments. Then, you specify a resolution of 8 qubits and define a custom list of eigenvalues for a 4x4 matrix. 
+The number of measurements for the eigenvector reconstruction is set to 1.000.000.
 
 .. code-block:: python
 
@@ -23,8 +22,8 @@ the eigenvectors reconstruction is set to 1000000.
    input_matrix=generate_matrix(matrix_dimension=matrix_dimension,replicate_paper=False,seed=seed,eigenvalues_list=eigenvalues_list)
    shots_numbers=[1000000] 
 
-Then, a Qpca object is fitted using the generated input matrix and the chosen resolution. Finally, using :meth:`~QPCA.decomposition.QPCA.eigenvectors_reconstruction`, you are able to reconstruct the eigenvalues/eigenvectors.
-The first reference example concerns the accuracy of reconstructing eigenvectors using :meth:`~QPCA.decomposition.QPCA.spectral_benchmarking`
+Next, you create a Qpca object and fit it using the generated input matrix and the chosen resolution. Finally, you utilize the :meth:`~QPCA.decomposition.QPCA.eigenvectors_reconstruction` method to reconstruct the eigenvalues and eigenvectors. 
+In the first reference example, you are interested in evaluating the accuracy of reconstructing the eigenvectors using :meth:`~QPCA.decomposition.QPCA.spectral_benchmarking`
 
 .. code-block:: python
 
@@ -38,26 +37,26 @@ The first reference example concerns the accuracy of reconstructing eigenvectors
 Eigenvectors benchmark
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Setting the :obj:`~QPCA.benchmark.eigenvectors_reconstruction.eigenvector_benchmarking` parameter to True, you will obtain a plot like the following one. You can see the eigenvectors that you are able to reconstruct and the values of the reconstructed 
-eigenvector (stars) compared to the original ones (circles). In the legend, it is also reported the l2-error distance between the reconstructed and original eigenvector.
+By setting the :obj:`~QPCA.benchmark.eigenvectors_reconstruction.eigenvector_benchmarking` parameter to True, you will obtain a plot similar to the one shown below. 
+The plot displays the reconstructed eigenvectors (represented by stars) along with the original eigenvectors (represented by circles). 
+The legend includes the l2-error distance between the reconstructed and original eigenvectors.
 
 .. image:: Images/benchmark1.png
 
 Eigenvalues benchmark
 ~~~~~~~~~~~~~~~~~~~~~~
 
-You can also benchmark the reconstructed eigenvalues by setting the :obj:`~QPCA.benchmark.eigenvectors_reconstruction.eigenvalues_benchmarching` to True. With this benchmark, a plot showing the reconstructed eigenvalues (red circle) and the 
-original ones (black crosses) is shown. If the :obj:`~QPCA.benchmark.eigenvectors_reconstruction.print_error` parameter is set to True, a table showing the absolute error between reconstructed and original eigenvalues it is also reported.
+You can also benchmark the reconstructed eigenvalues by setting the :obj:`~QPCA.benchmark.eigenvectors_reconstruction.eigenvalues_benchmarching` parameter to True. This benchmarking generates a plot that displays the reconstructed eigenvalues as red circles and the original eigenvalues as black crosses. 
+If the :obj:`~QPCA.benchmark.eigenvectors_reconstruction.print_error` parameter is set to True, a table is provided, showing the absolute error between the reconstructed and original eigenvalues.
 
 .. image:: Images/benchmark2.png
 
 Eigenvectors reconstruction error benchmark
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Using the :meth:`~QPCA.benchmark.Benchmark_Manager.error_benchmark` method, you can visualize better the trend of the reconstruction error for each eigenvectors as the number of measures and number of 
-resolution qubits increase. As before, once the number of measures and resolution qubits are chosen, you can perform the fit and eigenvectors reconstruction procedures. 
-Pay attention: it is important to save the results of the benchmark into specific dictionary, as in the code below. This is because the :meth:`~QPCA.benchmark.Benchmark_Manager.error_benchmark` function 
-expects dictionaries as parameters.
+The :meth:`~QPCA.benchmark.Benchmark_Manager.error_benchmark` method allows you to visualize the reconstruction error trend for each eigenvector as the number of measurements and resolution qubits increase. 
+Similar to before, you need to perform the fit and eigenvector reconstruction procedures after selecting the desired number of measurements and resolution qubits. 
+It's important to save the benchmark results in a specific dictionary, as shown in the code below. This is necessary because the :meth:`~QPCA.benchmark.Benchmark_Manager.error_benchmark` function expects dictionaries as parameters.
 
 .. code-block:: python
    
@@ -88,4 +87,5 @@ expects dictionaries as parameters.
 
 .. image:: Images/benchmark3.png
 
-With these plots, you can observe the trend of the errors as the number of measures and resolution qubits increases for each eigenvectors.
+Using these plots, you can observe the trend of the errors for each eigenvector as the number of measurements and resolution qubits increases. 
+This allows you to analyze how the errors change with varying experimental parameters and gain insights into the behavior of the reconstruction process.

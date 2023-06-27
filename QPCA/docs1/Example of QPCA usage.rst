@@ -6,8 +6,8 @@ Basic usage
 +++++++++++++++
 
 
-First, you have to import the necessary modules from the package and then you can generate a random Hermitian 
-matrix using :meth:`~QPCA.preprocessingUtilities.generate_matrix` method provided in the package. You can 
+First, you have to import the necessary modules from the package. Then, you can generate a random Hermitian 
+matrix using the :meth:`~QPCA.preprocessingUtilities.generate_matrix` method provided in the package. You can 
 set the matrix dimension and a seed for the reproducibility of the execution.
 
 ..  code-block:: python
@@ -36,9 +36,9 @@ set the matrix dimension and a seed for the reproducibility of the execution.
    eigenvalue: 0.04912229458049476 - eigenvector: [-0.233  0.973]
    eigenvalue: 0.6199503657038241 - eigenvector: [0.973 0.233]
 
-Once you have your input matrix, you can fit your QPCA model, specifying the number of resolution qubit 
-that you need for the phase estimation process. Remember that a higher resolution generally means better 
-accuracy results but lower performance. Remember that the input matrix will be normalized by its trace, therefore the eigenvalues could change.
+Once you have your input matrix, you can fit your QPCA model by specifying the number of resolution qubits 
+that you need for the phase estimation process. Remember that a higher resolution generally results in better accuracy but lower performance.
+Additionally, please note that the input matrix will be normalized by its trace, which may cause the eigenvalues to change.
 
 ..  code-block:: python
 
@@ -53,34 +53,30 @@ accuracy results but lower performance. Remember that the input matrix will be n
    array([[ 0.9725247 , -0.23279972],
           [ 0.23279972,  0.9725247 ]]))
 
-If you set the boolean flag plot_qram and plot_pe_circuit to True as in the example before, you are able to see
-two plots like the ones below.
+If you set the boolean flag plot_qram and plot_pe_circuit to True, as in the example before, you will be able to see two plots similar to the ones shown below.
 
-Specifically, this plot shows the circuit that implements the encoding of the input matrix in the quantum registers. By default, an optimized version 
-of the encoding circuit is implemented using StatePreparation class of Qiskit.
+This plot specifically represents the circuit that implements the encoding of the input matrix in the quantum registers. By default, an optimized version of the encoding circuit is implemented using the
+StatePreparation class of Qiskit.
 
 .. image:: Images/optimized_qram.png
 
 If you specify :obj:`~QPCA.decomposition.QPCA.optimized_qram` as False in the :meth:`~QPCA.decomposition.QPCA.fit` method, a custom version 
-of the encoding circuit is implemented.
-As you can see, the number of qubit required to store the matrix is in the order of log(n*m), where n and m 
+of the encoding circuit will be implemented.
+As you can see, the number of qubits required to store the matrix is in the order of log(n*m), where n and m 
 are the number of rows and columns of the input matrix.
 
 .. image:: Images/qram.png
 
-The other plot shows the general circuit made of the encoding part plus the phase estimation operator.
-Notice that the number of qubits used for the phase estimation in this case are 9: 8 specified by the resolution
-parameter to encode the eigenvalues and 1 to encode the eigenvectors. In general, you will have the qubits specified
-in the resolution parameter plus half of the qubits used for the matrix encoding.
+The other plot represents the general circuit, which includes both the encoding part and the phase estimation operator. 
+Please note that the number of qubits used for the phase estimation in this case is 9: 8 specified by the resolution parameter to encode the eigenvalues and 1 to encode the eigenvectors.
+In general, the number of qubits will be equal to the resolution parameter plus half of the qubits used for matrix encoding.
 
 .. image:: Images/pe.png
 
-The core part of this library is the eigenvector reconstruction that you can perform using :meth:`~QPCA.decomposition.QPCA.eigenvectors_reconstruction`. You can
-specify, as input parameters, :obj:`~QPCA.decomposition.QPCA.n_shots` which is the number of measure that you
-want to perform in the state vector tomography, :obj:`~QPCA.decomposition.QPCA.n_repetitions` which is the 
-number of times that you want to repeat the tomography process, and :obj:`~QPCA.decomposition.QPCA.plot_peaks`
-if you want to plot the output of the phase estimation which represent the most valuable approximated eigenvalues.
-
+The core part of this library is the eigenvector reconstruction, which can be performed using the :meth:`~QPCA.decomposition.QPCA.eigenvectors_reconstruction` function.
+As input parameters, you can specify :obj:`~QPCA.decomposition.QPCA.n_shots`, which is the number of measurements to be performed in the state vector tomography, :obj:`~QPCA.decomposition.QPCA.n_repetitions`, which is the number of times the tomography process should be repeated,
+and :obj:`~QPCA.decomposition.QPCA.plot_peaks`, if you want to plot the output of the phase estimation, representing the most valuable approximated eigenvalues.
+ 
 ..  code-block:: python
 
       eig=qpca.eigenvectors_reconstruction(n_shots=1000000,n_repetitions=1,plot_peaks=True)
@@ -93,14 +89,13 @@ if you want to plot the output of the phase estimation which represent the most 
    array([[ 0.97257301, -0.22836194],
         [ 0.23277106,  0.97266614]])
 
-With the boolean flag :obj:`~QPCA.decomposition.QPCA.plot_peaks` set to True, you can visualize a plot like the 
-one below, where you can see the peaks that represent the eigenvalues that phase estimation approximates with high probability.
-As you can see, here the two peaks are 0.92 and 0.07 which are the two eigenvalues that you are able to 
-estimate with the resolution and the number of shots that you provide.
+By setting the boolean flag :obj:`~QPCA.decomposition.QPCA.plot_peaks` to True, , you can visualize a plot similar to the one below.
+The plot displays peaks that represent the eigenvalues approximated with high probability by the phase estimation. 
+In this example, the two peaks are 0.92 and 0.07, which correspond to the two estimated eigenvalues based on the provided resolution and number of shots.
 
 .. image:: Images/peaks.png
 
-Finally, you can reconstruct the original input matrix using :meth:`~QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction`. 
+Finally, you can reconstruct the original input matrix using the :meth:`~QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction`. 
 
 ..  code-block:: python
 
@@ -118,14 +113,13 @@ Finally, you can reconstruct the original input matrix using :meth:`~QPCA.decomp
 Threshold optimization 
 +++++++++++++++
 
-In the :meth:`~QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction` method, you can specify the :obj:`~QPCA.decomposition.QPCA.eigenvalue_threshold` parameter
-to cut off the estimated eigenvalues that are smaller than the specified value.
+In the :meth:`~QPCA.decomposition.QPCA.quantum_input_matrix_reconstruction` method, you can specify the :obj:`~QPCA.decomposition.QPCA.eigenvalue_threshold` parameter to discard the estimated eigenvalues that are smaller than the specified value.
 
 ..  code-block:: python
 
       eig=qpca.eigenvectors_reconstruction(n_shots=1000000, n_repetitions=1, plot_peaks=True, eigenvalue_threshold=0.1)
 
-As you can see below, by specifying a threshold of 0.1, you cut off the last eigenvalue and you keep only the greatest one.
+As shown below, by setting a threshold of 0.1, you remove the last eigenvalue and retain only the largest one.
 
 ..  code-block:: python
 
@@ -137,19 +131,18 @@ As you can see below, by specifying a threshold of 0.1, you cut off the last eig
 
 .. image:: Images/threshold.png
 
-This type of threshold can be useful to cut out the smallest eigenvalues that are the most problematic to estimate
-and whose associated eigenvectors are those with the highest reconstruction error.
+This type of threshold can be useful for excluding the smallest eigenvalues, which are often the most challenging to estimate accurately. 
+Additionally, the associated eigenvectors of these small eigenvalues tend to have higher reconstruction errors. 
+By applying a threshold to remove these eigenvalues, you can potentially improve the overall quality of the eigenvector reconstruction.
 
 +++++++++++++++
 Absolute tolerance 
 +++++++++++++++
 
-The absolute tolerance is a kind of threshold that allows to discard the noisy eigenvalues (and consequently the respective eigenvectors) that could arise when the number of resolution qubits
-and/or the number of measurements performed in the tomography are not high enough.
+The absolute tolerance serves as a threshold to discard noisy eigenvalues and their corresponding eigenvectors that may arise when the number of resolution qubits and/or the number of measurements performed in the tomography is insufficient.
 
-Let's see the following example.
-To better visualize the problem, a 4x4 matrix is considered with 6 qubits of resolution and 1000000 shots performed to reconstruct the eigenvectors.
-
+Let's consider the following example to illustrate the issue. 
+To better visualize the problem, a 4x4 matrix is used, with a resolution of 6 qubits and 1.000.000 shots performed for eigenvector reconstruction.
 ..  code-block:: python
 
       resolution=6
@@ -188,11 +181,11 @@ To better visualize the problem, a 4x4 matrix is considered with 6 qubits of res
 
       eig=qpca.eigenvectors_reconstruction(n_shots=1000000,n_repetitions=1,plot_peaks=True)
 
-As you can see below, there is an eigenvalue (0.265625 in this case) which doesn't match any of the original eigenvalues. Indeed, even the peaks plot doesn't show a peak around 0.26. Therefore,
-this is a fluctuation or a noisy eigenvalue that is due to the classical postprocessing since the classical eigenvalues extractor algorithm searches for at most 4 eigenvalues (this is because 4 is the initial matrix dimension).
+As shown below, there is an eigenvalue (e.g., 0.265625 in this case) that does not match any of the original eigenvalues. This discrepancy is evident from the peaks plot, which does not exhibit a peak around 0.26. 
+Therefore, this eigenvalue can be attributed to fluctuations or noise introduced during the classical postprocessing phase, as the classical eigenvalue extraction algorithm typically searches for a maximum of 4 eigenvalues (corresponding to the initial matrix dimension of 4).
 
-But as you can see, the QPCA algorithm, with the configuration specified at the beginning, found 3 peaks or "correct" eigenvalues. The fourth, that corresponds to the smallest original eigenvalue,
-is something added by the postprocessing.
+However, it is worth noting that the QPCA algorithm, with the specified configuration, successfully identified 3 peaks or "correct" eigenvalues. 
+The fourth eigenvalue, which corresponds to the smallest original eigenvalue, is an artifact introduced by the postprocessing stage.
 
 ..  code-block:: python
 
@@ -206,11 +199,11 @@ is something added by the postprocessing.
 
 .. image:: Images/absolute_tolerance1.png
 
-To tackle this problem, you can both increase the number of qubits of resolution and/or the number of shots. But if these numbers are already big enough
-and you can't increase them for performance reasons, you can specify the :obj:`~QPCA.decomposition.QPCA.abs_tolerance` parameter setting a specific tolerance.
+To address this issue, you have two options: increase the number of resolution qubits and/or the number of shots. 
+However, if these numbers are already sufficiently large and cannot be further increased due to performance constraints, you can utilize the :obj:`~QPCA.decomposition.QPCA.abs_tolerance` parameter to specify a specific tolerance level.
 
-As you can see, by setting this parameter to 0.001, you can remove the noisy eigenvalue and return all the correct estimated eigenvalues/eigenvectors. If you also want to correctly estimate 
-the smallest eigenvalue, you probably need to increase the number of qubits of resolution.
+As demonstrated, by setting this parameter to 0.001, you can eliminate the noisy eigenvalue and obtain accurate estimates for all the correct eigenvalues and their corresponding eigenvectors. 
+If you also wish to accurately estimate the smallest eigenvalue, it is likely necessary to increase the number of resolution qubits.
 
 ..  code-block:: python
 
@@ -226,8 +219,8 @@ the smallest eigenvalue, you probably need to increase the number of qubits of r
         [ 0.46941485,  0.12992164,  0.36394397],
         [ 0.68487267, -0.5051309 ,  0.37952075]])
 
-Basically, the peaks are extracted by looking at their average vertical distance from their neighbors means. Therefore, specifying an absolute tolerance means specifying the average vertical height 
-below which a peak is no longer considered a peak but is seen as a fluctuation or noise.
-So, how to chose the absolute tolerance parameter? If you don't specify, it takes a default value of 1/n_shots. This is because the average vertical distance from the neighbors is in some sense related
-to the number of shots performed in the tomography. But due to the statistical variance in measuring, this is not always the case. So the best thing to do if an unexpected eigenvalue occurs is to try
-increasing the tolerance by an order of magnitude with respect to 1/n_shots (clearly the best solution would be to increase the resolution, where possible).
+The extraction of peaks is based on evaluating the average vertical distance of each peak from its neighboring peaks. 
+Therefore, when specifying an absolute tolerance, you are essentially determining the average vertical height below which a peak is considered as noise or a fluctuation rather than a valid peak.
+The default value for the absolute tolerance is set to 1/n_shots, as it is loosely related to the average vertical distance between neighboring peaks, which, in turn, can be influenced by the number of shots performed in the tomography. 
+However, due to statistical variance in measurements, this relationship may not always hold true. Hence, if you encounter an unexpected eigenvalue, it is advisable to increase the tolerance by an order of magnitude relative to 1/n_shots. 
+Increasing the tolerance can help filter out unwanted fluctuations or noisy eigenvalues. It's important to note that if feasible, increasing the resolution is often the preferred solution to improve the accuracy of the eigenvalue estimation.

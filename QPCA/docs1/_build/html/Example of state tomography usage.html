@@ -78,11 +78,10 @@
              
   <section id="example">
 <h1>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h1>
-<p>In the <code class="xref py py-mod docutils literal notranslate"><span class="pre">quantumUtilities</span></code> module, you will find the implementation of the vector state tomography algorithm described in the paper
-<a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>. Here below there is an example of a possible general usage
-of this algorithm.</p>
-<p>First, a quantum circuit is generated with the following code. This is the quantum circuit that encodes the
-quantum state that you want to reconstruct.</p>
+<p>In the <code class="xref py py-mod docutils literal notranslate"><span class="pre">quantumUtilities</span></code> module, you can find the implementation of the vector state tomography algorithm, as described in the paper <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>.
+Below is an example demonstrating a possible general usage of this algorithm.</p>
+<p>First, a quantum circuit is generated using the following code.
+This circuit is responsible for encoding the quantum state that you wish to reconstruct.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
 <span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">Aer</span><span class="p">,</span> <span class="n">transpile</span>
 <span class="kn">from</span> <span class="nn">qiskit.visualization</span> <span class="kn">import</span> <span class="n">array_to_latex</span>
@@ -96,19 +95,16 @@ quantum state that you want to reconstruct.</p>
 </pre></div>
 </div>
 <img alt="_images/tomography.png" src="_images/tomography.png" />
-<p>Then, using the statevector simulator provided by Aer backend, you are able to extract the true statevector of this
-circuit. This is only to check the result that you are going to obtain by executing the tomography procedure.</p>
+<p>Next, using the statevector simulator provided by the Aer backend, you can extract the true statevector of this circuit.
+This step is solely for the purpose of verifying the results obtained from executing the tomography procedure.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">aer</span><span class="o">=</span><span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;statevector_simulator&#39;</span><span class="p">)</span>
 <span class="n">statevector</span><span class="o">=</span><span class="n">aer</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">aer</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
 <span class="n">array_to_latex</span><span class="p">(</span><span class="n">statevector</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/statevector.png" src="_images/statevector.png" />
-<p>Therefore, you can execute the tomography procedure by passing the quantum circuit as parameter and the number
-of shots as the number of times that you want to measure the quantum state. The higher the number of measures,
-the more accurate the estimates.
-The output will be an estimate of the statevector in the form of a dictionary: the keys are the
-quantum states and the values the corresponding amplitudes with sign.</p>
+<p>Accordingly, you can execute the tomography procedure by providing the quantum circuit as a parameter and specifying the number of shots, which represents the number of times you wish to measure the quantum state. Increasing the number of measurements enhances the accuracy of the estimates.
+The output will be an estimate of the statevector presented as a dictionary, where the keys represent the quantum states and the corresponding values denote the amplitudes with their respective signs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">StateVectorTomography</span><span class="o">.</span><span class="n">state_vector_tomography</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span><span class="n">n_shots</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span><span class="n">n_repetitions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">drawing_amplitude_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">drawing_sign_circuit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="go">{&#39;00&#39;: 0.5054700782440045,</span>
@@ -117,10 +113,10 @@ quantum states and the values the corresponding amplitudes with sign.</p>
 <span class="go">&#39;11&#39;: -0.4949747468305833}</span>
 </pre></div>
 </div>
-<p>In the tomography function, you can also specify the drawing_amplitude_circuit flag, which if set to True returns as
-output the plot of the circuit that implements the amplitude estimation procedure (step 1 of the algorithm provided in <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>).</p>
+<p>In the tomography function, you have the option to specify the drawing_amplitude_circuit flag.
+When set to True, the function returns a plot of the circuit that implements the amplitude estimation procedure (step 1 of the algorithm described in <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>).</p>
 <img alt="_images/amplitude_tomo.png" src="_images/amplitude_tomo.png" />
-<p>If you set to True even the drawing_sign_circuit flag, the function returns the plot of the circuit that implements the sign estimation procedure (step 2 of the algorithm provided in <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>).</p>
+<p>Furthermore, if you also set the drawing_sign_circuit flag, the function returns a plot of the circuit that implements the sign estimation procedure (step 2 of the algorithm described in <a class="reference external" href="https://arxiv.org/abs/1808.09266">A Quantum Interior Point Method for LPs and SDPs</a>).</p>
 <img alt="_images/sign_tomo.png" src="_images/sign_tomo.png" />
 </section>
 
