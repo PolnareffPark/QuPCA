@@ -96,8 +96,10 @@ class QPCA():
         with warnings.catch_warnings():
             warnings.simplefilter('always')
             
-            if resolution<len(input_matrix):
-                customWarning.warn(f'You chose {resolution} qubits of resolution but the matrix dimension is {len(input_matrix)}. Note that to estimate correctly all the {len(input_matrix)} eigenvalues/eigenvectors, you need to set at least {len(input_matrix)} resolution qubits. Moreover, since with {resolution} qubits you have an accuracy of {1/2**resolution}, if you know that some eigenvalues are smaller than {1/2**resolution}, please increase the resolution qubits to get better estimates.')
+            # 8 qubit resolution because accuracy problems are more common below this value
+            
+            if resolution<8:
+                customWarning.warn(f'You chose {resolution} qubits of resolution. Moreover, since with {resolution} qubits you have an accuracy of {1/2**resolution}, if you know that some eigenvalues are smaller or closer to each other than {1/2**resolution}, please increase the resolution qubits to get better estimates.')
         
         true_input_matrix=input_matrix
         
