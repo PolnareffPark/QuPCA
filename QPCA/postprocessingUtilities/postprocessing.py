@@ -85,7 +85,11 @@ def general_postprocessing(input_matrix, statevector_dictionary, resolution, n_s
         with warnings.catch_warnings():
             warnings.simplefilter('always')
             if not any(bad_peaks_mask):
-                customWarning.warn(f'You set an absolute tolerance of {abs_tolerance}. If some output eigenvalues are not the expected ones, it is recommended to increase the absolute tolerance to cut away the noisy eigenvalues.')
+                if abs_tolerance==None:
+                    customWarning.warn(f'The default tolerance set is {abs_tolerance}. If some output eigenvalues are not the expected ones, it is recommended to increase the absolute tolerance to cut away the noisy eigenvalues.')
+                else:
+                    customWarning.warn(f'You set an absolute tolerance of {abs_tolerance}. If some output eigenvalues are not the expected ones, it is recommended to increase the absolute tolerance to cut away the noisy eigenvalues.')
+                    
                 
         binary_eigenvalues=binary_eigenvalues[~bad_peaks_mask]
         mean_threshold=mean_threshold[~bad_peaks_mask]
