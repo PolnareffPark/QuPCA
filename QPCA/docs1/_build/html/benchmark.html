@@ -218,8 +218,8 @@ reconstructed sign). If True, it has effect only if the eigenvector_benchmarking
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix on which you want to apply QPCA divided by its trace, where <cite>n_samples</cite> is the number of samples
-and <cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>input_matrix</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input hermitian matrix on which you want to apply QPCA, divided by its trace. Here, <cite>n_samples</cite> represents the number of samples,
+and <cite>n_features</cite> represents the number of features.</p></li>
 <li><p><strong>reconstructed_eigenvalues</strong> (<em>array-like</em>) – Reconstructed eigenvalues from QPCA algorithm.</p></li>
 <li><p><strong>reconstructed_eigenvectors</strong> (<em>array-like</em>) – Reconstructed eigenvectors from QPCA algorithm.</p></li>
 <li><p><strong>mean_threshold</strong> (<em>array-like</em>) – This array contains the mean between the left and right peaks vertical distance to its neighbouring samples. It is used to cut out the bad reconstructed eigenvalues.</p></li>
