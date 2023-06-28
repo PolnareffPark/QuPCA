@@ -6,7 +6,7 @@ from qiskit import QuantumCircuit
 class QramBuilder():
     
     @classmethod
-    def generate_qram_circuit(class_,input_matrix, optimized_qram):
+    def generate_qram_circuit(cls,input_matrix, optimized_qram):
         """
         Generate qram circuit.
 
@@ -14,8 +14,8 @@ class QramBuilder():
         ----------
         
         input_matrix: array-like of shape (n_samples, n_features)
-                        Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                        and `n_features` is the number of features.
+                        Input hermitian matrix on which you want to apply QPCA, divided by its trace. Here, `n_samples` represents the number of samples,
+                        and `n_features` represents the number of features. 
         
         optimized_qram: bool value
                         If True, it returns an optimized version of the preprocessing circuit. Otherwise, a custom implementation of a Qram is returned.

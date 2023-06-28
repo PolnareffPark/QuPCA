@@ -7,7 +7,7 @@ from qiskit.circuit.library import PhaseEstimation
 class PeCircuitBuilder():
     
     @classmethod
-    def generate_PE_circuit(class_,input_matrix,resolution,qram_circuit):
+    def generate_PE_circuit(cls,input_matrix,resolution,qram_circuit):
         """
         Generate phase estimation circuit with a number of qubits provided as resolution parameter in the constructor.
 
@@ -15,11 +15,11 @@ class PeCircuitBuilder():
         ----------
         
         input_matrix: array-like of shape (n_samples, n_features)
-                        Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                        and `n_features` is the number of features.
+                        Input hermitian matrix on which you want to apply QPCA, divided by its trace. Here, `n_samples` represents the number of samples,
+                        and `n_features` represents the number of features. 
         
         resolution: int value
-                    Number of qubits used for the phase estimation process to encode the eigenvalues.
+                        The number of qubits used in the phase estimation process to encode the eigenvalues.
         
         qram_circuit: QuantumCircuit 
                         The quantum circuit that encodes the input matrix.
