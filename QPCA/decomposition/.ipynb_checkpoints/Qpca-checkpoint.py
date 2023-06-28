@@ -25,14 +25,14 @@ class QPCA():
                         The trace of the input matrix.
     
     input_matrix : array-like of shape (n_samples, n_features)
-                        Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                        and `n_features` is the number of features. In case of non-2^N Hermitian matrix, a zero-padding method is applied to make it a 2^N matrix.
+                        Input hermitian matrix on which you want to apply QPCA, divided by its trace. Here, `n_samples` represents the number of samples,
+                        and `n_features` represents the number of features. In case of non-2^N Hermitian matrix, a zero-padding method is applied to make it a 2^N matrix.
     
     true_input_matrix : array-like of shape (n_samples, n_features)
                         This is the true input matrix that is given as input. 
     
     resolution : int value
-                        Number of qubits used for the phase estimation process to encode the eigenvalues.
+                        The number of qubits used in the phase estimation process to encode the eigenvalues.
     
     qram_circuit : QuantumCircuit 
                         The quantum circuit that encodes the input matrix.
@@ -67,11 +67,11 @@ class QPCA():
         ----------
         
         input_matrix: array-like of shape (n_samples, n_features)
-                    Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                    and `n_features` is the number of features.
+                    Input hermitian matrix on which you want to apply QPCA, divided by its trace. Here, `n_samples` represents the number of samples,
+                    and `n_features` represents the number of features.
                     
         resolution: int value
-                    Number of qubits used for the phase estimation process to encode the eigenvalues.
+                    The number of qubits used in the phase estimation process to encode the eigenvalues.
                     
         optimized_qram: bool value, default=True
                         If True, it returns an optimized version of the preprocessing circuit. Otherwise, a custom implementation of a Qram is returned.
