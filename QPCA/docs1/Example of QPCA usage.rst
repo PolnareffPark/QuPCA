@@ -143,6 +143,7 @@ The absolute tolerance serves as a threshold to discard noisy eigenvalues and th
 
 Let's consider the following example to illustrate the issue. 
 To better visualize the problem, a 4x4 matrix is used, with a resolution of 6 qubits and 1.000.000 shots performed for eigenvector reconstruction.
+
 ..  code-block:: python
 
       resolution=6

@@ -190,13 +190,12 @@ By applying a threshold to remove these eigenvalues, you can potentially improve
 <h2>Absolute tolerance<a class="headerlink" href="#absolute-tolerance" title="Permalink to this heading"></a></h2>
 <p>The absolute tolerance serves as a threshold to discard noisy eigenvalues and their corresponding eigenvectors that may arise when the number of resolution qubits and/or the number of measurements performed in the tomography is insufficient.</p>
 <p>Let’s consider the following example to illustrate the issue.
-To better visualize the problem, a 4x4 matrix is used, with a resolution of 6 qubits and 1.000.000 shots performed for eigenvector reconstruction.
-..  code-block:: python</p>
-<blockquote>
-<div><p>resolution=6
-matrix_dimension=4
-input_matrix=generate_matrix(matrix_dimension=matrix_dimension,seed=seed)</p>
-</div></blockquote>
+To better visualize the problem, a 4x4 matrix is used, with a resolution of 6 qubits and 1.000.000 shots performed for eigenvector reconstruction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">resolution</span><span class="o">=</span><span class="mi">6</span>
+<span class="n">matrix_dimension</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">input_matrix</span><span class="o">=</span><span class="n">generate_matrix</span><span class="p">(</span><span class="n">matrix_dimension</span><span class="o">=</span><span class="n">matrix_dimension</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">input_matrix</span><span class="p">)</span>
 
 <span class="go">   [[0.63 0.55 0.5  0.89]</span>
