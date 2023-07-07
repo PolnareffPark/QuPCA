@@ -70,7 +70,7 @@ class Benchmark_Manager():
         self.print_error=print_error
         
                     
-    def benchmark(self, input_matrix=None,reconstructed_eigenvalues=None, reconstructed_eigenvectors=None, mean_threshold=None, n_shots=1000):
+    def benchmark(self, input_matrix=None,reconstructed_eigenvalues=None, reconstructed_eigenvectors=None, mean_threshold=None, n_shots=1000, resolution=None):
         
         
         """ Method to benchmark the reconstructed eigenvectors/eigenvalues.
@@ -79,8 +79,8 @@ class Benchmark_Manager():
             ----------
             
             input_matrix: array-like of shape (n_samples, n_features)
-                        Input hermitian matrix on which you want to apply QPCA divided by its trace, where `n_samples` is the number of samples
-                        and `n_features` is the number of features.
+                        Input hermitian matrix on which you want to apply QPCA, divided by its trace. Here, `n_samples` represents the number of samples,
+                        and `n_features` represents the number of features.
             
             reconstructed_eigenvalues : array-like
                         Reconstructed eigenvalues from QPCA algorithm.
@@ -121,7 +121,7 @@ class Benchmark_Manager():
             
             error_list,delta=self.__eigenvectors_benchmarking(input_matrix_=input_matrix, original_eigenvalues_=original_eigenvalues, original_eigenvectors_=original_eigenvectors,
                                                             reconstructed_eigenvalues_=reconstructed_eigenvalues, reconstructed_eigenvectors_=reconstructed_eigenvectors,
-                                                            mean_threshold_=mean_threshold, n_shots_=n_shots)
+                                                            mean_threshold_=mean_threshold, n_shots_=n_shots, resolution_=resolution)
             returning_results_wrapper.append([error_list,delta])
             
         if self.eigenvalues_benchmarching:
@@ -212,7 +212,7 @@ class Benchmark_Manager():
         plt.show()
     
     def __eigenvectors_benchmarking(self,input_matrix_, original_eigenvectors_, original_eigenvalues_, reconstructed_eigenvalues_, reconstructed_eigenvectors_, mean_threshold_, 
-                                  n_shots_):
+                                  n_shots_,resolution_):
 
         """ Method to benchmark the quality of the reconstructed eigenvectors.
 
@@ -255,8 +255,12 @@ class Benchmark_Manager():
         """
 
         save_list=[]
+        
+        # Use remove_peaks if you want to remove usless eigenvalues using the resolution (safer)
 
         correct_reconstructed_eigenvalues=remove_usless_peaks(reconstructed_eigenvalues_,mean_threshold_,original_eigenvalues_)
+        #correct_reconstructed_eigenvalues=remove_peaks(reconstructed_eigenvalues_,mean_threshold_,original_eigenvalues_,resolution_)
+        #print(correct_reconstructed_eigenvalues,correct_reconstructed_eigenvalues1,eeer)
 
         correct_reconstructed_eigenvectors=[reconstructed_eigenvectors_[:,j] for c_r_e in correct_reconstructed_eigenvalues for j in range(len(reconstructed_eigenvalues_)) if c_r_e==reconstructed_eigenvalues_[j]]
 

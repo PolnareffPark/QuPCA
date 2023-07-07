@@ -105,6 +105,38 @@ def remove_usless_peaks(lambdas_num, mean_threshold, original_eig):
         lambdas_num=np.delete(lambdas_num,idxs)
     return sorted(lambdas_num,reverse=True)
 
+def remove_peaks(lambdas_num, mean_threshold, original_eig,resolution):
+    
+    check_eigenvalues={}
+    peaks_to_keep=[]
+    
+    #hashmap to store original eigenvalue 
+
+    for i in original_eig:
+
+        check_eigenvalues.update({i:0})
+        
+    for l in lambdas_num:
+        take=False
+
+        for ce in check_eigenvalues:
+
+            if check_eigenvalues[ce]==0:
+    
+                if abs(l-ce)<=1/2**resolution:
+                    peaks_to_keep.append(l)
+                    check_eigenvalues[ce]=1
+                    take=True
+                    break
+
+    return sorted(peaks_to_keep, reverse=True)
+
+            
+            
+                
+    
+    
+
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()

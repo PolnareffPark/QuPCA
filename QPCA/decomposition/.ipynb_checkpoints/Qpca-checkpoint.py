@@ -317,7 +317,7 @@ class QPCA():
             
             results=bench_manager.benchmark(input_matrix=self.true_input_matrix, reconstructed_eigenvalues=self.reconstructed_eigenvalues, 
                                             reconstructed_eigenvectors=self.reconstructed_eigenvectors, mean_threshold=self.mean_threshold, 
-                                            n_shots=self.n_shots)
+                                            n_shots=self.n_shots, resolution=self.resolution)
             
             
             return results
