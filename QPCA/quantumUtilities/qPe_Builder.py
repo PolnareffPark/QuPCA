@@ -1,7 +1,7 @@
 import numpy as np
 
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
-from qiskit.algorithms.linear_solvers.matrices.numpy_matrix import NumPyMatrix
+from .numpy_matrix import NumPyMatrix
 from qiskit.circuit.library import PhaseEstimation
 
 class PeCircuitBuilder():
