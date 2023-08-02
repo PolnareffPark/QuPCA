@@ -1,0 +1,4 @@
+# QuPCA
+Official repository for the paper "Towards An End-To-End Approach For Quantum Principal Component Analysis"
+
+Quantum Machine Learning has gained significant attention in recent years as a way to leverage the relationship between quantum information and machine learning. Principal Component Analysis (PCA) is a fundamental technique in machine learning, and the potential for its quantum acceleration has been extensively studied. However, an algorithmic end-to-end implementation remains challenging. This paper covers quantum PCA implementation up to extracting the principal components. We extend existing processes for quantum state tomography to extract the eigenvectors from the output state, addressing the challenges of dealing with complex amplitudes in the case of non-integer eigenvalues. Finally, we apply our implementation to a practical quantum finance use case related to interest rate risk, and present the results of our experiments.
