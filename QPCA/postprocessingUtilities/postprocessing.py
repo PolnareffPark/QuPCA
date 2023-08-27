@@ -198,8 +198,9 @@ def __peaks_extraction(df,len_input_matrix,n_shots):
             #check if the peaks finder is enter in an infinite loop
 
             if time.time()-start>30:
-                customWarning.warn("The extraction of the eigenvalues is taking a long time. You may have hit a plateau and therefore you may need to restart the execution by increasing the number of resolution qubits and/or the number of measurements performed.")
+                customWarning.warn("The extraction of the eigenvalues is taking longer than expected. You may need to restart the execution increasing the number of resolution qubits and/or the number of shots.")
                 warnings.simplefilter('ignore')
+                break
                 
             #compute the most likely peaks (eigenvalues)
 
