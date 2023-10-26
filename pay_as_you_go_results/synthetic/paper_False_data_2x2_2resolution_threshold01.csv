@@ -1,0 +1,2 @@
+matrix_idx,dimension,resolution,original_eigenvalues,reconstructed_eigenvalues,original_eigenvectors,reconstructed_eigenvectors,depth,job_ids
+paper,2,2,"[2.0, 1.0]",[0.75],"[[0.7071067811865475, 0.7071067811865475]]","[[-0.8110999829686304, 0.32608862143792683]]",41+544,"('ck65bu03hjk31guqifrg', 'ck6cc83l5r7th0mrefa0')"

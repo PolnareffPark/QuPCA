@@ -1,0 +1,1 @@
+{"matrix_idx": "paper", "dimension": 2, "resolution": 2, "original_eigenvalues": [2.0, 1.0], "reconstructed_eigenvalues": [0.75], "original_eigenvectors": [[0.7071067811865475, 0.7071067811865475]], "reconstructed_eigenvectors": [[-0.8110999829686304, 0.32608862143792683]], "depth": "41+544", "job_ids": ["ck65bu03hjk31guqifrg", "ck6cc83l5r7th0mrefa0"]}
