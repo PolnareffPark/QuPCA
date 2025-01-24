@@ -2,11 +2,11 @@ import numpy as np
 from qiskit.circuit.library.standard_gates import RYGate
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from qiskit.circuit.library import PhaseEstimation
-from qiskit import Aer, transpile
+from qiskit import transpile
+from qiskit_aer import Aer
 import matplotlib.pyplot as plt
 from qiskit.circuit.library.data_preparation.state_preparation import StatePreparation
 from ..warnings_utils.warning_utility import *
-from qiskit.primitives import BackendSampler
 from qiskit_ibm_runtime import Sampler, Options
 
 class StateVectorTomography():
@@ -40,31 +40,39 @@ class StateVectorTomography():
         
         #initialize a zero vector where we store the estimated probabilities
         
-        probabilities=np.zeros(2**c_size)
-        quantum_regs=QuantumRegister(q_size)
+        # 1) 기존과 동일하게 회로를 구성
+        probabilities = np.zeros(2**c_size)
+        quantum_regs = QuantumRegister(q_size)
         classical_regs = ClassicalRegister(c_size, 'classical')
-        amplitude_estimation_circuit = QuantumCircuit(quantum_regs,classical_regs)
-        amplitude_estimation_circuit.append(quantum_circuit,quantum_regs)
-        amplitude_estimation_circuit.measure(quantum_regs[qubits_to_be_measured],classical_regs)
-        
+        amplitude_estimation_circuit = QuantumCircuit(quantum_regs, classical_regs)
+        amplitude_estimation_circuit.append(quantum_circuit, quantum_regs)
+        amplitude_estimation_circuit.measure(quantum_regs[qubits_to_be_measured], classical_regs)
+
         if drawing_amplitude_circuit:
             display(amplitude_estimation_circuit.draw('mpl'))
+
+        # Transpile the circuit for the target backend
+        transpiled_circuit = transpile(amplitude_estimation_circuit, backend=backend)
+
+        # 2) backend.run() 대신 무조건 Sampler 사용
+        #    - IBM Runtime에서는 반드시 Sampler(또는 Estimator)와 같은 프리미티브를 써야 함.
+        sampler = Sampler(backend)  
         
-        if isinstance(backend, Sampler) or isinstance(backend, BackendSampler):
-            backend.set_options(shots=n_shots)
-            job = backend.run(amplitude_estimation_circuit)
-            shots = job.result().metadata[0].get("shots")                     
-            counts = {k: round(v * shots) for k, v in job.result().quasi_dists[0].binary_probabilities().items()}
-        else:
-            job = backend.run(transpile(amplitude_estimation_circuit, backend=backend), shots=n_shots)
-            counts = job.result().get_counts()
-        
-        #compute estimated probabilities as number of observation for the i-th state divided by the total number of shots performed
-        
-        for i in counts:
-            counts[i]/=n_shots
-            probabilities[int(i,2)]=counts[i]
-        
+        # 3) Sampler 실행
+        job = sampler.run([transpiled_circuit], shots=n_shots)
+
+        # 4) shots와 quasi_dists를 통해 counts 계산 (기존 코드와 동일)
+        shots = n_shots
+        counts = {
+            k: round(v * shots)
+            for k, v in job.result().quasi_dists[0].binary_probabilities().items()
+        }
+
+        # 5) 확률로 변환 후 저장
+        for bitstring in counts:
+            counts[bitstring] /= n_shots
+            probabilities[int(bitstring, 2)] = counts[bitstring]
+
         return probabilities
     
     def __sign_estimation(quantum_circuit,probabilities,q_size,c_size,n_shots,drawing_sign_circuit,backend,qubits_to_be_measured):
@@ -127,38 +135,41 @@ class StateVectorTomography():
         if drawing_sign_circuit:
             display(sign_estimation_circuit.draw('mpl'))
 
-        if isinstance(backend, Sampler) or isinstance(backend, BackendSampler):
-            backend.set_options(shots=n_shots)
-            job = backend.run(sign_estimation_circuit)
-            shots = job.result().metadata[0].get("shots")                 
-            counts_for_sign = {k: round(v * shots) for k, v in job.result().quasi_dists[0].binary_probabilities().items()}
-        else:
-            job = backend.run(transpile(sign_estimation_circuit, backend=backend), shots=n_shots)
-            counts_for_sign = job.result().get_counts()
-        tmp=np.zeros(2**c_size)
-        
-        #check the sign: we consider only the results with control qubit 0
-        
-        for c in counts_for_sign:
-            if c[0]=='0':
-                tmp[int(c[1:],2)]=counts_for_sign[c]
-        sign_dictionary={}
-        sign=0
-        for e, (count, prob) in enumerate(zip(tmp, probabilities)):
-            if count>0.4*prob*n_shots:
-                sign=1
-            else:
-                sign=-1
-            if prob==0:
-                sign=1
-            sign_dictionary.update({bin(e)[2:].zfill(c_size):sign})
+        # Transpile the circuit for the target backend
+        transpiled_circuit = transpile(sign_estimation_circuit, backend=backend)
 
-        statevector_dictionary={}
-        
-        #merge the results of amplitude and sign estimation in a dictionary where the keys are the states and the values are the signed amplitudes
-        
-        for e,key in enumerate(sign_dictionary):
-            statevector_dictionary[key]=sign_dictionary[key]*np.sqrt(probabilities[e])
+        # Sampler만 사용하도록 수정
+        sampler = Sampler(backend)  
+        job = sampler.run([transpiled_circuit], shots=n_shots)
+
+        shots = n_shots
+        counts_for_sign = {
+            k: round(v * shots)
+            for k, v in job.result().quasi_dists[0].binary_probabilities().items()
+        }
+
+        # 컨트롤 큐빗(맨 앞 비트)이 0인 경우만 추려서 tmp에 저장
+        tmp = np.zeros(2**c_size)
+        for bitstring in counts_for_sign:
+            if bitstring[0] == '0':  # 컨트롤 큐빗이 0
+                tmp[int(bitstring[1:], 2)] = counts_for_sign[bitstring]
+
+        # (기존 로직) tmp와 probabilities를 비교해 부호 판정
+        sign_dictionary = {}
+        for e, (count, prob) in enumerate(zip(tmp, probabilities)):
+            if count > 0.4 * prob * n_shots:
+                sign = 1
+            else:
+                sign = -1
+            if prob == 0:
+                sign = 1
+            sign_dictionary[bin(e)[2:].zfill(c_size)] = sign
+
+        # (기존 로직) 각 상태에 대해 sign * sqrt(prob)
+        statevector_dictionary = {}
+        for e, key in enumerate(sign_dictionary):
+            statevector_dictionary[key] = sign_dictionary[key] * np.sqrt(probabilities[e])
+
         return statevector_dictionary
     
     @classmethod
